@@ -48,11 +48,6 @@ def signup(request):
             email = EmailMessage(mail_subject, message, to=[to_email])
             email.send()
             return render(request, 'registration/confirm_account.html')
-
-            # raw_password = form.cleaned_data.get('password1')
-            # user = authenticate(username=email, password=raw_password)
-            # login(request, user)
-            # return redirect('account:index')
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})

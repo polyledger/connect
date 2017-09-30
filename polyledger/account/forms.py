@@ -48,6 +48,8 @@ class UserChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 class SignUpForm(UserCreationForm):
+    error_css_class = 'is-invalid'
+
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.', widget=forms.TextInput(attrs={'class': 'form-control'}))
     last_name = forms.CharField(max_length=30, required=False, help_text='Optional.', widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.', widget=forms.EmailInput(attrs={'class': 'form-control'}))
