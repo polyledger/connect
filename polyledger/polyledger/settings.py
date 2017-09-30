@@ -130,5 +130,5 @@ STATICFILES_DIRS = [
 # Set auth redirects and URLs
 # https://docs.djangoproject.com/en/1.11/ref/settings/#login-redirect-url
 LOGIN_REDIRECT_URL = '/account/'
-LOGIN_URL = '/accont/login/'
-LOGOUT_REDIRECT_URL = None
+LOGIN_URL = '/account/login/'
+LOGOUT_REDIRECT_URL = '/account/login/'

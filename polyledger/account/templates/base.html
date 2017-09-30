@@ -3,11 +3,36 @@
 <html lang="en">
 <head>
   <link rel="stylesheet" href="{% static 'account/css/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'polyledger/css/bootstrap.min.css' %}" />
   <link rel="stylesheet" href="{% static 'polyledger/css/toolkit-light.min.css' %}" />
   <title>Polyledger</title>
 </head>
 
 <body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">
+      <img src="{% static 'polyledger/img/logo.png' %}" height="30" alt="Polyledger">
+    </a>
+    {% if user.is_authenticated %}
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/account/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    {% endif %}
+  </nav>
+
   <main id="app">
     {% block content %}{% endblock %}
   </main>
