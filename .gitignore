@@ -14,6 +14,7 @@ media
 # in your Git repository. Update and uncomment the following line accordingly.
 polyledger/static/
 !polyledger/static/polyledger/
+!polyledger/static/favicon.ico
 
 
 ### macOS ###
