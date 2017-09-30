@@ -2,7 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="{% static 'account/css/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'polyledger/css/polyledger.css' %}" />
+  <link rel="stylesheet" href="{% static 'account/css/account.css' %}" />
+  {% if request.path == '/account/login/' or request.path == '/account/signup/' %}
+  <link rel="stylesheet" href="{% static 'account/css/theme.css' %}" />
+  {% endif %}
   <link rel="stylesheet" href="{% static 'polyledger/css/bootstrap.min.css' %}" />
   <link rel="stylesheet" href="{% static 'polyledger/css/toolkit-light.min.css' %}" />
   <title>Polyledger</title>
@@ -36,5 +40,7 @@
   <main id="app">
     {% block content %}{% endblock %}
   </main>
+
+  <script type="text/javascript" src="{% static 'polyledger/js/jquery-3.2.1.min.js' %}"></script>
 </body>
 </html>
