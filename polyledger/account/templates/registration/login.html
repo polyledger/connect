@@ -2,37 +2,35 @@
 
 {% block content %}
 
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-4">
+      <h2 class="text-center">Log in</h2>
+      <form method="post" action="{% url 'account:login' %}">
+        {% csrf_token %}
 
-{% if next %}
-    {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
-    {% endif %}
-{% endif %}
+        <div class="form-group">
+          <label id="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+          <input class="form-control" type="email" name="{{ form.username.html_name }}">
+        </div>
 
-<form method="post" action="{% url 'account:login' %}">
-{% csrf_token %}
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
+        <div class="form-group">
+          <label id="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+          <input class="form-control" type="password" name="{{ form.password.html_name }}">
+          <small>
+            <a href="{% url 'account:password_reset' %}">Lost password?</a>
+          </small>
+        </div>
 
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
-</form>
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+      </form>
+      <small class="form-text text-muted">
+        Don't have an account? <a href="{% url 'account:signup' %}">Signup</a>.
+      </small>
+    </div>
+  </div>
+</div>
 
-{# Assumes you setup the password_reset view in your URLconf #}
-<p><a href="{% url 'account:password_reset' %}">Lost password?</a></p>
+<!-- TODO: Show form errors. -->
 
 {% endblock %}
