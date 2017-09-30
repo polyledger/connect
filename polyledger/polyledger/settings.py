@@ -71,6 +71,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'polyledger.wsgi.application'
 
 
+# https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#specifying-a-custom-user-model
+AUTH_USER_MODEL = 'account.User'
+
+
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 

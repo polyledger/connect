@@ -12,11 +12,25 @@
         <div class="form-group">
           <label id="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
           <input class="form-control" type="email" name="{{ form.username.html_name }}">
+          {% if form.email.errors %}
+            <div class="text-danger">
+              {% for error in form.email.errors %}
+                {{ error|escape }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group">
           <label id="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
           <input class="form-control" type="password" name="{{ form.password.html_name }}">
+          {% if form.password.errors %}
+            <div class="text-danger">
+              {% for error in form.password.errors %}
+                {{ error|escape }}
+              {% endfor %}
+            </div>
+          {% endif %}
           <small>
             <a href="{% url 'account:password_reset' %}">Lost password?</a>
           </small>
