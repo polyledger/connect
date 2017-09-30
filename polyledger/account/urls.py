@@ -6,6 +6,7 @@ from . import views
 app_name = 'account'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.activate, name='activate'),
     url(r'^login/$', auth_views.LoginView.as_view(), name='login'),
     url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
     url(r'^password_reset/$', auth_views.PasswordResetView.as_view(), name='password_reset'),
