@@ -9,9 +9,11 @@
       <form method="post" action="{% url 'account:login' %}">
         {% csrf_token %}
 
-        <div class="alert alert-danger" role="alert">
-          {{ form.non_field_errors|striptags }}
-        </div>
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {{ form.non_field_errors|striptags }}
+          </div>
+        {% endif %}
 
         <div class="form-group">
           <label id="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
@@ -48,7 +50,5 @@
     </div>
   </div>
 </div>
-
-<!-- TODO: Show form errors. -->
 
 {% endblock %}

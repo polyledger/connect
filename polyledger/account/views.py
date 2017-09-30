@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_bytes, force_text
@@ -37,15 +37,19 @@ def signup(request):
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
-            message = render_to_string('registration/account_activation_email.html', {
+            email_context = {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
-            })
+            }
+            text_content = render_to_string('registration/account_activation_email.txt', email_context)
+            html_content = render_to_string('registration/account_activation_email.html', email_context)
             mail_subject = 'Activate your Polyledger account.'
+            from_email = 'Ari at Polyledger <ari@polyledger.com>'
             to_email = form.cleaned_data.get('email')
-            email = EmailMessage(mail_subject, message, to=[to_email])
+            email = EmailMultiAlternatives(mail_subject, text_content, from_email, to=[to_email])
+            email.attach_alternative(html_content, "text/html")
             email.send()
             return render(request, 'registration/confirm_account.html')
     else:

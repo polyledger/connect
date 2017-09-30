@@ -1,7 +1,7 @@
-#login-container, #signup-container {
+#login-container, #signup-container, #confirm-account-container {
   margin-top: 10%;
 }
 
 .navbar-brand > img {
-  margin-top: -4px;
+  margin-top: -5px;
 }
