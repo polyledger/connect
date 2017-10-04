@@ -32,6 +32,9 @@ def activate(request, uidb64, token):
         messages.add_message(request, messages.ERROR, 'Activation link is invalid!')
         return redirect('account:login')
 
+def questions(request):
+    return render(request, 'account/questions.html')
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
