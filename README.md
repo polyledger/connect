@@ -36,15 +36,14 @@ Change into the project folder
 (venv) ❯ cd polyledger
 ```
 
-Create a `.env` file and set up the envioronment variables
+Set up the envioronment variables (this step may vary depending on your system configuration)
 
 ```
-(venv) ❯ touch .env
 (venv) ❯ echo "
 dquote> SECRET_KEY={A secret key goes here}
 dquote> EMAIL_HOST_PASSWORD={The email host password goes here}
 dquote> DJANGO_SETTINGS_MODULE=polyledger.settings.local
-dquote>" >> .env
+dquote>" >> ~/.bash_profile
 ```
 
 Run the migrations
@@ -56,5 +55,7 @@ Run the migrations
 Start the web application
 
 ```
-(venv) ❯ python manage.py runserver 8080
+(venv) ❯ python3 manage.py runserver 8080
 ```
+
+The application should now be running at http://localhost:8080/account/login
