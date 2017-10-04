@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib import messages
 
 from .forms import SignUpForm
 from .tokens import account_activation_token
@@ -25,9 +26,11 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
+        messages.add_message(request, messages.SUCCESS, 'Welcome to Polyledger!')
         return redirect('account:index')
     else:
-        return HttpResponse('Activation link is invalid!')
+        messages.add_message(request, messages.ERROR, 'Activation link is invalid!')
+        return redirect('account:login')
 
 def signup(request):
     if request.method == 'POST':
