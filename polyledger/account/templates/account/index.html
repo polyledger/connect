@@ -3,16 +3,59 @@
 {% block content %}
 
 <div class="container">
-  <div class="row mt-4">
+  <div class="row mt-5">
     <div class="col">
       <h1>Your account</h1>
     </div>
   </div>
-  <div class="row mb-4">
-    <div class="col-9">
-      <h4>Portfolio</h4>
+  <div class="row my-5">
+    <div class="col-md-9">
+
+      <div class="hr-divider">
+        <ul class="nav nav-pills hr-divider-content hr-divider-nav" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a href="#value" class="nav-link active" role="tab" data-toggle="tab" aria-controls="value">Value</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a href="#portfolio" class="nav-link" role="tab" data-toggle="tab" aria-controls="portfolio">Portfolio</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="value">
+          <div class="ex-line-graphs">
+             <canvas
+              class="ex-line-graph"
+              width="600" height="350"
+              data-chart="line"
+              data-dataset="[[2500, 3300, 2512, 2775, 2498, 3512, 2925, 4275, 3507, 3825, 3445, 3985]]"
+              data-labels="['','Aug 29','','','Sept 5','','','Sept 12','','','Sept 19','']"
+              data-dark="true">
+            </canvas>
+          </div>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="portfolio">
+          <div class="row ex-graphs text-center mt-3">
+            <div class="col-sm-4 ml-auto mr-auto mb-4 mb-sm-0">
+              <div class="w-3 mx-auto">
+                <canvas
+                  class="ex-graph"
+                  width="200" height="200"
+                  data-chart="doughnut"
+                  data-dataset="[230, 130, 50]"
+                  data-dataset-options="{ borderColor: '#252830', backgroundColor: ['#f5922f', '#62698e', '#bebebe'] }"
+                  data-labels="['Bitcoin', 'Ethereum', 'Litecoin']">
+                </canvas>
+              </div>
+              <strong class="text-muted">Portfolio</strong>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col-3">
+    <div class="col-md-3">
       <h4>Tasks</h4>
       <div class="card my-2">
         <div class="card-body">
