@@ -3,9 +3,29 @@
 {% block content %}
 
 <div class="container">
-  <div class="row">
+  <div class="row mt-4">
     <div class="col">
-      Hello, world. You are at the account index.
+      <h1>Your account</h1>
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-9">
+      <h4>Portfolio</h4>
+    </div>
+    <div class="col-3">
+      <h4>Tasks</h4>
+      <div class="card my-2">
+        <div class="card-body">
+          <p>You still need to fill out the risk questionnaire.</p>
+          <button class="btn btn-success">Start now</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <p>You need to verify your status as an accredited investor before you can start investing.</p>
+          <button class="btn btn-success">Verify now</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
