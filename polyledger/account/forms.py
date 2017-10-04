@@ -59,3 +59,6 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = get_user_model()
         fields = ('first_name', 'last_name', 'email', 'password1', 'password2')
+
+class ProfileForm(forms.ModelForm):
+    pass
