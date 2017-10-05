@@ -27,12 +27,12 @@
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          <li class="nav-item {% if request.path == '/account/' %}active{% endif %}">
+            <a class="nav-link" href="/account">Home <span class="sr-only">(current)</span></a>
           </li>
         </ul>
         <ul class="navbar-nav">
-          <li class="nav-item">
+          <li class="nav-item {% if request.path == '/account/settings/' %}active{% endif %}">
             <a class="nav-link" href="/account/settings">Settings</a>
           </li>
           <li class="nav-item">
