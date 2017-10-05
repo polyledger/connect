@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
@@ -9,10 +10,40 @@
     </div>
   </div>
   <div class="row py-5">
+    {% if user.profile.account_funded and user.profile.risk_assessment_complete %}
     <div class="col">
       <h2 class="statcard-number text-center">$105,655 <small class="badge badge-success">5%</small></h2>
     </div>
+    {% else %}
+    <div class="col-md-4">
+      <div class="card">
+        <img class="card-img-top" src="{% static 'account/img/piggybank_icon.png' %}" alt="Piggybank icon">
+        <div class="card-body">
+          <h4 class="card-title">Fund your account</h4>
+          <p class="card-text">To get started with Polyledger's automated cryptocurrency investing, fund your account with either USD or BTC. We require a $10,000 (or equivalent) minumum investment.</p>
+          <a href="#" class="btn btn-primary btn-lg btn-block">Fund Account</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <img class="card-img-top" src="{% static 'account/img/dice_icon.png' %}" alt="Dice icon">
+        <div class="card-body">
+          <h4 class="card-title">Complete Risk Assessment</h4>
+          <p class="card-text">Please take our four-question risk assessment so we can understand your appetite for risk. We will develop an appropriate investment strategy for your portfolio.</p>
+          {% if user.profile.risk_assessment_complete %}
+          <a role="button" class="btn btn-link btn-lg btn-block" disabled><span class="text-success">Complete <i class="icon icon-check"></i></span></a>
+          {% else %}
+          <a href="/account/questions/" class="btn btn-primary btn-lg btn-block">Start</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </div>
+
+  {% if user.profile.account_funded %}
   <div class="row my-5">
     <div class="col-md-12">
       <div class="hr-divider">
@@ -53,6 +84,8 @@
       </div>
     </div>
   </div>
+  {% endif %}
+
 </div>
 
 {% endblock %}

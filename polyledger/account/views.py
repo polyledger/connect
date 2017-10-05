@@ -59,15 +59,16 @@ def questions(request):
     if request.method == 'POST':
         form = RiskAssessmentForm(request.POST)
         if form.is_valid():
-            risk_index = 0
+            risk_assessment_score = 0
             accredited_investor = form.cleaned_data['accredited_investor']
             del form.cleaned_data['accredited_investor']
             for key, value in form.cleaned_data.items():
-                risk_index += value
+                risk_assessment_score += value
             user = request.user
-            user.profile.risk_index = risk_index
+            user.profile.risk_assessment_score = risk_assessment_score
+            user.profile.risk_assessment_complete = True
             user.save()
-            return redirect('/account/signup')
+            return redirect('/account/')
     else:
         form = RiskAssessmentForm()
     return render(request, 'account/questions.html', {'form': form})
