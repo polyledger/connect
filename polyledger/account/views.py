@@ -64,6 +64,9 @@ def questions(request):
             del form.cleaned_data['accredited_investor']
             for key, value in form.cleaned_data.items():
                 risk_index += value
+            user = request.user
+            user.profile.risk_index = risk_index
+            user.save()
             return redirect('/account/signup')
     else:
         form = RiskAssessmentForm()
@@ -71,6 +74,8 @@ def questions(request):
 
 @login_required
 def settings(request):
+    if request.method == 'POST':
+        pass # TODO: Change email/password and account removal logic
     return render(request, 'account/settings.html')
 
 def signup(request):

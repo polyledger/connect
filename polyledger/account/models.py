@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
+from django.db import models
+from django.dispatch import receiver
 
 
 class UserManager(BaseUserManager):
@@ -83,3 +84,13 @@ class User(AbstractBaseUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    risk_index = models.FloatField(default=0)
+
+@receiver(models.signals.post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(models.signals.post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
