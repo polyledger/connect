@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row mt-5">
+    <div class="col">
+      <h1>Settings</h1>
+      <hr>
+      <div class="row">
+        <div class="col-md-6">
+          <h3>Change Email</h3>
+          <form action="#" method="POST">
+            <div class="form-group">
+              <label for="currentEmail">Current email address</label>
+              <input class="form-control short-field" type="email" placeholder="example@test.com" readonly>
+            </div>
+            <div class="form-group">
+              <label for="newEmail">New email address</label>
+              <input type="email" name="newEmail" class="form-control short-field">
+            </div>
+            <button class="btn btn-primary" type="submit">Submit</button>
+          </form>
+        </div>
+        <div class="col-md-6">
+          <h3>Change Password</h3>
+          <form action="#" method="POST">
+            <div class="form-group">
+              <label for="password">Current password</label>
+              <input type="password" name="password" class="form-control short-field">
+            </div>
+            <div class="form-group">
+              <label for="password1">New password</label>
+              <input type="password" name="password1" class="form-control short-field">
+            </div>
+            <div class="form-group">
+              <label for="password2">Confirm password</label>
+              <input type="password" name="password2" class="form-control short-field">
+            </div>
+            <button class="btn btn-primary" type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+      <hr>
+      <h3>Connect Bank Account</h3>
+      <hr>
+      <h3>Close Account</h3>
+      <p>We're sorry to see you go. This action is non-reversable and permanently closes your account with Polyledger.</p>
+      <button class="btn btn-danger">Close Account</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

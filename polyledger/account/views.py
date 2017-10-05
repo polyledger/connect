@@ -35,6 +35,9 @@ def activate(request, uidb64, token):
 def questions(request):
     return render(request, 'account/questions.html')
 
+def settings(request):
+    return render(request, 'account/settings.html')
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)

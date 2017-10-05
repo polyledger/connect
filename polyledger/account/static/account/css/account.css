@@ -2,6 +2,10 @@
   margin-top: -5px;
 }
 
+input.short-field {
+  width: 250px !important;
+}
+
 .footer {
   bottom: 0;
   width: 100%;
