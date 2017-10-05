@@ -5,7 +5,7 @@
 <ol class="breadcrumb">
   <div class="container">
     <li class="breadcrumb-item">Asess Your Risk Tolerance</li>
-    <li class="breadcrumb-item text-muted">View Your Plan</li>
+    <li class="breadcrumb-item text-muted">View Recommendations</li>
     <li class="breadcrumb-item text-muted">Open Account</li>
   </div>
 </ol>
@@ -17,29 +17,47 @@
       <form action="/account/questions" method="POST" class="mb-5">
 
         <fieldset class="form-group mt-4">
-          <p><strong>What is your primary reason for investing in cryptocurrencies?</strong></p>
+          <p><strong>Are you an accredited investor?</strong><br><small class="form-text text-muted">Click <a href="#">here</a> to learn if you are an accredited investor.</small></p>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-              General savings
+              Yes
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
-              Retirement
+              No
+            </label>
+          </div>
+        </fieldset>
+
+        <hr>
+
+        <fieldset class="form-group">
+          <p><strong>What is your primary reason for investing in cryptocurrencies?</strong></p>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+              I want to diversify my portfolio
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
+              Mostly speculative; I want to make money
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
-              College savings
+              I want to make a lot of money, even though it might be very risky
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
-              Other
+              I want to throw away my money
             </label>
           </div>
         </fieldset>
@@ -51,113 +69,55 @@
           <div class="form-check">
             <label class="form-check-label">
               <input class="form-check-input" type="checkbox" value="">
-              I'd like to further diversify my investment portfolio
+              Low-risk cryptocurrency investments
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input class="form-check-input" type="checkbox" value="">
-              I'd like to save money on my taxes
+              Auto-managagement of my portfolio
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input class="form-check-input" type="checkbox" value="">
-              I'd like someone to completely manage my investments, so I don't have to
+              High yield, high risk investment choices
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input class="form-check-input" type="checkbox" value="">
-              I'd like to match or beat the performance of the markets
+              Daily rebalancing of my portfolio
             </label>
-          </div>
-        </fieldset>
-
-        <hr>
-
-        <fieldset>
-          <div class="form-group">
-            <label for="formGroupExampleInput"><strong>What is your current age?</strong></label>
-            <input type="number" style="width: 200px !important" class="form-control" id="formGroupExampleInput">
-          </div>
-        </fieldset>
-
-        <hr>
-
-        <fieldset>
-          <div class="form-group">
-            <label for="formGroupExampleInput"><strong>What is your annual pre-tax income?</strong></label>
-            <input type="number" style="width: 200px !important" class="form-control" id="formGroupExampleInput">
           </div>
         </fieldset>
 
         <hr>
 
         <fieldset class="form-group">
-          <p><strong>Which of the following best describes your household?</strong></p>
+          <p><strong>What is your experience level with cryptocurrencies?</strong></p>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-              Single income, no dependents
+              I'm new and unfamiliar with different cryptocurrencies
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
-              Single income, at least one dependent
+              I know a little about Bitcoin but have not invested
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
-              Dual income, no dependents
+              I have/had investments in cryptocurrencies
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
-              Dual income, at least one dependent
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
-              Retired or financially independent
-            </label>
-          </div>
-        </fieldset>
-
-        <hr>
-
-        <fieldset>
-          <div class="form-group">
-            <label for="formGroupExampleInput"><strong>What is the total value of your cash and liquid investments?</strong></label>
-            <p class="form-text text-muted">e.g. savings, CDs, mutual funds, IRAs, 401(k)s, public stocks</p>
-            <input type="number" style="width: 200px !important" class="form-control" id="formGroupExampleInput">
-          </div>
-        </fieldset>
-
-        <hr>
-
-        <fieldset class="form-group">
-          <p><strong>When deciding to invest your money, which do you care about more?</strong></p>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-              Maximizing gains
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
-              Minimizing losses
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
-              Both equally
+              I'm a seasoned cryptocurrency investor
             </label>
           </div>
         </fieldset>
@@ -165,7 +125,7 @@
         <hr>
 
         <fieldset class="form-group">
-          <p><strong>The global stock market is often volatile. If your entire investment portfolio lost 10% of its value in a month during a market decline, what would you do?</strong></p>
+          <p><strong>The global cryptocurrency market is extremely volatile. If your entire investment portfolio lost 50% of its value in a month during a market decline, what would you do?</strong></p>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1">
