@@ -1,10 +1,20 @@
 main#app {
-  height: 100%;
+  min-height: 100%;
   background: url('/static/account/img/theme.jpg') no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+}
+
+#container {
+  padding-top: 10rem;
+}
+
+@media (max-width: 600px) {
+  #container {
+    padding-top: 0px;
+  }
 }
 
 .card {
