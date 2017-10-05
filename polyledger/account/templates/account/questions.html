@@ -14,22 +14,36 @@
   <div class="row">
     <div class="col">
       <p class="lead">Welcome to Polyledger! Please answer this set of questions to get started</p>
-      <form action="/account/questions" method="POST" class="mb-5">
+      <form action="/account/questions/" method="POST" class="mb-5">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {{ form.non_field_errors|striptags }}
+          </div>
+        {% endif %}
 
         <fieldset class="form-group mt-4">
           <p><strong>Are you an accredited investor?</strong><br><small class="form-text text-muted">Click <a href="#">here</a> to learn if you are an accredited investor.</small></p>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+              <input type="radio" class="form-check-input" name="accredited_investor" id="accredited_investor1" value="True">
               Yes
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
+              <input type="radio" class="form-check-input" name="accredited_investor" id="accredited_investor2" value="False">
               No
             </label>
           </div>
+          {% if form.accredited_investor.errors %}
+            <div class="text-danger">
+              {% for error in form.accredited_investor.errors %}
+                {{ error|escape }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </fieldset>
 
         <hr>
@@ -38,58 +52,72 @@
           <p><strong>What is your primary reason for investing in cryptocurrencies?</strong></p>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+              <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason1" value="0">
               I want to diversify my portfolio
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
+              <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason2" value="0.5">
               Mostly speculative; I want to make money
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
+              <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason3" value="1">
               I want to make a lot of money, even though it might be very risky
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
+              <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason4" value="1.5">
               I want to throw away my money
             </label>
           </div>
+          {% if form.primary_reason.errors %}
+            <div class="text-danger">
+              {% for error in form.primary_reason.errors %}
+                {{ error|escape }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </fieldset>
 
         <hr>
 
         <fieldset class="form-group my-4">
-          <p><strong>What are you looking for in a cryptocurrency investment advisor?</strong></p>
+          <p><strong>What are you looking for most in a cryptocurrency investment advisor?</strong></p>
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
+              <input type="radio" class="form-check-input" name="advisor_preference" id="advisor_preference1" value="0">
               Low-risk cryptocurrency investments
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
+              <input type="radio" class="form-check-input" name="advisor_preference" id="advisor_preference2" value="0.5">
               Auto-managagement of my portfolio
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
+              <input type="radio" class="form-check-input" name="advisor_preference" id="advisor_preference3" value="1">
               High yield, high risk investment choices
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
+              <input type="radio" class="form-check-input" name="advisor_preference" id="advisor_preference4" value="1.5">
               Daily rebalancing of my portfolio
             </label>
           </div>
+          {% if form.advisor_preference.errors %}
+            <div class="text-danger">
+              {% for error in form.advisor_preference.errors %}
+                {{ error|escape }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </fieldset>
 
         <hr>
@@ -98,28 +126,35 @@
           <p><strong>What is your experience level with cryptocurrencies?</strong></p>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+              <input type="radio" class="form-check-input" name="experience_level" id="experience_level1" value="0">
               I'm new and unfamiliar with different cryptocurrencies
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
+              <input type="radio" class="form-check-input" name="experience_level" id="experience_level2" value="1">
               I know a little about Bitcoin but have not invested
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
+              <input type="radio" class="form-check-input" name="experience_level" id="experience_level3" value="2">
               I have/had investments in cryptocurrencies
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
+              <input type="radio" class="form-check-input" name="experience_level" id="experience_level4" value="3">
               I'm a seasoned cryptocurrency investor
             </label>
           </div>
+          {% if form.experience_level.errors %}
+            <div class="text-danger">
+              {% for error in form.experience_level.errors %}
+                {{ error|escape }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </fieldset>
 
         <hr>
@@ -128,28 +163,35 @@
           <p><strong>The global cryptocurrency market is extremely volatile. If your entire investment portfolio lost 50% of its value in a month during a market decline, what would you do?</strong></p>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1">
+              <input type="radio" class="form-check-input" name="hypothetical" id="hypothetical1" value="0">
               Sell all of your investments
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
+              <input type="radio" class="form-check-input" name="hypothetical" id="hypothetical2" value="1">
               Sell some
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
+              <input type="radio" class="form-check-input" name="hypothetical" id="hypothetical3" value="2">
               Keep all
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
+              <input type="radio" class="form-check-input" name="hypothetical" id="hypothetical4" value="3">
               Buy more
             </label>
           </div>
+          {% if form.hypothetical.errors %}
+            <div class="text-danger">
+              {% for error in form.hypothetical.errors %}
+                {{ error|escape }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </fieldset>
 
         <button type="submit" class="btn btn-primary">Submit</button>

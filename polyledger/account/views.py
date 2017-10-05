@@ -16,7 +16,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.http import require_POST
 
-from .forms import SignUpForm
+from .forms import RiskAssessmentForm, SignUpForm
 from .tokens import account_activation_token
 
 
@@ -52,12 +52,22 @@ def get_access_token(request):
     public_token = request.POST['public_token']
     exchange_response = client.Item.public_token.exchange(public_token)
     access_token = exchange_response['access_token']
-    # Get bank account data
-    response = client.Auth.get(access_token)
+    response = client.Auth.get(access_token)  # Get bank account data
     return JsonResponse(exchange_response)
 
 def questions(request):
-    return render(request, 'account/questions.html')
+    if request.method == 'POST':
+        form = RiskAssessmentForm(request.POST)
+        if form.is_valid():
+            risk_index = 0
+            accredited_investor = form.cleaned_data['accredited_investor']
+            del form.cleaned_data['accredited_investor']
+            for key, value in form.cleaned_data.items():
+                risk_index += value
+            return redirect('/account/signup')
+    else:
+        form = RiskAssessmentForm()
+    return render(request, 'account/questions.html', {'form': form})
 
 @login_required
 def settings(request):

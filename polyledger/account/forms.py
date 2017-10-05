@@ -50,8 +50,8 @@ class UserChangeForm(forms.ModelForm):
 class SignUpForm(UserCreationForm):
     error_css_class = 'is-invalid'
 
-    first_name = forms.CharField(max_length=30, required=False, help_text='Optional.', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(max_length=30, required=False, help_text='Optional.', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(max_length=30, required=True, help_text='Required.', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(max_length=30, required=True, help_text='Required.', widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.', widget=forms.EmailInput(attrs={'class': 'form-control'}))
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -60,5 +60,11 @@ class SignUpForm(UserCreationForm):
         model = get_user_model()
         fields = ('first_name', 'last_name', 'email', 'password1', 'password2')
 
-class ProfileForm(forms.ModelForm):
-    pass
+class RiskAssessmentForm(forms.Form):
+    error_css_class = 'is-invalid'
+
+    accredited_investor = forms.BooleanField(required=True)
+    primary_reason = forms.FloatField(required=True)
+    advisor_preference = forms.FloatField(required=True)
+    experience_level = forms.FloatField( required=True)
+    hypothetical = forms.FloatField(required=True)
