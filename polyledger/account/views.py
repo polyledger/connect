@@ -1,20 +1,33 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os
+import plaid
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
+from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 from .forms import SignUpForm
 from .tokens import account_activation_token
 
+
+# Set up Plaid (https://plaid.com/docs/quickstart/)
+PLAID_CLIENT_ID = os.environ.get('PLAID_CLIENT_ID')
+PLAID_SECRET = os.environ.get('PLAID_SECRET')
+PLAID_PUBLIC_KEY = 'af5c2e7385fc3f941340c29c8c88db'
+PLAID_ENV = 'sandbox'
+
+client = plaid.Client(client_id = PLAID_CLIENT_ID, secret=PLAID_SECRET,
+                      public_key=PLAID_PUBLIC_KEY, environment=PLAID_ENV)
 
 def activate(request, uidb64, token):
     try:
@@ -32,9 +45,21 @@ def activate(request, uidb64, token):
         messages.add_message(request, messages.ERROR, 'Activation link is invalid!')
         return redirect('account:login')
 
+@login_required
+@require_POST
+def get_access_token(request):
+    global access_token
+    public_token = request.POST['public_token']
+    exchange_response = client.Item.public_token.exchange(public_token)
+    access_token = exchange_response['access_token']
+    # Get bank account data
+    response = client.Auth.get(access_token)
+    return JsonResponse(exchange_response)
+
 def questions(request):
     return render(request, 'account/questions.html')
 
+@login_required
 def settings(request):
     return render(request, 'account/settings.html')
 
@@ -65,6 +90,7 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
 
+@login_required
 def logout(request):
     logout(request)
     return redirect('account:login')

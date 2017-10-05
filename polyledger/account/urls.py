@@ -7,6 +7,7 @@ app_name = 'account'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.activate, name='activate'),
+    url(r'^get_access_token/$', views.get_access_token, name='get_access_token'),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
     url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
