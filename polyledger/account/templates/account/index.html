@@ -105,11 +105,21 @@
           <a class="nav-item nav-link" href="#BTC" data-toggle="tab" role="tab">BTC</a>
         </nav>
 
-        <div class="tab-content my-5">
+        <div class="tab-content my-3">
           <div class="tab-pane fade show active" id="USD" role="tabpanel">
-            <p>If you would like to buy cryptocurrency with USD, get started by clicking the button below. You'll simply have to log into your bank, then we'll handle the rest.</p>
-            <div class="text-center">
-              <button class="btn btn-success" id="link-btn">Link bank account</button>
+            <div class="row">
+              <div class="col">
+                <p>If you would like to buy cryptocurrency with USD, get started by entering your investment and clicking the button below. You'll simply have to log into your bank, then we'll handle the rest.</p>
+              </div>
+            </div>
+            <div class="row justify-content-center">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="amount">Transfer Amount</label>
+                  <input name="amount" type="number" class="form-control" placeholder="10000" min="10000">
+                </div>
+                <button class="btn btn-primary btn-block" id="link-btn">Start transfer</button>
+              </div>
             </div>
           </div>
           <div class="tab-pane fade" id="BTC" role="tabpanel">
