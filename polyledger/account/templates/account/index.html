@@ -113,10 +113,14 @@
               </div>
             </div>
             <div class="row justify-content-center">
-              <div class="col-md-4">
+              <div class="col-md-6">
                 <div class="form-group">
                   <label for="amount">Transfer Amount</label>
-                  <input name="amount" type="number" class="form-control" placeholder="10000" min="10000">
+                  <div class="input-group">
+                    <span class="input-group-addon">$</span>
+                    <input type="text" name="amount" class="form-control" placeholder="10,000" aria-label="Amount (to the nearest dollar)">
+                    <span class="input-group-addon">.00</span>
+                  </div>
                 </div>
                 <button class="btn btn-primary btn-block" id="link-btn">Start transfer</button>
               </div>
