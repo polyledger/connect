@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
-from django.http import JsonResponse
+from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_bytes, force_text
@@ -50,10 +50,12 @@ def activate(request, uidb64, token):
 def get_access_token(request):
     global access_token
     public_token = request.POST['public_token']
+    account_id = request.POST['account_id']
     exchange_response = client.Item.public_token.exchange(public_token)
     access_token = exchange_response['access_token']
-    response = client.Auth.get(access_token)  # Get bank account data
-    return JsonResponse(exchange_response)
+    stripe_response = client.Processor.stripeBankAccountTokenCreate(access_token, account_id)
+    bank_account_token = stripe_response['stripe_bank_account_token']
+    return HttpResponse(status=204)
 
 def questions(request):
     if request.method == 'POST':

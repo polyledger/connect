@@ -16,16 +16,18 @@
     headers: { "X-CSRFToken": getCookie("csrftoken") }
   });
 
-  var handler = Plaid.create({
-    apiVersion: 'v2',
+  let handler = Plaid.create({
     clientName: 'Polyledger',
+    selectAccount: true,
     env: 'sandbox',
     product: ['auth'],
     key: 'af5c2e7385fc3f941340c29c8c88db',
-    onSuccess: function(public_token) {
-      $.post('/account/get_access_token/', { public_token: public_token }, function(response) {
-        console.log(response);
-      });
+    onSuccess: function(public_token, metadata) {
+      let data = {
+        public_token: public_token,
+        account_id: metadata.account_id
+      };
+      $.post('/account/get_access_token/', data);
     },
   });
 
