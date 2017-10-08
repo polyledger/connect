@@ -1,4 +1,0 @@
-click==6.7
-Django==1.11.5
-pytz==2017.2
-plaid-python>=2.0,<2.1
