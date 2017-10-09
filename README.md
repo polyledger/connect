@@ -1,6 +1,6 @@
 # Polyledger
 
-> AI-based cryptocurrency hedge fund
+> Automated cryptocurrency portfolio platform
 
 This Django project serves multiple purposes. First, the account application allows clients to invest and view their account balance. Second, the lattice application serves as an analytic tool for the Polyledger team to manage the fund's portfolio.
 
@@ -12,28 +12,25 @@ Clone the repository to your home folder
 ❯ cd ~ && git clone https://github.com/polyledger/polyledger.git
 ```
 
+Create a virtual environment and activate it (you could create this inside a `/polyledger` directory)
+
+```
+❯ virtualenv venv
+New python executable in /Users/home/venv/bin/python
+Installing setuptools, pip, wheel...done.
+❯ source venv/bin/activate
+```
+
 Change into the repository folder
 
 ```
-❯ cd polyledger
-```
-
-Start the virtual environment
-
-```
-❯ source venv/bin/activate
+(venv) ❯ cd polyledger
 ```
 
 Install requirements
 
 ```
 (venv) ❯ pip install -r requirements.txt
-```
-
-Change into the project folder
-
-```
-(venv) ❯ cd polyledger
 ```
 
 Set up the envioronment variables (this step may vary depending on your system configuration)
