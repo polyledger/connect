@@ -61,34 +61,35 @@ def get_access_token(request):
 
     auth_response = client.Auth.get(access_token)
     account = next(account for account in auth_response['accounts'] if account['account_id'] == account_id)
-    available_balance = account['balances']['available']
+    current_balance = account['balances']['current']
+    print(current_balance)
 
-    if amount >= 10000 and available_balance >= amount:
-        stripe_response = client.Processor.stripeBankAccountTokenCreate(access_token, account_id)
-        bank_account_token = stripe_response['stripe_bank_account_token']
-        customer = stripe.Customer.create(
-            source=bank_account_token,
-            email=request.user.email,
-            metadata={
-                'first_name': request.user.first_name,
-                'last_name': request.user.last_name
-            }
-        )
-        stripe.Charge.create(
-            amount=amount,
-            currency='usd',
-            customer=customer.id
-        )
-        user = request.user
-        user.profile.account_funded = True
-        user.save()
-        return HttpResponse(status=204)
+    if amount >= 100:
+        if current_balance >= amount:
+            stripe_response = client.Processor.stripeBankAccountTokenCreate(access_token, account_id)
+            bank_account_token = stripe_response['stripe_bank_account_token']
+            customer = stripe.Customer.create(
+                source=bank_account_token,
+                email=request.user.email,
+                metadata={
+                    'first_name': request.user.first_name,
+                    'last_name': request.user.last_name
+                }
+            )
+            stripe.Charge.create(
+                amount=amount,
+                currency='usd',
+                customer=customer.id
+            )
+            user = request.user
+            user.profile.account_funded = True
+            user.save()
+            return HttpResponse(status=204)
+        else:
+            error_message = 'Your current balance is less than the amount you want to fund.'
     else:
-        if amount < 10000:
-            error_message = 'The minimum amount is $10,000.'
-        if available_balance < amount:
-            error_message = 'Your available balance is less than the amount you want to fund.'
-        return HttpResponse(error_message, status=400)
+        error_message = 'The minimum amount is $1,000.'
+    return HttpResponse(error_message, status=400)
 
 @login_required
 def questions(request):
@@ -163,3 +164,13 @@ def logout(request):
 @login_required
 def index(request):
     return render(request, 'account/index.html')
+
+@login_required
+def current_value(request):
+    # TODO: Respond with the current account value
+    return HttpResponse(status=200)
+
+@login_required
+def historical_value(request):
+    # TODO: Respond with requested historical value data points (1d, 7d, 1m, 3m, 6m, 1y) and percent change
+    return HttpResponse(status=200)
