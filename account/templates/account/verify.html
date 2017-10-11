@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<ol class="breadcrumb">
+  <div class="container">
+    <li class="breadcrumb-item text-muted">Asess Your Risk Tolerance</li>
+    <li class="breadcrumb-item">Verify Risk Assessment</li>
+  </div>
+</ol>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-6">
+      <form action="/account/questions/verify/" method="POST" class="mb-5">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {{ form.non_field_errors|striptags }}
+          </div>
+        {% endif %}
+
+        <h1 class="text-center my-5">Risk tolerance score:</h1>
+        <h3 class="text-center my-5"><span class="lead" id="risk-score-output">{{ user.profile.risk_assessment_score }}</span>/10</h3>
+
+        <input type="range" name="risk_assessment_score" min="1" max="10" value="{{ user.profile.risk_assessment_score}}" class="slider my-5" id="risk-score-slider">
+        <p class="lead">Based on our calculations, your risk index is {{ user.profile.risk_assessment_score }}/10. Does this seem right?</p>
+
+        <div class="text-center">
+          <input type="submit" class="btn btn-dark btn-lg my-5" value="Confirm">
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

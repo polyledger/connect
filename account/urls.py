@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^password_reset_confirm/$', auth_views.password_reset_confirm, name='password_reset_confirm'),
     url(r'^password_reset_complete/$', auth_views.password_reset_complete, name='password_reset_complete'),
     url(r'^questions/$', views.questions, name='questions'),
+    url(r'^questions/verify/$', views.verify, name='verify'),
     url(r'^settings/$', views.settings, name='settings'),
     url(r'^signup/$', views.signup, name='signup')
 ]

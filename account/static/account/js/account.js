@@ -7,3 +7,11 @@ $(document).on('change keyup paste', 'input[name=amount]', (event) => {
     $('button#link-btn').attr('disabled', true)
   }
 })
+
+
+
+// Update the current slider value (each time you drag the slider handle)
+$(document).on('input', '#risk-score-slider', (event) => {
+  let value = $(event.currentTarget).val()
+  $('#risk-score-output').text(value)
+})

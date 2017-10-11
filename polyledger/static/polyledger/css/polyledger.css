@@ -5,3 +5,7 @@ html, body {
 main {
   min-height: 90vh;
 }
+
+.btn.btn-dark {
+  border-radius: 0;
+}

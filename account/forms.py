@@ -68,3 +68,6 @@ class RiskAssessmentForm(forms.Form):
     advisor_preference = forms.FloatField(required=True)
     experience_level = forms.FloatField( required=True)
     hypothetical = forms.FloatField(required=True)
+
+class RiskConfirmationForm(forms.Form):
+    risk_assessment_score = forms.FloatField(required=True)

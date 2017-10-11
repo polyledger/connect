@@ -16,7 +16,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.http import require_POST
 
-from .forms import RiskAssessmentForm, SignUpForm
+from .forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
 from .tokens import account_activation_token
 
 
@@ -68,12 +68,24 @@ def questions(request):
                 risk_assessment_score += value
             user = request.user
             user.profile.risk_assessment_score = risk_assessment_score
-            user.profile.risk_assessment_complete = True
             user.save()
-            return redirect('/account/')
+            return redirect('/account/questions/verify')
     else:
         form = RiskAssessmentForm()
     return render(request, 'account/questions.html', {'form': form})
+
+def verify(request):
+    if request.method == 'POST':
+        form = RiskConfirmationForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            user.profile.risk_assessment_score = form.cleaned_data['risk_assessment_score']
+            user.profile.risk_assessment_complete = True
+            user.save()
+            return redirect('/account/')
+        else:
+            form = RiskConfirmationForm()
+    return render(request, 'account/verify.html')
 
 @login_required
 def settings(request):
