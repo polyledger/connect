@@ -21,7 +21,7 @@
         <div class="card-body">
           <h4 class="card-title">Fund your account</h4>
           <p class="card-text">To get started with Polyledger's automated cryptocurrency investing, fund your account with either USD or BTC. We require a $10,000 (or equivalent) minumum investment.</p>
-          <button data-toggle="modal" data-target="#fund-account-modal" class="btn btn-primary btn-lg btn-block">Fund Account</button>
+          <button data-toggle="modal" data-target="#fund-account-modal" class="btn btn-dark btn-lg btn-block">Fund Account</button>
         </div>
       </div>
     </div>
@@ -35,7 +35,7 @@
           {% if user.profile.risk_assessment_complete %}
           <a role="button" class="btn btn-link btn-lg btn-block" disabled><span class="text-success">Complete <i class="icon icon-check"></i></span></a>
           {% else %}
-          <a href="/account/questions/" class="btn btn-primary btn-lg btn-block">Start</a>
+          <a href="/account/questions/" class="btn btn-dark btn-lg btn-block">Start</a>
           {% endif %}
         </div>
       </div>
@@ -105,6 +105,10 @@
           <a class="nav-item nav-link" href="#BTC" data-toggle="tab" role="tab">BTC</a>
         </nav>
 
+        <div class="alert alert-danger fade hide mt-3" role="alert">
+          <span id="error-message"></span>
+        </div>
+
         <div class="tab-content my-3">
           <div class="tab-pane fade show active" id="USD" role="tabpanel">
             <div class="row">
@@ -122,7 +126,12 @@
                     <span class="input-group-addon">.00</span>
                   </div>
                 </div>
-                <button class="btn btn-primary btn-block" id="link-btn">Continue</button>
+                <button class="btn btn-dark btn-block" id="link-btn">Continue</button>
+              </div>
+            </div>
+            <div class="row mt-5">
+              <div class="col">
+                <p><strong>Note:</strong> it may take up to 7 business days for ACH payments to process.</p>
               </div>
             </div>
           </div>

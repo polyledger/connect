@@ -39,6 +39,9 @@ Set up the envioronment variables (this step may vary depending on your system c
 (venv) ❯ echo "
 dquote> SECRET_KEY={A secret key goes here}
 dquote> EMAIL_HOST_PASSWORD={The email host password goes here}
+dquote> PLAID_CLIENT_ID={Plaid client ID goes here}
+dquote> PLAID_SECRET={Plaid secret key goes here}
+dquote> STRIPE_SECRET={Stripe secret key goes here}
 dquote> DJANGO_SETTINGS_MODULE=polyledger.settings.local
 dquote>" >> ~/.bash_profile
 ```

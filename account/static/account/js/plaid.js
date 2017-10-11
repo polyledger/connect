@@ -25,9 +25,14 @@
     onSuccess: function(public_token, metadata) {
       let data = {
         public_token: public_token,
-        account_id: metadata.account_id
+        account_id: metadata.account_id,
+        amount: $('input[name=amount]').val()
       };
-      $.post('/account/get_access_token/', data);
+      $.post('/account/get_access_token/', data).fail((data, textStatus, jqXHR) => {
+        let alert = $('span#error-message')
+        alert.text(data.responseText)
+        alert.parent().removeClass('hide').addClass('show')
+      })
     },
   });
 

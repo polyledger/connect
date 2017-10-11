@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import os
 import plaid
+import stripe
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -29,6 +30,9 @@ PLAID_ENV = 'sandbox'
 client = plaid.Client(client_id = PLAID_CLIENT_ID, secret=PLAID_SECRET,
                       public_key=PLAID_PUBLIC_KEY, environment=PLAID_ENV)
 
+# Set up Stripe python client() https://stripe.com/docs/ach)
+stripe.api_key = os.environ.get('STRIPE_SECRET')
+
 def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
@@ -51,12 +55,42 @@ def get_access_token(request):
     global access_token
     public_token = request.POST['public_token']
     account_id = request.POST['account_id']
+    amount = int(request.POST['amount'].replace(',', ''))
     exchange_response = client.Item.public_token.exchange(public_token)
     access_token = exchange_response['access_token']
-    stripe_response = client.Processor.stripeBankAccountTokenCreate(access_token, account_id)
-    bank_account_token = stripe_response['stripe_bank_account_token']
-    return HttpResponse(status=204)
 
+    auth_response = client.Auth.get(access_token)
+    account = next(account for account in auth_response['accounts'] if account['account_id'] == account_id)
+    available_balance = account['balances']['available']
+
+    if amount >= 10000 and available_balance >= amount:
+        stripe_response = client.Processor.stripeBankAccountTokenCreate(access_token, account_id)
+        bank_account_token = stripe_response['stripe_bank_account_token']
+        customer = stripe.Customer.create(
+            source=bank_account_token,
+            email=request.user.email,
+            metadata={
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name
+            }
+        )
+        stripe.Charge.create(
+            amount=amount,
+            currency='usd',
+            customer=customer.id
+        )
+        user = request.user
+        user.profile.account_funded = True
+        user.save()
+        return HttpResponse(status=204)
+    else:
+        if amount < 10000:
+            error_message = 'The minimum amount is $10,000.'
+        if available_balance < amount:
+            error_message = 'Your available balance is less than the amount you want to fund.'
+        return HttpResponse(error_message, status=400)
+
+@login_required
 def questions(request):
     if request.method == 'POST':
         form = RiskAssessmentForm(request.POST)
@@ -69,11 +103,12 @@ def questions(request):
             user = request.user
             user.profile.risk_assessment_score = risk_assessment_score
             user.save()
-            return redirect('/account/questions/verify')
+            return redirect('account:verify')
     else:
         form = RiskAssessmentForm()
     return render(request, 'account/questions.html', {'form': form})
 
+@login_required
 def verify(request):
     if request.method == 'POST':
         form = RiskConfirmationForm(request.POST)
@@ -82,7 +117,7 @@ def verify(request):
             user.profile.risk_assessment_score = form.cleaned_data['risk_assessment_score']
             user.profile.risk_assessment_complete = True
             user.save()
-            return redirect('/account/')
+            return redirect('account:index')
         else:
             form = RiskConfirmationForm()
     return render(request, 'account/verify.html')
