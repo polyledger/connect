@@ -12,7 +12,7 @@
   <div class="row py-5">
     {% if user.profile.account_funded and user.profile.risk_assessment_complete %}
     <div class="col">
-      <h2 class="statcard-number text-center">$105,655 <small class="badge badge-success">5%</small></h2>
+      <h2 class="statcard-number text-center">{{ account_value }} <small class="badge" id="percent-change"></small></h2>
     </div>
     {% else %}
     <div class="col-md-4">
@@ -47,7 +47,7 @@
   <div class="row my-5">
     <div class="col-md-12">
       <div class="hr-divider">
-        <ul class="nav nav-pills hr-divider-content hr-divider-nav" role="tablist">
+        <ul class="nav nav-pills hr-divider-content hr-divider-nav" role="tablist" id="historical-value-tabs">
           <li class="nav-item" role="presentation">
             <a href="#day" class="nav-link active" role="tab" data-toggle="tab" aria-controls="day">1d</a>
           </li>
@@ -69,7 +69,7 @@
         </ul>
       </div>
       <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="day">
+        <div role="tabpanel" class="tab-pane active">
           <div class="ex-line-graphs">
              <canvas
               class="ex-line-graph"

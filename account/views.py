@@ -10,7 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_bytes, force_text
@@ -61,11 +61,10 @@ def get_access_token(request):
 
     auth_response = client.Auth.get(access_token)
     account = next(account for account in auth_response['accounts'] if account['account_id'] == account_id)
-    current_balance = account['balances']['current']
-    print(current_balance)
+    available_balance = account['balances']['available']
 
     if amount >= 100:
-        if current_balance >= amount:
+        if available_balance >= amount:
             stripe_response = client.Processor.stripeBankAccountTokenCreate(access_token, account_id)
             bank_account_token = stripe_response['stripe_bank_account_token']
             customer = stripe.Customer.create(
@@ -83,6 +82,7 @@ def get_access_token(request):
             )
             user = request.user
             user.profile.account_funded = True
+            user.profile.account_balance = amount
             user.save()
             return HttpResponse(status=204)
         else:
@@ -163,14 +163,26 @@ def logout(request):
 
 @login_required
 def index(request):
-    return render(request, 'account/index.html')
-
-@login_required
-def current_value(request):
-    # TODO: Respond with the current account value
-    return HttpResponse(status=200)
+    account_value = '${:,.2f}'.format(request.user.profile.account_value)
+    return render(request, 'account/index.html', {'account_value': account_value})
 
 @login_required
 def historical_value(request):
-    # TODO: Respond with requested historical value data points (1d, 7d, 1m, 3m, 6m, 1y) and percent change
-    return HttpResponse(status=200)
+    """
+    Example request: https://polyledger.com/account/historical_value/?period=1d
+    Responds with historical data points over the period with the percent change:
+    {'historical_data_points': [...], 'percent_change': 'x.x%'}
+    """
+    period = request.GET.get('period')
+
+    if period not in ['1d', '7d', '1m', '3m', '6m', '1y']:
+        return HttpResponse('Invalid parameter value for period', status=400)
+
+    dataset = [] # placeholder
+    labels = [] # placeholder
+    percent_change = '0%' # placeholder
+    return JsonResponse({
+        'dataset': dataset,
+        'labels': labels,
+        'percent_change': percent_change
+    })

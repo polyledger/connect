@@ -15,8 +15,35 @@ $(document).on('input', '#risk-score-slider', (event) => {
   $('#risk-score-output').text(value)
 })
 
-// Format money input values as numerals
-var cleave = new Cleave('.usd-input', {
-  numeral: true,
-  numeralThousandsGroupStyle: 'thousand'
-})
+let getHistoricalData = (period) => {
+  $.ajax(`/account/historical_value/?period=${period}`).then((data, textStatus, jqXHR) => {
+    let dataset = data.dataset
+    let labels = data.labels
+    let percentChange = data.percent_change
+    $percentChangeEl = $('#percent-change')
+    $percentChangeEl.text(percentChange)
+
+    // Set badge class based on non-negativity
+    let badgeClass
+    percentChange[0] !== '-' ? badgeClass = 'badge-success' : badgeClass = 'badge-danger'
+    $percentChangeEl.addClass(badgeClass)
+  }, (jqXHR, textStatus, errorThrown) => {
+    console.error(errorThrown)
+  })
+}
+
+if (window.location.pathname === '/account/') {
+  // Format money input values as numerals
+  var cleave = new Cleave('.usd-input', {
+    numeral: true,
+    numeralThousandsGroupStyle: 'thousand'
+  })
+
+  // GET historical data points and percent change for account index
+  getHistoricalData('1d')
+
+  $(document).on('click', '#historical-value-tabs', (event) => {
+    let period = event.target.textContent
+    getHistoricalData(period)
+  })
+}

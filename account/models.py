@@ -87,6 +87,7 @@ class Profile(models.Model):
     risk_assessment_score = models.FloatField(default=0)
     risk_assessment_complete = models.BooleanField(default=False)
     account_funded = models.BooleanField(default=False)
+    account_value = models.FloatField(default=0)
 
 @receiver(models.signals.post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
