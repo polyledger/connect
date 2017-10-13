@@ -97,3 +97,10 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(models.signals.post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+class Portfolio(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    usd = models.FloatField(default=0)
+    bitcoin = models.FloatField(default=0)
+    litecoin = models.FloatField(default=0)
+    ethereum = models.FloatField(default=0)

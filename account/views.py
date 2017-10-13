@@ -19,6 +19,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
 from .tokens import account_activation_token
+from .models import Portfolio
 
 
 # Set up Plaid (https://plaid.com/docs/quickstart/)
@@ -83,6 +84,7 @@ def get_access_token(request):
             user = request.user
             user.profile.account_funded = True
             user.profile.account_balance = amount
+            Portfolio.objects.create(user=user, usd=amount) # Create the user's portfolio
             user.save()
             return HttpResponse(status=204)
         else:
@@ -163,7 +165,12 @@ def logout(request):
 
 @login_required
 def index(request):
-    account_value = '${:,.2f}'.format(request.user.profile.account_value)
+    account_value = 0
+
+    for field, value in request.user.portfolio.__dict__.items():
+        if field != 'id' and field != 'user_id' and type(value) is float:
+            account_value += value
+    account_value = '${:,.2f}'.format(account_value)
     return render(request, 'account/index.html', {'account_value': account_value})
 
 @login_required
