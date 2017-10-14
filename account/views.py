@@ -167,10 +167,11 @@ def logout(request):
 def index(request):
     account_value = 0
 
-    for field, value in request.user.portfolio.__dict__.items():
-        if field != 'id' and field != 'user_id' and type(value) is float:
-            account_value += value
-    account_value = '${:,.2f}'.format(account_value)
+    if hasattr(request.user, 'portfolio'):
+        for field, value in request.user.portfolio.__dict__.items():
+            if field != 'id' and field != 'user_id' and type(value) is float:
+                account_value += value
+        account_value = '${:,.2f}'.format(account_value)
     return render(request, 'account/index.html', {'account_value': account_value})
 
 @login_required
