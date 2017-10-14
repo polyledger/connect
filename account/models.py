@@ -2,8 +2,11 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.dispatch import receiver
+
+from decimal import *
 
 
 class UserManager(BaseUserManager):
@@ -104,3 +107,33 @@ class Portfolio(models.Model):
     bitcoin = models.FloatField(default=0)
     litecoin = models.FloatField(default=0)
     ethereum = models.FloatField(default=0)
+
+class Transfer(models.Model):
+    """
+    A table representing monetary withdrawls/deposits.
+    """
+
+    SUPPORTED_CURRENCIES = (
+        ('Withdrawals', (
+                ('USD', 'US Dollar')
+            )
+        ),
+        ('Deposits', (
+                ('USD', 'US Dollar'),
+                ('BTC', 'Bitcoin')
+            )
+        )
+    )
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    transfer_type = models.CharField(
+        max_length=8,
+        choices=(('withdrawal', 'Withdrawal'), ('deposit', 'Deposit'))
+    )
+    amount = models.DecimalField(
+        max_digits=30,
+        decimal_places=8,
+        validators=[MinValueValidator(Decimal('0'))]
+    )
+    currency = models.CharField(max_length=4, choices=SUPPORTED_CURRENCIES)
