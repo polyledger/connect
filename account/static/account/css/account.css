@@ -1,10 +1,50 @@
-.navbar-brand > img {
-  margin-top: -5px;
+/* Signup and Login Pages */
+
+#container {
+  padding-top: 7.5rem;
 }
+
+@media (max-width: 600px) {
+  #container {
+    padding-top: 0px;
+  }
+}
+
+#container .card {
+  color: #fff;
+  background-color: rgba(29, 29, 29, 0.75) !important;
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+}
+
+#container input.form-control {
+  color: #fff !important;
+  padding-left: 0px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0px;
+  border-bottom: 1px solid #3498db;
+  background-color: transparent;
+}
+
+#container input.form-control:active,
+#container input.form-control:focus {
+  border-bottom: 2px solid #3498db;
+  background-color: transparent;
+}
+
+#container input.form-control:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px #333 inset !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+/* Risk Assessment Page */
 
 input.short-field {
   width: 250px !important;
 }
+
+/* Risk Assessment Confirmation Page */
 
 #risk-index-container {
   width: 100%;
@@ -43,11 +83,16 @@ input.short-field {
   cursor: pointer;
 }
 
+/* Base Template */
+
 .footer {
-  bottom: 0;
   width: 100%;
   padding-top: 5rem;
   padding-bottom: 3rem;
   background-color: #1A1C22;
   color: #f5f5f5;
+}
+
+.navbar-brand > img {
+  margin-top: -5px;
 }

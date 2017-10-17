@@ -3,7 +3,10 @@ html, body {
 }
 
 main {
-  min-height: 90vh;
+  min-height: 70vh;
+  background-color: #F6F6F6;
+  padding-bottom: 1.5rem;
+  padding-top: 1.5rem;
 }
 
 .btn.btn-dark {
