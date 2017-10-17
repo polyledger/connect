@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
+import json
 import plaid
 import stripe
 
@@ -15,6 +16,7 @@ from django.template.loader import render_to_string
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from .forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
@@ -44,10 +46,12 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        messages.add_message(request, messages.SUCCESS, 'Welcome to Polyledger!')
+        message = 'Welcome to Polyledger!'
+        messages.add_message(request, messages.SUCCESS, message)
         return redirect('account:index')
     else:
-        messages.add_message(request, messages.ERROR, 'Activation link is invalid!')
+        message = 'Activation link is invalid!'
+        messages.add_message(request, messages.ERROR, message)
         return redirect('account:login')
 
 @login_required
@@ -61,12 +65,17 @@ def get_access_token(request):
     access_token = exchange_response['access_token']
 
     auth_response = client.Auth.get(access_token)
-    account = next(account for account in auth_response['accounts'] if account['account_id'] == account_id)
+    account = next(
+        account for account in auth_response['accounts']
+        if account['account_id'] == account_id
+    )
     available_balance = account['balances']['available']
 
     if amount >= 100:
         if available_balance >= amount:
-            stripe_response = client.Processor.stripeBankAccountTokenCreate(access_token, account_id)
+            stripe_response = client.Processor.stripeBankAccountTokenCreate(
+                access_token, account_id
+            )
             bank_account_token = stripe_response['stripe_bank_account_token']
             customer = stripe.Customer.create(
                 source=bank_account_token,
@@ -84,19 +93,29 @@ def get_access_token(request):
             user = request.user
             user.profile.account_funded = True
             user.profile.account_balance = amount
-            Portfolio.objects.create(user=user, usd=amount) # Create the user's portfolio
+            Portfolio.objects.create(user=user, usd=amount)
             user.save()
             return HttpResponse(status=204)
         else:
-            error_message = 'Your current balance is less than the amount you want to fund.'
+            error_message = 'Your current balance is less than the amount you '
+            'want to fund.'
     else:
         error_message = 'The minimum amount is $1,000.'
     return HttpResponse(error_message, status=400)
 
-@login_required
+@csrf_exempt
 def deposit(request):
     if request.method == 'POST':
-        return redirect('account:index')
+        stripe_event_type = json.loads(request.body)['type']
+
+        # TODO: Implement these event handlers
+        if stripe_event_type == 'charge.pending':
+            pass
+        elif stripe_event_type == 'charge.failed':
+            pass
+        elif stripe_event_type == 'charge.succeeded':
+            pass
+        return HttpResponse(status=204)
     return render(request, 'account/deposit.html')
 
 @login_required
@@ -123,7 +142,8 @@ def verify(request):
         form = RiskConfirmationForm(request.POST)
         if form.is_valid():
             user = request.user
-            user.profile.risk_assessment_score = form.cleaned_data['risk_assessment_score']
+            risk_assessment_score = form.cleaned_data['risk_assessment_score']
+            user.profile.risk_assessment_score = risk_assessment_score
             user.profile.risk_assessment_complete = True
             user.save()
             return redirect('account:index')
@@ -151,12 +171,18 @@ def signup(request):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             }
-            text_content = render_to_string('registration/account_activation_email.txt', email_context)
-            html_content = render_to_string('registration/account_activation_email.html', email_context)
+            text_content = render_to_string(
+                'registration/account_activation_email.txt', email_context
+            )
+            html_content = render_to_string(
+                'registration/account_activation_email.html', email_context
+            )
             mail_subject = 'Activate your Polyledger account.'
             from_email = 'Ari at Polyledger <ari@polyledger.com>'
             to_email = form.cleaned_data.get('email')
-            email = EmailMultiAlternatives(mail_subject, text_content, from_email, to=[to_email])
+            email = EmailMultiAlternatives(
+                mail_subject, text_content, from_email, to=[to_email]
+            )
             email.attach_alternative(html_content, "text/html")
             email.send()
             return render(request, 'registration/confirm_account.html')
@@ -178,13 +204,15 @@ def index(request):
             if field != 'id' and field != 'user_id' and type(value) is float:
                 account_value += value
         account_value = '${:,.2f}'.format(account_value)
-    return render(request, 'account/index.html', {'account_value': account_value})
+    return render(
+        request, 'account/index.html', {'account_value': account_value}
+    )
 
 @login_required
 def historical_value(request):
     """
     Example request: https://polyledger.com/account/historical_value/?period=1d
-    Responds with historical data points over the period with the percent change:
+    Responds with historical data points over the period with the percent change
     {'historical_data_points': [...], 'percent_change': 'x.x%'}
     """
     period = request.GET.get('period')

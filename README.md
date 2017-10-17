@@ -8,6 +8,7 @@ This Django project serves multiple purposes. First, the account application all
 
 1. [Development](#development)
     - [Account app](#account-app)
+        - [Funding a test account](#funding-a-test-account)
     - [Custodian app](#custodian-app)
 
 ## Development
@@ -67,6 +68,32 @@ Start the web application
 ```
 
 The application should now be running at http://localhost:8080/account/login
+
+#### Funding a test account
+
+We use several integrations to allow test account funding without real money. We use [Plaid](https://plaid.com/) to verify and link bank accounts, [Stripe](https://stripe.com/) for ACH transfers, and [ngrok](https://ngrok.com) for a secure tunnel to localhost to listen to the Stripe ACH pending/success/fail webhook. These services are all set up; you will only need the API credentials.
+
+To get started, download ngrok for macOS. Unzip it to your Applications directory
+
+```
+(venv) ❯ unzip /path/to/ngrok
+(venv) ❯ mv /path/to/ngrok /Applications
+```
+
+Create a symlink to ngrok
+
+```
+(venv) ❯ cd /usr/loca/bin
+ln -s /Applications/ngrok ngrok
+```
+
+Now you can run the `ngrok` command from any directory while in the terminal. Before starting ngrok, ensure that you are added to the Polyledger ngrok account. Then start ngrok in a new tab
+
+```
+ngrok http -subdomain=polyledger 8080
+```
+
+Assuming you have already added the Plaid and Stripe API credentials to your bash profile, you should be able to fund your account. In test mode, you can only fund your account with $100.
 
 ### Custodian app
 
