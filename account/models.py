@@ -90,7 +90,7 @@ class Profile(models.Model):
     risk_assessment_score = models.FloatField(default=0)
     risk_assessment_complete = models.BooleanField(default=False)
     account_funded = models.BooleanField(default=False)
-    account_value = models.FloatField(default=0)
+    stripe_customer_id = models.CharField(max_length=30, unique=True)
 
 @receiver(models.signals.post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -125,7 +125,7 @@ class Transfer(models.Model):
         )
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     transfer_type = models.CharField(
         max_length=8,
@@ -137,3 +137,12 @@ class Transfer(models.Model):
         validators=[MinValueValidator(Decimal('0'))]
     )
     currency = models.CharField(max_length=4, choices=SUPPORTED_CURRENCIES)
+    status = models.CharField(
+        max_length=30,
+        choices=(
+            ('pending', 'Pending'),
+            ('succeeded', 'Succeeded'),
+            ('failed', 'Failed'),
+        )
+    )
+    stripe_charge_id = models.CharField(max_length=30, unique=True)

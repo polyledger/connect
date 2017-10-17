@@ -4,6 +4,7 @@ import os
 import json
 import plaid
 import stripe
+import datetime
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -21,7 +22,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
 from .tokens import account_activation_token
-from .models import Portfolio
+from .models import Portfolio, Profile, Transfer
 
 
 # Set up Plaid (https://plaid.com/docs/quickstart/)
@@ -93,6 +94,7 @@ def get_access_token(request):
             user = request.user
             user.profile.account_funded = True
             user.profile.account_balance = amount
+            user.profile.stripe_customer_id = customer.id
             Portfolio.objects.create(user=user, usd=amount)
             user.save()
             return HttpResponse(status=204)
@@ -106,15 +108,28 @@ def get_access_token(request):
 @csrf_exempt
 def deposit(request):
     if request.method == 'POST':
-        stripe_event_type = json.loads(request.body)['type']
+        body = json.loads(request.body)
+        stripe_charge_id = body['data']['object']['id']
+        profile = Profile.objects.get(
+            stripe_customer_id=body['data']['object']['customer']
+        )
+        user = get_user_model().objects.get(pk=profile.user_id)
+        transfer, created = Transfer.objects.get_or_create(
+            user=user,
+            transfer_type='deposit',
+            amount=body['data']['object']['amount'],
+            currency='USD',
+            stripe_charge_id=stripe_charge_id
+        )
 
-        # TODO: Implement these event handlers
-        if stripe_event_type == 'charge.pending':
-            pass
-        elif stripe_event_type == 'charge.failed':
-            pass
-        elif stripe_event_type == 'charge.succeeded':
-            pass
+        if body['type'] == 'charge.pending':
+            transfer.status = 'pending'
+        elif body['type'] == 'charge.failed':
+            transfer.status = 'failed'
+        elif body['type'] == 'charge.succeeded':
+            transfer.status = 'succeeded'
+
+        transfer.save()
         return HttpResponse(status=204)
     return render(request, 'account/deposit.html')
 
