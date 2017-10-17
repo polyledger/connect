@@ -38,6 +38,9 @@ client = plaid.Client(client_id = PLAID_CLIENT_ID, secret=PLAID_SECRET,
 stripe.api_key = os.environ.get('STRIPE_SECRET')
 
 def activate(request, uidb64, token):
+    """
+    This route activates a user's account after confirming their email address.
+    """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = get_user_model().objects.get(pk=uid)
@@ -58,6 +61,10 @@ def activate(request, uidb64, token):
 @login_required
 @require_POST
 def get_access_token(request):
+    """
+    This endpoint uses the Plaid credentials to get a stripe bank access token
+    and initiates an ACH transfer.
+    """
     global access_token
     public_token = request.POST['public_token']
     account_id = request.POST['account_id']
@@ -107,6 +114,11 @@ def get_access_token(request):
 
 @csrf_exempt
 def deposit(request):
+    """
+    The deposit page allows users to deposit money into their Polyledger
+    account. It is also an endpoint for Stripe to notify the Account app when
+    a deposit is pending, succeeded, or failed.
+    """
     if request.method == 'POST':
         body = json.loads(request.body)
         stripe_charge_id = body['data']['object']['id']
@@ -135,6 +147,10 @@ def deposit(request):
 
 @login_required
 def questions(request):
+    """
+    This page presents the user with a form to be completed. The form is used
+    to calculate the user's risk tolerance score.
+    """
     if request.method == 'POST':
         form = RiskAssessmentForm(request.POST)
         if form.is_valid():
@@ -153,6 +169,10 @@ def questions(request):
 
 @login_required
 def verify(request):
+    """
+    This page allows the user to verify their risk assessment score and adjust
+    it as needed.
+    """
     if request.method == 'POST':
         form = RiskConfirmationForm(request.POST)
         if form.is_valid():
@@ -212,6 +232,11 @@ def logout(request):
 
 @login_required
 def index(request):
+    """
+    This is the home page for the account app where the user can take the
+    risk assessment form, initially fund the account, and see the account's
+    value.
+    """
     account_value = 0
 
     if hasattr(request.user, 'portfolio'):
