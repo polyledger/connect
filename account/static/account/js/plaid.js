@@ -28,12 +28,15 @@
         account_id: metadata.account_id,
         amount: $('input[name=amount]').val()
       };
-      $.post('/account/get_access_token/', data).fail((data, textStatus, jqXHR) => {
+      $.post('/account/get_access_token/', data).done((data, textStatus, jqXHR => {
+        window.location = "/account/"
+        // TODO: Add an alert indicating the status of their ACH deposit.
+      })).fail((data, textStatus, jqXHR) => {
         let alert = $('span#error-message')
         alert.text(data.responseText)
         alert.parent().removeClass('hide').addClass('show')
       })
-    },
+    }
   });
 
   $('#link-btn').on('click', function(e) {

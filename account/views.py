@@ -94,6 +94,12 @@ def get_access_token(request):
     return HttpResponse(error_message, status=400)
 
 @login_required
+def deposit(request):
+    if request.method == 'POST':
+        return redirect('account:index')
+    return render(request, 'account/deposit.html')
+
+@login_required
 def questions(request):
     if request.method == 'POST':
         form = RiskAssessmentForm(request.POST)

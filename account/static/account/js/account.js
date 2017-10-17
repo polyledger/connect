@@ -32,18 +32,10 @@ let getHistoricalData = (period) => {
   })
 }
 
-if (window.location.pathname === '/account/') {
+if (window.location.pathname === '/account/deposit/') {
   // Format money input values as numerals
   var cleave = new Cleave('.usd-input', {
     numeral: true,
     numeralThousandsGroupStyle: 'thousand'
-  })
-
-  // GET historical data points and percent change for account index
-  getHistoricalData('1d')
-
-  $(document).on('click', '#historical-value-tabs', (event) => {
-    let period = event.target.textContent
-    getHistoricalData(period)
   })
 }
