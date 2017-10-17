@@ -42,50 +42,6 @@
     </div>
     {% endif %}
   </div>
-
-  {% if user.profile.account_funded %}
-  <div class="row my-5">
-    <div class="col-md-12">
-      <div class="hr-divider">
-        <ul class="nav nav-pills hr-divider-content hr-divider-nav" role="tablist" id="historical-value-tabs">
-          <li class="nav-item" role="presentation">
-            <a href="#day" class="nav-link active" role="tab" data-toggle="tab" aria-controls="day">1d</a>
-          </li>
-          <li class="nav-item" role="presentation">
-            <a href="#week" class="nav-link" role="tab" data-toggle="tab" aria-controls="week">7d</a>
-          </li>
-          <li class="nav-item" role="presentation">
-            <a href="#month" class="nav-link" role="tab" data-toggle="tab" aria-controls="month">1m</a>
-          </li>
-          <li class="nav-item" role="presentation">
-            <a href="#quarter-year" class="nav-link" role="tab" data-toggle="tab" aria-controls="quarter-year">3m</a>
-          </li>
-          <li class="nav-item" role="presentation">
-            <a href="#half-year" class="nav-link" role="tab" data-toggle="tab" aria-controls="half-year">6m</a>
-          </li>
-          <li class="nav-item" role="presentation">
-            <a href="#year" class="nav-link" role="tab" data-toggle="tab" aria-controls="year">1y</a>
-          </li>
-        </ul>
-      </div>
-      <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active">
-          <div class="ex-line-graphs">
-             <canvas
-              class="ex-line-graph"
-              width="600" height="350"
-              data-chart="line"
-              data-dataset="[[2500, 3300, 2512, 2775, 2498, 3512, 2925, 4275, 3507, 3825, 3445, 3985]]"
-              data-labels="['','Aug 29','','','Sept 5','','','Sept 12','','','Sept 19','']"
-              data-dark="true">
-            </canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-
 </div>
 
 <!-- Modal -->
