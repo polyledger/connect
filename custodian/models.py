@@ -10,7 +10,6 @@ class Trade(models.Model):
     """
 
     SUPPORTED_EXCHANGES = (
-        ('Bitfinex', 'Bitfinex'),
         ('GDAX', 'GDAX'),
     )
 
@@ -18,80 +17,14 @@ class Trade(models.Model):
         ('BTC', 'Bitcoin'),
         ('ETH', 'Ethereum'),
         ('LTC', 'Litecoin'),
-        ('BCH', 'Bitcoin Cash'),
-        ('XRP', 'Ripple'),
-        ('USDT', 'Tether'),
-        ('NEO', 'NEO'),
-        ('XMR', 'Monero'),
-        ('ETP', 'Metaverse ETP'),
-        ('IOT', 'IOTA'),
-        ('ZEC', 'Zcash'),
-        ('OMG', 'OmiseGO'),
-        ('DSH', 'Dash'),
-        ('ETC', 'Ethereum Classic'),
-        ('AVT', 'Aventus'),
-        ('EOS', 'EOS'),
-        ('QTM', 'Qtum'),
-        ('SAN', 'Santiment Network Token'),
-        ('BCU', 'Bitcoin Unlimited (Futures)')
     )
 
     SUPPORTED_PAIRS = (
-        ('Bitfinex', (
-                ('BTC/USD', 'Bitcoin - US Dollar'),
-                ('ETH/USD', 'Ethereum - US Dollar'),
-                ('ETH/BTC', 'Ethereum - Bitcoin'),
-                ('LTC/USD', 'Litecoin - US Dollar'),
-                ('BCH/USD', 'Bitcoin Cash - US Dollar'),
-                ('XRP/USD', 'Ripple - US Dollar'),
-                ('USDT/USD', 'Tether - US Dollar'),
-                ('BCH/BTC', 'Bitcoin Cash - Bitcoin'),
-                ('NEO/USD', 'NEO - US Dollar'),
-                ('LTC/BTC', 'Litecoin - Bitcoin'),
-                ('XRP/BTC', 'Ripple - Bitcoin'),
-                ('XMR/USD', 'Monero - US Dollar'),
-                ('ETP/USD', 'Metaverse ETP - US Dollar'),
-                ('IOT/BTC', 'IOTA - Bitcoin'),
-                ('ZEC/USD', 'Zcash - US Dollar'),
-                ('OMG/USD', 'OmiseGO - US Dollar'),
-                ('DSH/USD', 'Dash - US Dollar'),
-                ('NEO/BTC', 'NEO - Bitcoin'),
-                ('IOT/BTC', 'IOTA - Bitcoin'),
-                ('ZEC/BTC', 'Zcash - Bitcoin'),
-                ('ETP/BTC', 'Metaverse ETP - Bitcoin'),
-                ('ETC/USD', 'Ethereum Classic - US Dollar'),
-                ('DSH/BTC', 'Dash - Bitcoin'),
-                ('XMR/BTC', 'Monero - Bitcoin'),
-                ('OMG/BTC', 'OmiseGO - Bitcoin'),
-                ('AVT/USD', 'Aventus - US Dollar'),
-                ('EOS/USD', 'EOS - US Dollar'),
-                ('ETH/BTC', 'Ethereum Classic - Bitcoin'),
-                ('EOS/ETH', 'EOS - Ethereum'),
-                ('QTM/BTC', 'Qtum - Bitcoin'),
-                ('ETP/ETH', 'Metaverse ETP - Ethereum'),
-                ('QTM/USD', 'Qtum - US Dollar'),
-                ('OMG/ETH', 'OmiseGO - Ethereum'),
-                ('NEO/ETH', 'NEO - Ethereum'),
-                ('IOT/ETH', 'IOTA - Ethereum'),
-                ('AVT/BTC', 'Aventus - Bitcoin'),
-                ('BCH/ETH', 'Bitcoin Cash - Ethereum'),
-                ('EOS/BTC', 'EOS - Bitcoin'),
-                ('AVT/ETH', 'Aventus - Ethereum'),
-                ('SAN/USD', 'Santiment Network Token - USD'),
-                ('SAN/BTC', 'Santiment Network Token - BTC'),
-                ('SAN/ETH', 'Santiment Network Token - ETH'),
-                ('QTM/ETH', 'Qtum - Ethereum'),
-                ('BCU/USD', 'Bitcoin Unlimited (Futures)/US Dollar')
-            )
-        ),
-        ('GDAX', (
-                ('BTC/USD', 'Bitcoin - US Dollar'),
-                ('ETH/USD', 'Ethereum - US Dollar'),
-                ('LTC/USD', 'Litecoin - US Dollar'),
-                ('ETH/BTC', 'Ethereum - Bitcoin'),
-                ('LTC/BTC', 'Litecoin - Bitcoin')
-            )
-        )
+        ('BTC/USD', 'Bitcoin - US Dollar'),
+        ('ETH/USD', 'Ethereum - US Dollar'),
+        ('LTC/USD', 'Litecoin - US Dollar'),
+        ('ETH/BTC', 'Ethereum - Bitcoin'),
+        ('LTC/BTC', 'Litecoin - Bitcoin'),
     )
 
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
@@ -147,86 +80,6 @@ class Price(models.Model):
         validators=[MinValueValidator(Decimal('0'))]
     )
     LTC = models.DecimalField(
-        max_digits=30,
-        decimal_places=8,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    BCH = models.DecimalField(
-        max_digits=30,
-        decimal_places=8,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    XRP = models.DecimalField(
-        max_digits=30,
-        decimal_places=6,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    USDT = models.DecimalField(
-        max_digits=30,
-        decimal_places=18,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    NEO = models.DecimalField(
-        max_digits=30,
-        decimal_places=0,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    XMR = models.DecimalField(
-        max_digits=30,
-        decimal_places=12,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    ETP = models.DecimalField(
-        max_digits=30,
-        decimal_places=8,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    IOT = models.DecimalField(
-        max_digits=30,
-        decimal_places=0,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    ZEC = models.DecimalField(
-        max_digits=30,
-        decimal_places=8,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    OMG = models.DecimalField(
-        max_digits=30,
-        decimal_places=18,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    DSH = models.DecimalField(
-        max_digits=30,
-        decimal_places=8,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    ETC = models.DecimalField(
-        max_digits=30,
-        decimal_places=18,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    AVT = models.DecimalField(
-        max_digits=30,
-        decimal_places=18,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    EOS = models.DecimalField(
-        max_digits=30,
-        decimal_places=18,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    QTM = models.DecimalField(
-        max_digits=30,
-        decimal_places=18,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    SAN = models.DecimalField(
-        max_digits=30,
-        decimal_places=18,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    BCU = models.DecimalField(
         max_digits=30,
         decimal_places=8,
         validators=[MinValueValidator(Decimal('0'))]

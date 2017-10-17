@@ -3,3 +3,5 @@ Django==1.11.5
 pytz==2017.2
 plaid-python>=2.0,<2.1
 stripe==1.66.0
+celery==4.1
+redis==2.10.6

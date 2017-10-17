@@ -2,9 +2,17 @@
 
 > Automated cryptocurrency portfolio platform
 
-This Django project serves multiple purposes. First, the account application allows clients to invest and view their account balance. Second, the lattice application serves as an analytic tool for the Polyledger team to manage the fund's portfolio.
+This Django project serves multiple purposes. First, the account application allows clients to invest and view their account balance. Second, the custodian application processes pricing data and executes trades.
+
+## Table of Contents
+
+1. [Development](#development)
+    - [Account app](#account-app)
+    - [Custodian app](#custodian-app)
 
 ## Development
+
+### Account app
 
 Clone the repository to your home folder
 
@@ -59,3 +67,11 @@ Start the web application
 ```
 
 The application should now be running at http://localhost:8080/account/login
+
+### Custodian app
+
+To pull prices during development, start redis in a separate tab with `redis-server` and start the worker
+
+```
+(venv) ❯ celery -A custodian.tasks worker --loglevel=info
+```
