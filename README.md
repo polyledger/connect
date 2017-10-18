@@ -7,11 +7,26 @@ This Django project serves multiple purposes. First, the account application all
 ## Table of Contents
 
 1. [Development](#development)
+    - [Prerequisites](#prerequisites)
     - [Account app](#account-app)
         - [Funding a test account](#funding-a-test-account)
     - [Custodian app](#custodian-app)
 
 ## Development
+
+### Prerequisites
+
+Before continuing, ensure you have Python 3.6 installed on your system (`python3 --version`).
+
+Ensure that you've generated an SSH key on your MacBook. If you haven't generated one before, follow this [guide](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/).
+
+Then copy the content of your public key (`id_rsa.pub`)
+
+```
+❯ cat ~/.ssh/id_rsa.pub
+```
+
+In your GitHub account go to [Settings > SSH and GPG Keys](https://github.com/settings/keys) and add it.
 
 ### Account app
 
