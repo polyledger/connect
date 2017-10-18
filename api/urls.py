@@ -1,5 +1,10 @@
-from django.conf.urls import url
-from . import views
+from django.conf.urls import url, include
+from rest_framework import routers
+from api import views
+
+router = routers.DefaultRouter()
 
 app_name = 'api'
-urlpatterns = []
+urlpatterns = [
+    url(r'^', include(router.urls, namespace='api'))
+]
