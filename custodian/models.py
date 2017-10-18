@@ -29,7 +29,10 @@ class Trade(models.Model):
 
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    trade_type = models.CharField(max_length=4, choices=(('Buy', 'Buy'), ('Sell', 'Sell')))
+    trade_type = models.CharField(
+        max_length=4,
+        choices=(('Buy', 'Buy'), ('Sell', 'Sell'))
+    )
     base_coin = models.CharField(max_length=4, choices=SUPPORTED_COINS)
     counter_coin = models.CharField(max_length=4, choices=SUPPORTED_COINS)
     pair = models.CharField(max_length=9, choices=SUPPORTED_PAIRS)
