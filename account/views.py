@@ -79,7 +79,15 @@ def get_access_token(request):
     )
     available_balance = account['balances']['available']
 
-    if amount >= 100:
+    env = os.environ.get('DJANGO_SETTINGS_MODULE')
+
+    # For testing purposes, lower the minimum initial deposit amount
+    if env == 'polyledger.settings.local':
+        minimum = 1
+    else:
+        minimum = 10000
+
+    if amount >= minimum:
         if available_balance >= amount:
             stripe_response = client.Processor.stripeBankAccountTokenCreate(
                 access_token, account_id
@@ -109,7 +117,7 @@ def get_access_token(request):
             error_message = 'Your current balance is less than the amount you '
             'want to fund.'
     else:
-        error_message = 'The minimum amount is $1,000.'
+        error_message = 'The minimum amount is $10,000.'
     return HttpResponse(error_message, status=400)
 
 @csrf_exempt
