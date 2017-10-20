@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
-import json
 import plaid
 import stripe
 import datetime
@@ -17,7 +16,6 @@ from django.template.loader import render_to_string
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from .forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
@@ -31,7 +29,7 @@ PLAID_SECRET = os.environ.get('PLAID_SECRET')
 PLAID_PUBLIC_KEY = 'af5c2e7385fc3f941340c29c8c88db'
 PLAID_ENV = 'sandbox'
 
-client = plaid.Client(client_id = PLAID_CLIENT_ID, secret=PLAID_SECRET,
+client = plaid.Client(client_id=PLAID_CLIENT_ID, secret=PLAID_SECRET,
                       public_key=PLAID_PUBLIC_KEY, environment=PLAID_ENV)
 
 # Set up Stripe python client() https://stripe.com/docs/ach)
@@ -120,37 +118,12 @@ def get_access_token(request):
         error_message = 'The minimum amount is $10,000.'
     return HttpResponse(error_message, status=400)
 
-@csrf_exempt
+@login_required
 def deposit(request):
     """
     The deposit page allows users to deposit money into their Polyledger
-    account. It is also an endpoint for Stripe to notify the Account app when
-    a deposit is pending, succeeded, or failed.
+    account.
     """
-    if request.method == 'POST':
-        body = json.loads(request.body)
-        stripe_charge_id = body['data']['object']['id']
-        profile = Profile.objects.get(
-            stripe_customer_id=body['data']['object']['customer']
-        )
-        user = get_user_model().objects.get(pk=profile.user_id)
-        transfer, created = Transfer.objects.get_or_create(
-            user=user,
-            transfer_type='deposit',
-            amount=body['data']['object']['amount'],
-            currency='USD',
-            stripe_charge_id=stripe_charge_id
-        )
-
-        if body['type'] == 'charge.pending':
-            transfer.status = 'pending'
-        elif body['type'] == 'charge.failed':
-            transfer.status = 'failed'
-        elif body['type'] == 'charge.succeeded':
-            transfer.status = 'succeeded'
-
-        transfer.save()
-        return HttpResponse(status=204)
     return render(request, 'account/deposit.html')
 
 @login_required

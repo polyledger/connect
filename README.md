@@ -66,6 +66,9 @@ dquote> EMAIL_HOST_PASSWORD={The email host password goes here}
 dquote> PLAID_CLIENT_ID={Plaid client ID goes here}
 dquote> PLAID_SECRET={Plaid secret key goes here}
 dquote> STRIPE_SECRET={Stripe secret key goes here}
+dquote> GDAX_API_KEY={GDAX API key goes here}
+dquote> GDAX_SECRET_KEY={GDAX secret key goes here}
+dquote> GDAX_PASSPHRASE={GDAX passphrase goes here}
 dquote> DJANGO_SETTINGS_MODULE=polyledger.settings.local
 dquote>" >> ~/.bash_profile
 ```
@@ -91,21 +94,21 @@ We use several integrations to allow test account funding without real money. We
 To get started, download ngrok for macOS. Unzip it to your Applications directory
 
 ```
-(venv) ❯ unzip /path/to/ngrok
-(venv) ❯ mv /path/to/ngrok /Applications
+❯ unzip /path/to/ngrok
+❯ mv /path/to/ngrok /Applications
 ```
 
 Create a symlink to ngrok
 
 ```
-(venv) ❯ cd /usr/loca/bin
-ln -s /Applications/ngrok ngrok
+❯ cd /usr/loca/bin
+❯ ln -s /Applications/ngrok ngrok
 ```
 
 Now you can run the `ngrok` command from any directory while in the terminal. Before starting ngrok, ensure that you are added to the Polyledger ngrok account. Then start ngrok in a new tab
 
 ```
-ngrok http -subdomain=polyledger 8080
+❯ ngrok http -subdomain=polyledger 8080
 ```
 
 Assuming you have already added the Plaid and Stripe API credentials to your bash profile, you should be able to fund your account. In test mode, you can only fund your account with $100.

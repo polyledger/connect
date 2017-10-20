@@ -125,6 +125,8 @@ class Transfer(models.Model):
         )
     )
 
+    SUPPORTED_EXCHANGES = (('GDAX', 'GDAX'),)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     transfer_type = models.CharField(
@@ -146,3 +148,4 @@ class Transfer(models.Model):
         )
     )
     stripe_charge_id = models.CharField(max_length=30, unique=True)
+    exchange = models.CharField(max_length=30, choices=SUPPORTED_EXCHANGES)

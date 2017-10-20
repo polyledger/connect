@@ -23,6 +23,9 @@
     product: ['auth'],
     key: 'af5c2e7385fc3f941340c29c8c88db',
     onSuccess: function(public_token, metadata) {
+      $('#link-btn').prop('disabled', 'true')
+      $('#link-btn').html('<i class=\'fa fa-spinner fa-spin\'></i> Processing')
+
       let data = {
         public_token: public_token,
         account_id: metadata.account_id,
