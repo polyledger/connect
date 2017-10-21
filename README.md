@@ -2,7 +2,7 @@
 
 > Automated cryptocurrency portfolio platform
 
-This Django project serves multiple purposes. First, the account application allows clients to invest and view their account balance. Second, the custodian application processes pricing data and executes trades.
+This Django project serves multiple purposes. First, the account application allows clients to invest and view their account balance. Second, the custodian application processes pricing data and executes trades. Lastly, the admin app serves as an internal management tool.
 
 ## Table of Contents
 
@@ -10,6 +10,7 @@ This Django project serves multiple purposes. First, the account application all
     - [Prerequisites](#prerequisites)
     - [Account app](#account-app)
         - [Funding a test account](#funding-a-test-account)
+    - [Admin app](#admin-app)
     - [Custodian app](#custodian-app)
 
 ## Development
@@ -112,6 +113,10 @@ Now you can run the `ngrok` command from any directory while in the terminal. Be
 ```
 
 Assuming you have already added the Plaid and Stripe API credentials to your bash profile, you should be able to fund your account. In test mode, you can only fund your account with $100.
+
+### Admin app
+
+The admin app allows Polyledger admins to use an admin interface for managing content on the site. If the web server is already running, you can log in at http://localhost:8080/admin/.
 
 ### Custodian app
 
