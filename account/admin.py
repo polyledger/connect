@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from .models import User
+from .models import User, Profile, Portfolio, Transfer
 
 
 class UserCreationForm(forms.ModelForm):
@@ -86,8 +86,25 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email'),
     filter_horizontal = ()
 
+
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'risk_assessment_score', 'risk_assessment_score',
+                    'account_funded', 'stripe_customer_id')
+
+
+class PortfolioAdmin(admin.ModelAdmin):
+    list_display = ('user', 'usd', 'bitcoin', 'litecoin', 'ethereum')
+
+
+class TransferAdmin(admin.ModelAdmin):
+    list_display = ('user', 'timestamp', 'transfer_type', 'amount', 'currency',
+                    'status', 'stripe_charge_id', 'exchange')
+
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
+admin.site.register(Profile, ProfileAdmin)
+admin.site.register(Portfolio, PortfolioAdmin)
+admin.site.register(Transfer, TransferAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)

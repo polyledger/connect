@@ -115,12 +115,12 @@ class Transfer(models.Model):
 
     SUPPORTED_CURRENCIES = (
         ('Withdrawals', (
-                ('USD', 'US Dollar')
+                ('USD', 'US Dollar'),
             )
         ),
         ('Deposits', (
                 ('USD', 'US Dollar'),
-                ('BTC', 'Bitcoin')
+                ('BTC', 'Bitcoin'),
             )
         )
     )
@@ -131,7 +131,10 @@ class Transfer(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     transfer_type = models.CharField(
         max_length=8,
-        choices=(('withdrawal', 'Withdrawal'), ('deposit', 'Deposit'))
+        choices=(
+            ('withdrawal', 'Withdrawal'),
+            ('deposit', 'Deposit'),
+        )
     )
     amount = models.DecimalField(
         max_digits=30,
