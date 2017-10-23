@@ -35,6 +35,8 @@
         window.location = "/account/"
         // TODO: Add an alert indicating the status of their ACH deposit.
       }).fail((data, textStatus, jqXHR) => {
+        $('#link-btn').prop('disabled', 'false')
+        $('#link-btn').html('Continue')
         let alert = $('span#error-message')
         alert.text(data.responseText)
         alert.parent().removeClass('hide').addClass('show')
