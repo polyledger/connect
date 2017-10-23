@@ -183,7 +183,7 @@ def signup(request):
             current_site = get_current_site(request)
             email_context = {
                 'user': user,
-                'domain': current_site.domain,
+                'site_url': 'https://staging.polyledger.com',
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             }
