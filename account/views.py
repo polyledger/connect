@@ -79,11 +79,11 @@ def get_access_token(request):
 
     env = os.environ.get('DJANGO_SETTINGS_MODULE')
 
-    # For testing purposes, lower the minimum initial deposit amount
-    if env == 'polyledger.settings.local':
-        minimum = 1
-    else:
+    if env == 'polyledger.settings.production':
         minimum = 10000
+    else:
+        # For testing purposes, lower the minimum initial deposit amount
+        minimum = 1
 
     if amount >= minimum:
         if available_balance >= amount:
