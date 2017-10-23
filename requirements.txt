@@ -8,4 +8,5 @@ celery==4.1
 redis==2.10.6
 gdax==1.0.6
 coinbase==2.0.6
+psycopg2==2.7.3.1
 git+ssh://git@github.com/polyledger/lattice.git@0.2.dev2
