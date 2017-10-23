@@ -9,3 +9,18 @@ ALLOWED_HOSTS = ['*']
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/app/static'
+
+POSTGRESQL_NAME = = os.environ.get('POSTGRESQL_NAME')
+POSTGRESQL_USER = = os.environ.get('POSTGRESQL_USER')
+POSTGRESQL_PASSWORD = = os.environ.get('POSTGRESQL_PASSWORD')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': POSTGRESQL_NAME,
+        'USER': POSTGRESQL_USER,
+        'PASSWORD': POSTGRESQL_PASSWORD,
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}

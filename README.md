@@ -12,6 +12,7 @@ This Django project serves multiple purposes. First, the account application all
         - [Funding a test account](#funding-a-test-account)
     - [Admin app](#admin-app)
     - [Custodian app](#custodian-app)
+2. [Deployment](#deployment)
 
 ## Development
 
@@ -70,6 +71,9 @@ dquote> STRIPE_SECRET={Stripe secret key goes here}
 dquote> GDAX_API_KEY={GDAX API key goes here}
 dquote> GDAX_SECRET_KEY={GDAX secret key goes here}
 dquote> GDAX_PASSPHRASE={GDAX passphrase goes here}
+dquote> POSTGRESQL_NAME={PostgreSQL name goes here}
+dquote> POSTGRESQL_USER={PostgreSQL user goes here}
+dquote> POSTGRESQL_PASSWORD={PostgreSQL password goes here}
 dquote> DJANGO_SETTINGS_MODULE=polyledger.settings.local
 dquote>" >> ~/.bash_profile
 ```
@@ -124,4 +128,12 @@ To pull prices during development, start redis in a separate tab with `redis-ser
 
 ```
 (venv) ❯ celery -A custodian.tasks worker --loglevel=info
+```
+
+## Deployment
+
+The app will be hosted on a [Digital Ocean droplet](https://cloud.digitalocean.com) staging environment. To access the droplet, you must have SSH key access.
+
+```
+ssh root@192.241.220.209
 ```
