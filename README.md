@@ -149,3 +149,9 @@ Log into the PostgreSQL database
 ```
 ❯ psql -U admin --password -d polyledger_staging
 ```
+
+Starting gunicorn
+
+```
+❯ /home/venv/bin/gunicorn --bind 127.0.0.1:8001 --reload polyledger.wsgi
+```
