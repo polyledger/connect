@@ -90,7 +90,8 @@ class Profile(models.Model):
     risk_assessment_score = models.FloatField(default=0)
     risk_assessment_complete = models.BooleanField(default=False)
     account_funded = models.BooleanField(default=False)
-    stripe_customer_id = models.CharField(max_length=30, unique=True)
+    stripe_customer_id = models.CharField(max_length=30, unique=True,
+                                          null=True, blank=True)
 
 @receiver(models.signals.post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
