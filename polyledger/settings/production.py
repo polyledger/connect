@@ -8,7 +8,7 @@ ALLOWED_HOSTS = ['*']
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/app/static'
+STATIC_ROOT = '/home/static'
 
 POSTGRESQL_NAME = = os.environ.get('POSTGRESQL_NAME')
 POSTGRESQL_USER = = os.environ.get('POSTGRESQL_USER')
