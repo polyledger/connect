@@ -13,6 +13,8 @@ This Django project serves multiple purposes. First, the account application all
     - [Admin app](#admin-app)
     - [Custodian app](#custodian-app)
 2. [Deployment](#deployment)
+3. [Staging](#staging)
+    - [Database](#database)
 
 ## Development
 
@@ -135,5 +137,15 @@ To pull prices during development, start redis in a separate tab with `redis-ser
 The app will be hosted on a [Digital Ocean droplet](https://cloud.digitalocean.com) staging environment. To access the droplet, you must have SSH key access.
 
 ```
-ssh root@192.241.220.209
+❯ ssh root@192.241.220.209
+```
+
+## Staging
+
+### Database
+
+Log into the PostgreSQL database
+
+```
+❯ psql -U admin --password -d polyledger_staging
 ```
