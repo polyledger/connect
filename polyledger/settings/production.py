@@ -10,9 +10,9 @@ ALLOWED_HOSTS = ['*']
 STATIC_URL = '/static/'
 STATIC_ROOT = '/home/static'
 
-POSTGRESQL_NAME = = os.environ.get('POSTGRESQL_NAME')
-POSTGRESQL_USER = = os.environ.get('POSTGRESQL_USER')
-POSTGRESQL_PASSWORD = = os.environ.get('POSTGRESQL_PASSWORD')
+POSTGRESQL_NAME = os.environ.get('POSTGRESQL_NAME')
+POSTGRESQL_USER = os.environ.get('POSTGRESQL_USER')
+POSTGRESQL_PASSWORD = os.environ.get('POSTGRESQL_PASSWORD')
 
 DATABASES = {
     'default': {
