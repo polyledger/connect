@@ -1,0 +1,13 @@
+#!/bin/bash
+
+BIN=$(dirname $PWD)/venv/bin/activate
+source $BIN
+
+if [[ "$1" = 'server' ]] ; then
+  python manage.py runserver 8080
+elif [[ "$1" = 'worker' ]] ; then
+  (
+    redis-server --daemonize yes
+  )
+  celery -A custodian.tasks worker --loglevel=info
+fi

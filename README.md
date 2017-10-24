@@ -92,6 +92,12 @@ Start the web application
 (venv) ❯ python3 manage.py runserver 8080
 ```
 
+Alternatively, you can use the shell script to start the app
+
+```
+(venv) ❯ ./start.sh server
+```
+
 The application should now be running at http://localhost:8080/account/login
 
 #### Funding a test account
@@ -130,6 +136,12 @@ To pull prices during development, start redis in a separate tab with `redis-ser
 
 ```
 (venv) ❯ celery -A custodian.tasks worker --loglevel=info
+```
+
+Alternatively, you can use the shell script to start both redis and the worker
+
+```
+(venv) ❯ ./start.sh worker
 ```
 
 ## Deployment
