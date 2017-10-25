@@ -135,7 +135,7 @@ The admin app allows Polyledger admins to use an admin interface for managing co
 To pull prices during development, start redis in a separate tab with `redis-server` and start the worker
 
 ```
-(venv) ❯ celery -A custodian.tasks worker --loglevel=info
+(venv) ❯ celery -E -A custodian.tasks worker --loglevel=info -B
 ```
 
 Alternatively, you can use the shell script to start both redis and the worker

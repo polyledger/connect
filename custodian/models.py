@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator
 
 from decimal import *
 
+
 class Trade(models.Model):
     """
     A table to store all trades that occur.
@@ -68,8 +69,8 @@ class Price(models.Model):
     """
     A table for the prices of all supported coins in USD. Used to get the real-
     time value of users' portfolios (by getting the last row containing the most
-    up-to-date prices, and doing dot multiplication with the contents of the
-    user's portfolio).
+    up-to-date prices, and doing dot product with the contents of the user's
+    portfolio).
     """
     timestamp = models.DateTimeField(auto_now_add=True)
     BTC = models.DecimalField(
