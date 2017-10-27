@@ -4,6 +4,7 @@ import os
 import plaid
 import stripe
 import datetime
+from lattice import backtest
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -21,6 +22,7 @@ from django.views.decorators.http import require_POST
 from .forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
 from .tokens import account_activation_token
 from .models import Portfolio, Profile, Transfer
+from custodian.models import Trade
 
 
 # Set up Plaid (https://plaid.com/docs/quickstart/)
@@ -171,7 +173,8 @@ def verify(request):
 def settings(request):
     if request.method == 'POST':
         pass # TODO: Change email/password and account removal logic
-    return render(request, 'account/settings.html')
+    email = request.user.email
+    return render(request, 'account/settings.html', {'email': email})
 
 def signup(request):
     if request.method == 'POST':
@@ -183,7 +186,8 @@ def signup(request):
             current_site = get_current_site(request)
             email_context = {
                 'user': user,
-                'site_url': 'https://staging.polyledger.com',
+                'image_url': 'https://staging.polyledger.com',
+                'site_url': current_site,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             }
@@ -219,6 +223,7 @@ def index(request):
     value.
     """
     account_value = 0
+    transfers = Transfer.objects.filter(user=request.user)
 
     if hasattr(request.user, 'portfolio'):
         for field, value in request.user.portfolio.__dict__.items():
@@ -226,7 +231,10 @@ def index(request):
                 account_value += value
         account_value = '${:,.2f}'.format(account_value)
     return render(
-        request, 'account/index.html', {'account_value': account_value}
+        request, 'account/index.html', {
+            'account_value': account_value,
+            'transfers': transfers
+        }
     )
 
 @login_required
@@ -241,8 +249,38 @@ def historical_value(request):
     if period not in ['1d', '7d', '1m', '3m', '6m', '1y']:
         return HttpResponse('Invalid parameter value for period', status=400)
 
-    dataset = [] # placeholder
-    labels = [] # placeholder
+    # Transfers + Trades in portfolio
+    transfers = Transfer.objects.filter(user=request.user)
+    trades = Trade.objects.filter(user=request.user)
+
+    portfolio = backtest.Portfolio()
+
+    for transfer in transfers:
+        if transfer.transfer_type == 'deposit':
+            portfolio.add_asset(
+                transfer.currency, transfer.amount, str(transfer.timestamp)
+            )
+        else:
+            portfolio.remove_asset(
+                transfer.currency, transfer.amount, str(transfer.timestamp)
+            )
+
+    for trade in trades:
+        if trade.trade_type == 'buy':
+            portfolio.trade_asset(
+                trade.amount, trade.quote, trade.base, str(trade.timestamp)
+            )
+        else:
+            portfolio.trade_asset(
+                trade.amount, trade.base, trade.quote, str(trade.timestamp)
+            )
+
+    data = portfolio.get_historical_value(
+        '2017-10-01', freq='D', silent=True
+    )
+
+    dataset = data['values']
+    labels = data['dates']
     percent_change = '0%' # placeholder
     return JsonResponse({
         'dataset': dataset,

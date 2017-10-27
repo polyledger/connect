@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% load static %}
 
 {% block content %}
@@ -13,7 +14,21 @@
     {% if user.profile.account_funded and user.profile.risk_assessment_complete %}
     <div class="col">
       <h2 class="statcard-number text-center">{{ account_value }} <small class="badge" id="percent-change"></small></h2>
-    </div>
+      <h4>Transfer History</h4>
+      <ul class="list-group">
+        {% for transfer in transfers %}
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-1">{{transfer.currency}} {{transfer.amount|floatformat:2|intcomma}} {{transfer.transfer_type}}</h5>
+              <small>{{transfer.timestamp}}</small>
+            </div>
+            <span class="badge badge-primary">{{transfer.status}}</span>
+          </div>
+        </li>
+        {% endfor %}
+      </div>
+    </ul>
     {% else %}
     <div class="col-md-4">
       <div class="card">

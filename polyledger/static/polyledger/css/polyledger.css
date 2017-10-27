@@ -12,3 +12,7 @@ main {
 .btn.btn-dark {
   border-radius: 0;
 }
+
+.badge {
+  padding: 5px !important;
+}

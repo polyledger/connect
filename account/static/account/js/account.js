@@ -27,6 +27,7 @@ let getHistoricalData = (period) => {
     let badgeClass
     percentChange[0] !== '-' ? badgeClass = 'badge-success' : badgeClass = 'badge-danger'
     $percentChangeEl.addClass(badgeClass)
+    console.log(data)
   }, (jqXHR, textStatus, errorThrown) => {
     console.error(errorThrown)
   })
@@ -38,4 +39,8 @@ if (window.location.pathname === '/account/deposit/') {
     numeral: true,
     numeralThousandsGroupStyle: 'thousand'
   })
+}
+
+if (window.location.pathname === '/account/') {
+  getHistoricalData('1d')
 }
