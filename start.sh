@@ -3,7 +3,9 @@
 BIN=$(dirname $PWD)/venv/bin/activate
 source $BIN
 
-if [[ "$1" = 'server' ]] ; then
+if [ $# -eq 0 ] ; then
+  echo "Please provide an argument: (server|worker)"
+elif [[ "$1" = 'server' ]] ; then
   python manage.py runserver 8080
 elif [[ "$1" = 'worker' ]] ; then
   (
