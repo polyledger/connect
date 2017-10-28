@@ -15,6 +15,7 @@ class Trade(models.Model):
     )
 
     SUPPORTED_COINS = (
+        ('USD', 'US Dollar'),
         ('BTC', 'Bitcoin'),
         ('ETH', 'Ethereum'),
         ('LTC', 'Litecoin'),
@@ -32,7 +33,7 @@ class Trade(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     trade_type = models.CharField(
         max_length=4,
-        choices=(('Buy', 'Buy'), ('Sell', 'Sell'))
+        choices=(('buy', 'Buy'), ('sell', 'Sell'))
     )
     base = models.CharField(max_length=4, choices=SUPPORTED_COINS)
     quote = models.CharField(max_length=4, choices=SUPPORTED_COINS)
@@ -47,24 +48,23 @@ class Trade(models.Model):
     )
     cost_basis = models.DecimalField(
         max_digits=30,
-        decimal_places=15,
+        decimal_places=16,
         validators=[MinValueValidator(Decimal('0'))]
     )
     fees = models.DecimalField(
         max_digits=30,
-        decimal_places=15,
+        decimal_places=16,
         validators=[MinValueValidator(Decimal('0'))]
     )
     cost_basis_usd = models.DecimalField(
         max_digits=30,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal('0'))],
-        default=cost_basis
+        decimal_places=16,
+        validators=[MinValueValidator(Decimal('0'))]
     )
-    fees_usd = models.DecimalField(max_digits=6,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal('0'))],
-        default=fees
+    fees_usd = models.DecimalField(
+        max_digits=30,
+        decimal_places=16,
+        validators=[MinValueValidator(Decimal('0'))]
     )
 
 class Price(models.Model):

@@ -23,7 +23,7 @@
               <h5 class="mb-1">{{transfer.currency}} {{transfer.amount|floatformat:2|intcomma}} {{transfer.transfer_type}}</h5>
               <small>{{transfer.timestamp}}</small>
             </div>
-            <span class="badge badge-primary">{{transfer.status}}</span>
+            <span class="badge badge-{% if transfer.status == 'pending' %}primary{% endif %}{% if transfer.status == 'succeeded' %}success{% endif %}">{{transfer.status}}</span>
           </div>
         </li>
         {% endfor %}

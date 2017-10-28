@@ -68,6 +68,8 @@ def get_access_token(request):
     global access_token
     public_token = request.POST['public_token']
     account_id = request.POST['account_id']
+    # Stripe only accepts charges in cents
+    stripe_amount = int(request.POST['amount'].replace(',', '')) * 100
     amount = int(request.POST['amount'].replace(',', ''))
     exchange_response = client.Item.public_token.exchange(public_token)
     access_token = exchange_response['access_token']
@@ -102,7 +104,7 @@ def get_access_token(request):
                 }
             )
             stripe.Charge.create(
-                amount=amount,
+                amount=stripe_amount,
                 currency='usd',
                 customer=customer.id
             )
@@ -110,7 +112,9 @@ def get_access_token(request):
             user.profile.account_funded = True
             user.profile.account_balance = amount
             user.profile.stripe_customer_id = customer.id
-            Portfolio.objects.create(user=user, usd=amount)
+            user.portfolio, created = Portfolio.objects.get_or_create(user=user)
+            user.portfolio.usd += amount
+            user.portfolio.save()
             user.save()
             return HttpResponse(status=204)
         else:
@@ -223,7 +227,9 @@ def index(request):
     value.
     """
     account_value = 0
-    transfers = Transfer.objects.filter(user=request.user)
+    transfers = Transfer.objects.filter(
+        user=request.user
+    ).order_by('-timestamp')
 
     if hasattr(request.user, 'portfolio'):
         for field, value in request.user.portfolio.__dict__.items():
@@ -258,21 +264,31 @@ def historical_value(request):
     for transfer in transfers:
         if transfer.transfer_type == 'deposit':
             portfolio.add_asset(
-                transfer.currency, transfer.amount, str(transfer.timestamp)
+                transfer.currency,
+                float(transfer.amount),
+                str(transfer.timestamp)
             )
         else:
             portfolio.remove_asset(
-                transfer.currency, transfer.amount, str(transfer.timestamp)
+                transfer.currency,
+                float(transfer.amount),
+                str(transfer.timestamp)
             )
 
     for trade in trades:
         if trade.trade_type == 'buy':
             portfolio.trade_asset(
-                trade.amount, trade.quote, trade.base, str(trade.timestamp)
+                float(trade.amount),
+                trade.quote,
+                trade.base,
+                str(trade.timestamp)
             )
         else:
             portfolio.trade_asset(
-                trade.amount, trade.base, trade.quote, str(trade.timestamp)
+                float(trade.amount),
+                trade.base,
+                trade.quote,
+                str(trade.timestamp)
             )
 
     data = portfolio.get_historical_value(
