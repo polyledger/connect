@@ -14,7 +14,27 @@
     {% if user.profile.account_funded and user.profile.risk_assessment_complete %}
     <div class="col">
       <h2 class="statcard-number text-center">{{ account_value }} <small class="badge" id="percent-change"></small></h2>
-      <div class="text-center my-5" style="height: 200px; display: flex; justify-content: center; align-items: center;" id="spinner">
+      <ul class="nav nav-pills justify-content-center my-4">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">1D</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">7D</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">1M</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">3M</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">6M</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">1Y</a>
+        </li>
+      </ul>
+      <div class="text-center my-5" style="height: 270px; display: flex; justify-content: center; align-items: center;" id="spinner">
         <i class="fa fa-spinner fa-spin fa-3x"></i>
       </div>
       <canvas id="portfolio-value-chart" class="my-5" width="100%" height="25"></canvas>

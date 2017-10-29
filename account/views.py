@@ -252,7 +252,7 @@ def historical_value(request):
     """
     period = request.GET.get('period')
 
-    if period not in ['1d', '7d', '1m', '3m', '6m', '1y']:
+    if period not in ['1D', '7D', '1M', '3M', '6M', '1Y']:
         return HttpResponse('Invalid parameter value for period', status=400)
 
     # Transfers + Trades in portfolio
@@ -291,9 +291,38 @@ def historical_value(request):
                 str(trade.timestamp)
             )
 
-    data = portfolio.get_historical_value(
-        '2017-10-01', freq='D', date_format='%b %-d %Y', silent=True
-    )
+    if period == '1D':
+        start = '2017-10-29T00:00:00'
+        end = '2017-10-29T23:59:59'
+        freq = 'H'
+        date_format = '%b %-d %Y'
+    elif period == '7D':
+        start = '2017-10-22'
+        end = '2017-10-29'
+        freq = 'D'
+        date_format = '%b %-d %Y'
+    elif period == '1M':
+        start = '2017-09-29'
+        end = '2017-10-29'
+        freq = 'D'
+        date_format = '%b %-d %Y'
+    elif period == '3M':
+        start = '2017-07-29'
+        end = '2017-10-29'
+        freq = 'D'
+        date_format = '%b %-d %Y'
+    elif period == '6M':
+        start = '2017-04-22'
+        end = '2017-10-29'
+        freq = 'D'
+        date_format = '%b %-d %Y'
+    elif period == '1Y':
+        start = '2016-10-29'
+        end = '2017-10-29'
+        freq = 'W'
+        date_format = '%b %-d %Y'
+
+    data = portfolio.get_historical_value(start, end, freq, date_format, silent=True)
 
     dataset = data['values']
     labels = data['dates']
