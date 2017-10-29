@@ -14,6 +14,7 @@
     {% if user.profile.account_funded and user.profile.risk_assessment_complete %}
     <div class="col">
       <h2 class="statcard-number text-center">{{ account_value }} <small class="badge" id="percent-change"></small></h2>
+      <canvas id="portfolio-value-chart" width="100%" height="25"></canvas>
       <h4>Transfer History</h4>
       <ul class="list-group">
         {% for transfer in transfers %}
