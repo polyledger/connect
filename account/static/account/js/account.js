@@ -17,6 +17,7 @@ $(document).on('input', '#risk-score-slider', (event) => {
 
 let getHistoricalData = (period) => {
   $.ajax(`/account/historical_value/?period=${period}`).then((data, textStatus, jqXHR) => {
+    $('#spinner').remove()
     let dataset = data.dataset
     let labels = data.labels
     let percentChange = data.percent_change
