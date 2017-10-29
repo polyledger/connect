@@ -132,10 +132,10 @@ The admin app allows Polyledger admins to use an admin interface for managing co
 
 ### Custodian app
 
-To pull prices during development, start redis in a separate tab with `redis-server` and start the worker
+To allow the deposit process to complete and execute trades, start redis in a separate tab with `redis-server` and start the worker
 
 ```
-(venv) ❯ celery -E -A custodian.tasks worker --loglevel=info -B
+(venv) ❯ celery -E -A polyledger worker --loglevel=info -B
 ```
 
 Alternatively, you can use the shell script to start both redis and the worker

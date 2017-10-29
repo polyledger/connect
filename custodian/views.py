@@ -1,8 +1,4 @@
-import os
-import gdax
 import json
-import coinbase
-from lattice.optimize import allocate
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -11,12 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from account.models import Portfolio, Profile, Transfer
-from custodian.models import Trade
-
-GDAX_API_KEY = os.environ.get('GDAX_API_KEY')
-GDAX_SECRET_KEY = os.environ.get('GDAX_SECRET_KEY')
-GDAX_PASSPHRASE = os.environ.get('GDAX_PASSPHRASE')
-COINBASE_ACCOUNT_ID = os.environ.get('COINBASE_ACCOUNT_ID')
+from custodian.tasks import automate_trades
 
 
 @csrf_exempt
@@ -53,49 +44,8 @@ def deposit(request):
     transfer.save()
 
     if status == 'succeeded':
-        # TODO: Transfer from Stripe to Coinbase
+        automate_trades.delay(profile.user_id, transfer.amount)
 
-        # Transfer from Coinbase USD wallet to GDAX
-        api_url='https://api-public.sandbox.gdax.com'
-        auth_client = gdax.AuthenticatedClient(
-            GDAX_API_KEY, GDAX_SECRET_KEY, GDAX_PASSPHRASE, api_url=api_url
-        )
-        res = auth_client.get_payment_methods()
-        payment_method_id = [
-            m for m in res if m['type'] == 'ach_bank_account'
-        ][0].get('id')
-        res = auth_client.deposit(
-            amount=float(transfer.amount),
-            currency='USD',
-            payment_method_id=payment_method_id
-        )
-        print(res)
-
-        # Create portfolio
-        risk_index = user.profile.risk_assessment_score
-        allocation = allocate(risk_index).to_dict()
-
-        # Place trades
-        usd = user.portfolio.usd
-
-        for coin in allocation:
-            funds = round(allocation[coin] * usd, 2)
-            pair = '{0}-USD'.format(coin)
-            res = auth_client.buy(funds=funds, product_id=pair, type='market')
-            try:
-                print(res)
-                order_id = res['id']
-                trade = Trade(
-                    user=user, trade_type='buy', base=coin, quote='USD', pair=pair,
-                    exchange='GDAX', amount=res['filled_size'], cost_basis=funds,
-                    fees=res['fill_fees'], status=res['status'],
-                    settled=res['settled'], cost_basis_usd=funds,
-                    fees_usd=res['fill_fees']
-                )
-                trade.save()
-                # TODO: Update user portfolio object once trade is confirmed
-            except Exception as e:
-                print(res)
     return HttpResponse(status=204)
 
 def withdraw(request):
