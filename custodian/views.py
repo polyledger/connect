@@ -44,7 +44,7 @@ def deposit(request):
     transfer, created = Transfer.objects.get_or_create(
         user=user,
         transfer_type='deposit',
-        amount=body['data']['object']['amount'],
+        amount=body['data']['object']['amount']/100,
         currency='USD',
         stripe_charge_id=stripe_charge_id,
         exchange='GDAX'
@@ -60,11 +60,16 @@ def deposit(request):
         auth_client = gdax.AuthenticatedClient(
             GDAX_API_KEY, GDAX_SECRET_KEY, GDAX_PASSPHRASE, api_url=api_url
         )
-        deposit_params = {
-            'amount': float(transfer.amount), # Does not accept Decimal type
-            'coinbase_account_id': COINBASE_ACCOUNT_ID
-        }
-        auth_client.deposit(deposit_params)
+        res = auth_client.get_payment_methods()
+        payment_method_id = [
+            m for m in res if m['type'] == 'ach_bank_account'
+        ][0].get('id')
+        res = auth_client.deposit(
+            amount=float(transfer.amount),
+            currency='USD',
+            payment_method_id=payment_method_id
+        )
+        print(res)
 
         # Create portfolio
         risk_index = user.profile.risk_assessment_score
@@ -74,16 +79,23 @@ def deposit(request):
         usd = user.portfolio.usd
 
         for coin in allocation:
-            funds = allocation[coin] * usd
+            funds = round(allocation[coin] * usd, 2)
             pair = '{0}-USD'.format(coin)
             res = auth_client.buy(funds=funds, product_id=pair, type='market')
-            order_id = res.id
-            trade = Trade(
-                user=user, trade_type='buy', base=coin, quote='USD', pair=pair,
-                exchange='GDAX', amount=res.filled_size, cost_basis=funds,
-                fees=res.fill_fees, status=res.status, settled=res.settled
-            )
-            trade.save()
+            try:
+                print(res)
+                order_id = res['id']
+                trade = Trade(
+                    user=user, trade_type='buy', base=coin, quote='USD', pair=pair,
+                    exchange='GDAX', amount=res['filled_size'], cost_basis=funds,
+                    fees=res['fill_fees'], status=res['status'],
+                    settled=res['settled'], cost_basis_usd=funds,
+                    fees_usd=res['fill_fees']
+                )
+                trade.save()
+                # TODO: Update user portfolio object once trade is confirmed
+            except Exception as e:
+                print(res)
     return HttpResponse(status=204)
 
 def withdraw(request):
