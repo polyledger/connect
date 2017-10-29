@@ -15,9 +15,20 @@ $(document).on('input', '#risk-score-slider', (event) => {
   $('#risk-score-output').text(value)
 })
 
+$(document).on('click', '.nav-item', (event) => {
+  $('#portfolio-value-chart').hide()
+  $('#spinner').show()
+  $('a.nav-link').removeClass('active')
+  $el = $(event.currentTarget)
+  $el.find('a.nav-link').addClass('active')
+  let period = $el.text().replace(/ /g,'')
+  getHistoricalData(period)
+})
+
 let getHistoricalData = (period) => {
   $.ajax(`/account/historical_value/?period=${period}`).then((data, textStatus, jqXHR) => {
-    $('#spinner').remove()
+    $('#portfolio-value-chart').show()
+    $('#spinner').hide()
     let dataset = data.dataset
     let labels = data.labels
     let percentChange = data.percent_change
@@ -43,7 +54,7 @@ if (window.location.pathname === '/account/deposit/') {
 }
 
 if (window.location.pathname === '/account/') {
-  getHistoricalData('1d')
+  getHistoricalData('1D')
 }
 
 let createChart = (data, labels) => {
