@@ -17,6 +17,7 @@ $(document).on('input', '#risk-score-slider', (event) => {
 
 let getHistoricalData = (period) => {
   $.ajax(`/account/historical_value/?period=${period}`).then((data, textStatus, jqXHR) => {
+    $('#spinner').remove()
     let dataset = data.dataset
     let labels = data.labels
     let percentChange = data.percent_change
@@ -27,7 +28,7 @@ let getHistoricalData = (period) => {
     let badgeClass
     percentChange[0] !== '-' ? badgeClass = 'badge-success' : badgeClass = 'badge-danger'
     $percentChangeEl.addClass(badgeClass)
-    console.log(data)
+    createChart(dataset, labels)
   }, (jqXHR, textStatus, errorThrown) => {
     console.error(errorThrown)
   })
@@ -43,4 +44,68 @@ if (window.location.pathname === '/account/deposit/') {
 
 if (window.location.pathname === '/account/') {
   getHistoricalData('1d')
+}
+
+let createChart = (data, labels) => {
+  var ctx = document.getElementById("portfolio-value-chart").getContext('2d')
+  var chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Portfolio Value',
+        data: data,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: true,
+        displayColors: true,
+        callbacks: {
+          labelColor: (tooltipItem, chart) => {
+            return {
+              borderColor: 'rgba(255, 99, 132, 1)',
+              backgroundColor: 'rgba(255, 99, 132, 1)'
+            }
+          }
+        }
+      },
+      scales: {
+        xAxes: [{
+          gridLines: {
+            display: false
+          },
+          ticks: {
+            maxTicksLimit: 7
+          }
+        }],
+        yAxes: [{
+          gridLines: {
+            display: false
+          },
+          ticks: {
+            maxTicksLimit: 5,
+            beginAtZero: true,
+            callback: (value, index, values) => {
+              if (parseInt(value) >= 1000) {
+                return '$' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",").toFixed(2)
+              } else {
+                return '$' + value.toFixed(2)
+              }
+            }
+          }
+        }]
+      }
+    }
+  })
 }

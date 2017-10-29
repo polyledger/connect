@@ -291,7 +291,9 @@ def historical_value(request):
                 str(trade.timestamp)
             )
 
-    data = portfolio.get_historical_value('2017-10-01', freq='D')
+    data = portfolio.get_historical_value(
+        '2017-10-01', freq='D', date_format='%b %-d %Y'
+    )
 
     dataset = data['values']
     labels = data['dates']
