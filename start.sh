@@ -11,5 +11,5 @@ elif [[ "$1" = 'worker' ]] ; then
   (
     redis-server --daemonize yes
   )
-  celery -E -A custodian.tasks worker --loglevel=info -B
+  celery -E -A polyledger worker --loglevel=info -B
 fi
