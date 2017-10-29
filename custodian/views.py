@@ -61,11 +61,13 @@ def deposit(request):
             GDAX_API_KEY, GDAX_SECRET_KEY, GDAX_PASSPHRASE, api_url=api_url
         )
         res = auth_client.get_payment_methods()
-        payment_method_id = [m for m in res if m['name'] == 'USD Wallet'][0]
+        payment_method_id = [
+            m for m in res if m['type'] == 'ach_bank_account'
+        ][0].get('id')
         res = auth_client.deposit(
             amount=float(transfer.amount),
-            payment_method_id='e49c8d15-547b-464e-ac3d-4b9d20b360ec',
-            currency='USD'
+            currency='USD',
+            payment_method_id=payment_method_id
         )
         print(res)
 
@@ -91,6 +93,7 @@ def deposit(request):
                     fees_usd=res['fill_fees']
                 )
                 trade.save()
+                # TODO: Update user portfolio object once trade is confirmed
             except Exception as e:
                 print(res)
     return HttpResponse(status=204)

@@ -10,4 +10,4 @@ gdax==1.0.6
 coinbase==2.0.6
 psycopg2==2.7.3.1
 gunicorn==19.7
-git+ssh://git@github.com/polyledger/lattice.git@0.3.3
+git+ssh://git@github.com/polyledger/lattice.git@0.3.4
