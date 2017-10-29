@@ -80,8 +80,20 @@ let createChart = (data, labels) => {
         }
       },
       scales: {
-        yAxes: [{
+        xAxes: [{
+          gridLines: {
+            display: false
+          },
           ticks: {
+            maxTicksLimit: 7
+          }
+        }],
+        yAxes: [{
+          gridLines: {
+            display: false
+          },
+          ticks: {
+            maxTicksLimit: 5,
             beginAtZero: true,
             callback: (value, index, values) => {
               if (parseInt(value) >= 1000) {
