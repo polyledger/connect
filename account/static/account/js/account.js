@@ -46,7 +46,6 @@ if (window.location.pathname === '/account/') {
 }
 
 let createChart = (data, labels) => {
-  console.log(data)
   var ctx = document.getElementById("portfolio-value-chart").getContext('2d')
   var chart = new Chart(ctx, {
     type: 'line',
@@ -56,32 +55,41 @@ let createChart = (data, labels) => {
         label: 'Portfolio Value',
         data: data,
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
+          'rgba(255, 99, 132, 0.2)'
         ],
         borderColor: [
-          'rgba(255,99,132,1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
+          'rgba(255, 99, 132, 1)'
         ],
         borderWidth: 1
       }]
     },
     options: {
-      scaleLabel(label) {
-        return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: true,
+        displayColors: true,
+        callbacks: {
+          labelColor: (tooltipItem, chart) => {
+            return {
+              borderColor: 'rgba(255, 99, 132, 1)',
+              backgroundColor: 'rgba(255, 99, 132, 1)'
+            }
+          }
+        }
       },
       scales: {
         yAxes: [{
           ticks: {
-            beginAtZero:true
+            beginAtZero: true,
+            callback: (value, index, values) => {
+              if (parseInt(value) >= 1000) {
+                return '$' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",").toFixed(2)
+              } else {
+                return '$' + value.toFixed(2)
+              }
+            }
           }
         }]
       }
