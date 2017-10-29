@@ -292,7 +292,7 @@ def historical_value(request):
             )
 
     data = portfolio.get_historical_value(
-        '2017-10-01', freq='D', date_format='%b %-d %Y'
+        '2017-10-01', freq='D', date_format='%b %-d %Y', silent=True
     )
 
     dataset = data['values']
