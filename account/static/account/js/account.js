@@ -54,12 +54,15 @@ if (window.location.pathname === '/account/deposit/') {
 }
 
 if (window.location.pathname === '/account/') {
+  $('#portfolio-value-chart').hide()
+  $('#spinner').show()
   getHistoricalData('1D')
 }
 
 let createChart = (data, labels) => {
+  if (window.chart) window.chart.destroy()
   var ctx = document.getElementById("portfolio-value-chart").getContext('2d')
-  var chart = new Chart(ctx, {
+  window.chart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,

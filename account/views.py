@@ -291,36 +291,27 @@ def historical_value(request):
                 str(trade.timestamp)
             )
 
+    end = datetime.datetime.now()
+
     if period == '1D':
-        start = '2017-10-29T00:00:00'
-        end = '2017-10-29T23:59:59'
-        freq = 'H'
-        date_format = '%b %-d %Y'
+        start = end - datetime.timedelta(days = 1)
+        date_format = '%b %-d %-I:%M %p'
     elif period == '7D':
-        start = '2017-10-22'
-        end = '2017-10-29'
-        freq = 'D'
+        start = end - datetime.timedelta(days = 7)
         date_format = '%b %-d %Y'
     elif period == '1M':
-        start = '2017-09-29'
-        end = '2017-10-29'
-        freq = 'D'
+        start = end - datetime.timedelta(days = 30)
         date_format = '%b %-d %Y'
     elif period == '3M':
-        start = '2017-07-29'
-        end = '2017-10-29'
-        freq = 'D'
+        start = end - datetime.timedelta(days = 90)
         date_format = '%b %-d %Y'
     elif period == '6M':
-        start = '2017-04-22'
-        end = '2017-10-29'
-        freq = 'D'
+        start = end - datetime.timedelta(days = 182)
         date_format = '%b %-d %Y'
     elif period == '1Y':
-        start = '2016-10-29'
-        end = '2017-10-29'
-        freq = 'W'
+        start = end - datetime.timedelta(days = 364)
         date_format = '%b %-d %Y'
+    freq = '%iS' % ((end - start)/9).total_seconds()
 
     data = portfolio.get_historical_value(start, end, freq, date_format, silent=True)
 
