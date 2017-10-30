@@ -54,6 +54,8 @@ if (window.location.pathname === '/account/deposit/') {
 }
 
 if (window.location.pathname === '/account/') {
+  $('#portfolio-value-chart').hide()
+  $('#spinner').show()
   getHistoricalData('1D')
 }
 
