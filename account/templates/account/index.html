@@ -40,6 +40,9 @@
       <canvas id="portfolio-value-chart" class="my-5" width="100%" height="25" style="display: none;"></canvas>
       <h4>Transfer History</h4>
       <ul class="list-group">
+        {% if not transfers %}
+          No transfers
+        {% endif %}
         {% for transfer in transfers %}
         <li class="list-group-item">
           <div class="d-flex justify-content-between align-items-center">
