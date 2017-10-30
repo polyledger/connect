@@ -188,7 +188,15 @@ def signup(request):
             user = form.save(commit=False)
             user.is_active = False
             user.save()
-            current_site = get_current_site(request)
+
+            env = os.environ.get('DJANGO_SETTINGS_MODULE')
+
+            if env == 'polyledger.settings.production':
+                current_site = 'polyledger.com'
+            elif env == 'polyledger.settings.staging':
+                current_site = 'staging.polyledger.com'
+            else:
+                current_site = get_current_site(request)
             email_context = {
                 'user': user,
                 'image_url': 'https://staging.polyledger.com',
