@@ -6,7 +6,13 @@ source $BIN
 if [ $# -eq 0 ] ; then
   echo "Please provide an argument: (server|worker)"
 elif [[ "$1" = 'server' ]] ; then
-  python manage.py runserver 8080
+  set -m
+  python manage.py runserver 8080 &
+  PID=$!
+  sleep 3
+  kill -TSTP $PID
+  open http://localhost:8080/account/
+  fg %1
 elif [[ "$1" = 'worker' ]] ; then
   (
     redis-server --daemonize yes
