@@ -66,27 +66,3 @@ class Trade(models.Model):
         decimal_places=16,
         validators=[MinValueValidator(Decimal('0'))]
     )
-
-class Price(models.Model):
-    """
-    A table for the prices of all supported coins in USD. Used to get the real-
-    time value of users' portfolios (by getting the last row containing the most
-    up-to-date prices, and doing dot product with the contents of the user's
-    portfolio).
-    """
-    timestamp = models.DateTimeField(auto_now_add=True)
-    BTC = models.DecimalField(
-        max_digits=30,
-        decimal_places=8,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    ETH = models.DecimalField(
-        max_digits=30,
-        decimal_places=18,
-        validators=[MinValueValidator(Decimal('0'))]
-    )
-    LTC = models.DecimalField(
-        max_digits=30,
-        decimal_places=8,
-        validators=[MinValueValidator(Decimal('0'))]
-    )

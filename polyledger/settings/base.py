@@ -92,6 +92,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# File Storage
+# https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-DEFAULT_FILE_STORAGE
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 

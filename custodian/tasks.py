@@ -66,19 +66,3 @@ def automate_trades(pk, transfer_amount):
             # TODO: Update user portfolio object once trade is confirmed
         except Exception as e:
             print(res)
-
-@shared_task
-def get_daily_prices():
-    """
-    Gets pricing data via API of supported coins once a day up until the most
-    recent fiscal quarter and stores them in the db.
-    """
-    pass
-
-@shared_task
-def get_real_time_prices():
-    """
-    Constantly gets pricing data via API of supported coins when running and
-    stores them in the db.
-    """
-    pass

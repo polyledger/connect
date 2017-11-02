@@ -19,7 +19,7 @@ app.autodiscover_tasks()
 
 # http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html
 @app.on_after_configure.connect
-def setup_period_tasks(sender, **kwargs):
+def setup_periodic_tasks(sender, **kwargs):
     # sender.add_periodic_task(crontab(hour=7, minute=30), get_daily_prices.s())
     pass
 
