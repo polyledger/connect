@@ -15,7 +15,7 @@ $(document).on('input', '#risk-score-slider', (event) => {
   $('#risk-score-output').text(value)
 })
 
-$(document).on('click', '.nav-item', (event) => {
+$(document).on('click', '.nav-pills > .nav-item', (event) => {
   $('#portfolio-value-chart').hide()
   $('#spinner').show()
   $('a.nav-link').removeClass('active')
