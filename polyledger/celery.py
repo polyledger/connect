@@ -16,13 +16,6 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 
-
-# http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    # sender.add_periodic_task(crontab(hour=7, minute=30), get_daily_prices.s())
-    pass
-
 @app.task(bind=True)
 def debug_task(self):
     print('Request: {0!r}'.format(self.request))

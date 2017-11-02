@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 from django.contrib import messages
-
+from celery.schedules import crontab
 
 # See https://docs.djangoproject.com/en/1.11/ref/contrib/messages/#message-tags
 MESSAGE_TAGS = {
@@ -135,4 +135,9 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'US/Pacific'
-CELERY_BEAT_SCHEDULE = {}
+CELERY_BEAT_SCHEDULE = {
+    'fill_daily_historical_prices': {
+        'task': 'api.tasks.get_current_prices',
+        'schedule': crontab(hour=0, minute=0)
+    }
+}
