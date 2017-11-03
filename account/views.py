@@ -114,7 +114,6 @@ def get_access_token(request):
             user.profile.account_balance = amount
             user.profile.stripe_customer_id = customer.id
             user.portfolio, created = Portfolio.objects.get_or_create(user=user)
-            user.portfolio.usd += amount
             user.portfolio.save()
             user.save()
             return HttpResponse(status=204)

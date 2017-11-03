@@ -31,11 +31,12 @@ def deposit(request):
         return HttpResponse(status=500)
 
     user = get_user_model().objects.get(pk=profile.user_id)
-    status = body['type'].split('.')[1]
+    status = body['data']['object']['status']
+    amount = body['data']['object']['amount']/100
     transfer, created = Transfer.objects.get_or_create(
         user=user,
         transfer_type='deposit',
-        amount=body['data']['object']['amount']/100,
+        amount=amount,
         currency='USD',
         stripe_charge_id=stripe_charge_id,
         exchange='GDAX'
@@ -44,6 +45,9 @@ def deposit(request):
     transfer.save()
 
     if status == 'succeeded':
+        user.portfolio, created = Portfolio.objects.get_or_create(user=user)
+        user.portfolio.usd += amount
+        user.portfolio.save()
         automate_trades.delay(profile.user_id, transfer.amount)
     elif status == 'failed':
         # TODO: Rollback account value.
