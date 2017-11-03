@@ -8,7 +8,6 @@ import gdax
 import coinbase
 from custodian.models import Trade
 from lattice.optimize import allocate
-from lattice.data import HistoricRatesPipeline
 
 
 GDAX_API_KEY = os.environ.get('GDAX_API_KEY')

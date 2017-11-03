@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
+import pytz
 import plaid
 import stripe
 import datetime
@@ -261,7 +262,7 @@ def historical_value(request):
     """
     period = request.GET.get('period')
 
-    if period not in ['1D', '7D', '1M', '3M', '6M', '1Y']:
+    if period not in ['7D', '1M', '3M', '6M', '1Y']:
         return HttpResponse('Invalid parameter value for period', status=400)
 
     # Transfers + Trades in portfolio
@@ -275,13 +276,13 @@ def historical_value(request):
             portfolio.add_asset(
                 transfer.currency,
                 float(transfer.amount),
-                str(transfer.timestamp)
+                str(transfer.timestamp.astimezone(tz=pytz.timezone('US/Pacific')).date())
             )
         else:
             portfolio.remove_asset(
                 transfer.currency,
                 float(transfer.amount),
-                str(transfer.timestamp)
+                str(transfer.timestamp.astimezone(tz=pytz.timezone('US/Pacific')).date())
             )
 
     for trade in trades:
@@ -290,39 +291,36 @@ def historical_value(request):
                 float(trade.amount),
                 trade.quote,
                 trade.base,
-                str(trade.timestamp)
+                str(transfer.timestamp.astimezone(tz=pytz.timezone('US/Pacific')).date())
             )
         else:
             portfolio.trade_asset(
                 float(trade.amount),
                 trade.base,
                 trade.quote,
-                str(trade.timestamp)
+                str(transfer.timestamp.astimezone(tz=pytz.timezone('US/Pacific')).date())
             )
 
     end = datetime.datetime.now()
 
-    if period == '1D':
-        start = end - datetime.timedelta(days = 1)
-        date_format = '%b %-d %-I:%M %p'
-    elif period == '7D':
-        start = end - datetime.timedelta(days = 7)
+    if period == '7D':
+        start = end - datetime.timedelta(days=7)
         date_format = '%b %-d %Y'
     elif period == '1M':
-        start = end - datetime.timedelta(days = 30)
+        start = end - datetime.timedelta(days=30)
         date_format = '%b %-d %Y'
     elif period == '3M':
-        start = end - datetime.timedelta(days = 90)
+        start = end - datetime.timedelta(days=90)
         date_format = '%b %-d %Y'
     elif period == '6M':
-        start = end - datetime.timedelta(days = 182)
+        start = end - datetime.timedelta(days=182)
         date_format = '%b %-d %Y'
     elif period == '1Y':
-        start = end - datetime.timedelta(days = 364)
+        start = end - datetime.timedelta(days=364)
         date_format = '%b %-d %Y'
-    freq = '%iS' % ((end - start)/9).total_seconds()
+    freq = 'D'
 
-    data = portfolio.get_historical_value(start, end, freq, date_format, silent=True)
+    data = portfolio.get_historical_value(start, end, freq, date_format)
 
     dataset = data['values']
     labels = data['dates']

@@ -45,6 +45,9 @@ def deposit(request):
 
     if status == 'succeeded':
         automate_trades.delay(profile.user_id, transfer.amount)
+    elif status == 'failed':
+        # TODO: Rollback account value.
+        pass
 
     return HttpResponse(status=204)
 
