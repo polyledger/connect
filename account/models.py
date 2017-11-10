@@ -120,7 +120,7 @@ class Portfolio(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    selected_coins = MultiSelectField(choices=SUPPORTED_COINS)
+    selected_coins = MultiSelectField(choices=SUPPORTED_COINS, null=True, blank=True)
     usd = models.FloatField(default=0)
     bitcoin = models.FloatField(default=0)
     bitcoin_cash = models.FloatField(default=0)

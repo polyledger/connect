@@ -7,6 +7,8 @@ from __future__ import unicode_literals
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+
+from account.models import Portfolio
 from account.tasks import rebalance, allocate_for_user
 
 
@@ -24,6 +26,9 @@ class AllocateForUserTestCase(TestCase):
             email = 'ari@polyledger.com',
             password='top_secret'
         )
+        self.user.profile.risk_assessment_score = 3
+        self.user.portfolio = Portfolio.objects.create(user=self.user)
+        self.user.save()
 
     def test_no_error(self):
         allocate_for_user(self.user.id)

@@ -73,8 +73,10 @@
             <p class="card-text">Choose which coins you would like in your portfolio. Having more coins in your portfolio increases management overhead but reduces portfolio risk significantly.</p>
             {% if user.profile.coins_selected %}
             <a role="button" class="btn btn-link btn-lg btn-block" disabled><span class="text-success">Complete <i class="icon icon-check"></i></span></a>
-            {% else %}
+            {% elif user.profile.risk_assessment_complete %}
             <a href="/account/coins/" class="btn btn-dark btn-lg btn-block">Choose Coins</a>
+            {% else %}
+            <button class="btn btn-dark btn-lg btn-block" disabled>Choose Coins</button>
             {% endif %}
           </div>
         </div>

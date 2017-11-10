@@ -22,9 +22,10 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.http import require_POST
 
-from .forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
-from .tokens import account_activation_token
-from .models import Portfolio, Profile, Transfer
+from account.forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
+from account.tokens import account_activation_token
+from account.models import Portfolio, Profile, Transfer
+from account.tasks import allocate_for_user, rebalance
 from custodian.models import Trade
 
 
@@ -152,6 +153,7 @@ def coins(request):
         user.profile.coins_selected = True
         user.portfolio.save()
         user.save()
+        allocate_for_user.delay(user.id)
         return redirect('account:index')
     return render(request, 'account/coins.html')
 
