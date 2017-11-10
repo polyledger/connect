@@ -88,7 +88,7 @@ class User(AbstractBaseUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    risk_assessment_score = models.FloatField(default=0)
+    risk_assessment_score = models.IntegerField(default=0)
     risk_assessment_complete = models.BooleanField(default=False)
     account_funded = models.BooleanField(default=False)
     coins_selected = models.BooleanField(default=False)

@@ -1,6 +1,29 @@
+"""
+Run this file with `python manage.py test account.tests`
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 from django.test import TestCase
+from django.contrib.auth import get_user_model
+from account.tasks import rebalance, allocate_for_user
 
-# Create your tests here.
+
+class RebalanceTestCase(TestCase):
+
+    def test_no_error(self):
+        rebalance()
+
+class AllocateForUserTestCase(TestCase):
+
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            first_name='Ari',
+            last_name='Hall',
+            email = 'ari@polyledger.com',
+            password='top_secret'
+        )
+
+    def test_no_error(self):
+        allocate_for_user(self.user.id)

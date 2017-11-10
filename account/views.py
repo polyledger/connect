@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import os
 import pytz
+import math
 import json
 import plaid
 import stripe
@@ -168,7 +169,7 @@ def questions(request):
             del form.cleaned_data['accredited_investor']
             for key, value in form.cleaned_data.items():
                 risk_assessment_score += value
-            risk_assessment_score = max(min(10, risk_assessment_score), 0)
+            risk_assessment_score = math.floor(max(min(5, risk_assessment_score), 0))
             user = request.user
             user.profile.risk_assessment_score = risk_assessment_score
             user.save()

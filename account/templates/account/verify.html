@@ -22,10 +22,10 @@
         {% endif %}
 
         <h1 class="text-center my-5">Risk tolerance score:</h1>
-        <h3 class="text-center my-5"><span class="lead" id="risk-score-output">{{ user.profile.risk_assessment_score }}</span>/10</h3>
+        <h3 class="text-center my-5"><span class="lead" id="risk-score-output">{{ user.profile.risk_assessment_score }}</span>/5</h3>
 
-        <input type="range" name="risk_assessment_score" min="1" max="10" value="{{ user.profile.risk_assessment_score}}" class="slider my-5" id="risk-score-slider">
-        <p class="lead">Based on our calculations, your risk index is {{ user.profile.risk_assessment_score }}/10. Does this seem right?</p>
+        <input type="range" name="risk_assessment_score" min="0" max="5" value="{{ user.profile.risk_assessment_score}}" class="slider my-5" id="risk-score-slider">
+        <p class="lead">Based on our calculations, your risk index is {{ user.profile.risk_assessment_score }}/5. Does this seem right?</p>
 
         <div class="text-center">
           <input type="submit" class="btn btn-dark btn-lg my-5" value="Confirm">
