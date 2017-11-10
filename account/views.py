@@ -257,20 +257,15 @@ def index(request):
     risk assessment form, initially fund the account, and see the account's
     value.
     """
-    account_value = 0
-    transfers = Transfer.objects.filter(
-        user=request.user
-    ).order_by('-timestamp')
+    selected_coins = []
+    for coin_name in request.user.portfolio.selected_coins:
+        coin = {}
+        coin['name'] = coin_name
+        selected_coins.append(coin)
 
-    if hasattr(request.user, 'portfolio'):
-        for field, value in request.user.portfolio.__dict__.items():
-            if field != 'id' and field != 'user_id' and type(value) is float:
-                account_value += value
-        account_value = '${:,.2f}'.format(account_value)
     return render(
         request, 'account/index.html', {
-            'account_value': account_value,
-            'transfers': transfers
+            'selected_coins': selected_coins
         }
     )
 
@@ -285,42 +280,6 @@ def historical_value(request):
 
     if period not in ['7D', '1M', '3M', '6M', '1Y']:
         return HttpResponse('Invalid parameter value for period', status=400)
-
-    # Transfers + Trades in portfolio
-    transfers = Transfer.objects.filter(user=request.user)
-    trades = Trade.objects.filter(user=request.user)
-
-    portfolio = backtest.Portfolio()
-
-    for transfer in transfers:
-        if transfer.transfer_type == 'deposit':
-            portfolio.add_asset(
-                transfer.currency,
-                float(transfer.amount),
-                str(transfer.timestamp.astimezone(tz=pytz.timezone('US/Pacific')).date())
-            )
-        else:
-            portfolio.remove_asset(
-                transfer.currency,
-                float(transfer.amount),
-                str(transfer.timestamp.astimezone(tz=pytz.timezone('US/Pacific')).date())
-            )
-
-    for trade in trades:
-        if trade.trade_type == 'buy':
-            portfolio.trade_asset(
-                float(trade.amount),
-                trade.quote,
-                trade.base,
-                str(transfer.timestamp.astimezone(tz=pytz.timezone('US/Pacific')).date())
-            )
-        else:
-            portfolio.trade_asset(
-                float(trade.amount),
-                trade.base,
-                trade.quote,
-                str(transfer.timestamp.astimezone(tz=pytz.timezone('US/Pacific')).date())
-            )
 
     end = datetime.datetime.now()
 
@@ -341,6 +300,12 @@ def historical_value(request):
         date_format = '%b %-d %Y'
     freq = 'D'
 
+    assets = {
+        'ETC': 100,
+        'LTC': 55,
+        'NEO': 100
+    }
+    portfolio = backtest.Portfolio(assets, start.strftime('%Y-%m-%d'))
     data = portfolio.get_historical_value(start, end, freq, date_format)
 
     dataset = data['values']

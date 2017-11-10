@@ -9,7 +9,17 @@
     <div class="row py-5">
       <div class="col">
         <h2 class="text-center">Your Portfolio</h2>
-        <!-- TODO: Get selected coins -->
+        <div class="d-flex flex-row justify-content-center">
+          {% for coin in selected_coins %}
+            <div class="card mx-1">
+              <div class="card-body">
+                {% with 'account/img/coins/'|add:coin.name|add:'.png' as image_url %}
+                  <img src="{% static image_url %}" width="25">
+                {% endwith %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
       </div>
     </div>
     <div class="row py-5">

@@ -131,6 +131,9 @@ let createChart = (data, labels) => {
               borderColor: 'rgba(98, 105, 142, 1)',
               backgroundColor: 'rgba(98, 105, 142, 1)'
             }
+          },
+          label: (tooltipItem, data) => {
+            return ' $' + tooltipItem.yLabel.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
           }
         }
       },
@@ -149,12 +152,12 @@ let createChart = (data, labels) => {
           },
           ticks: {
             maxTicksLimit: 5,
-            beginAtZero: true,
+            beginAtZero: false,
             callback: (value, index, values) => {
               if (parseInt(value) >= 1000) {
-                return '$' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",").toFixed(2)
+                return '$' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               } else {
-                return '$' + value.toFixed(2)
+                return '$' + value
               }
             }
           }
