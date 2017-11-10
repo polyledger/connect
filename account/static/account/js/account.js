@@ -1,5 +1,9 @@
 $('button#link-btn').attr('disabled', true)
 
+$(() => {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
 // Disable link bank account button unless a transfer amount is entered
 $(document).on('change keyup paste', 'input[name=amount]', (event) => {
   if ($(event.currentTarget).val().length > 0) {
@@ -23,6 +27,27 @@ $(document).on('click', '.nav-pills > .nav-item', (event) => {
   $el.find('a.nav-link').addClass('active')
   let period = $el.text().replace(/ /g,'')
   getHistoricalData(period)
+})
+
+$('.coin-card').click((event) => {
+  let $el = $(event.currentTarget)
+
+  if ($el.hasClass('border-success')) {
+    $el.removeClass('border-success')
+  } else {
+    $el.addClass('border-success')
+  }
+})
+
+$('.coin-card').on({
+  mouseenter (event) {
+    let $el = $(event.currentTarget)
+    $el.css('backgroundColor', '#eee')
+  },
+  mouseleave (event) {
+    let $el = $(event.currentTarget)
+    $el.css('backgroundColor', '#fff')
+  }
 })
 
 let getHistoricalData = (period) => {
@@ -54,9 +79,11 @@ if (window.location.pathname === '/account/deposit/') {
 }
 
 if (window.location.pathname === '/account/') {
-  $('#portfolio-value-chart').hide()
-  $('#spinner').show()
-  getHistoricalData('7D')
+  if ($('#portfolio-value-chart').length) {
+    $('#portfolio-value-chart').hide()
+    $('#spinner').show()
+    getHistoricalData('7D')
+  }
 }
 
 let createChart = (data, labels) => {
@@ -70,10 +97,10 @@ let createChart = (data, labels) => {
         label: 'Portfolio Value',
         data: data,
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)'
+          'rgba(98, 105, 142, 0.2)'
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)'
+          'rgba(98, 105, 142, 1)'
         ],
         borderWidth: 1
       }]
@@ -88,8 +115,8 @@ let createChart = (data, labels) => {
         callbacks: {
           labelColor: (tooltipItem, chart) => {
             return {
-              borderColor: 'rgba(255, 99, 132, 1)',
-              backgroundColor: 'rgba(255, 99, 132, 1)'
+              borderColor: 'rgba(98, 105, 142, 1)',
+              backgroundColor: 'rgba(98, 105, 142, 1)'
             }
           }
         }

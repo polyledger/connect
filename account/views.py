@@ -133,6 +133,14 @@ def deposit(request):
     return render(request, 'account/deposit.html')
 
 @login_required
+def coins(request):
+    """
+    The coins page allows users to select which coins to include in their
+    portfolio.
+    """
+    return render(request, 'account/coins.html')
+
+@login_required
 def questions(request):
     """
     This page presents the user with a form to be completed. The form is used

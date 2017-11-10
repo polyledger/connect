@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-5">
+  <h1>Coins</h1>
+  <p class="lead mb-5">Select the coins you want to add to your portfolio (you must have at least two coins selected). You can always update this later.</p>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card-columns">
+        <div class="card coin-card" data-toggle="tooltip" data-placement="bottom" title="Bitcoin">
+          <div class="card-body text-center">
+            <img src="{% static 'account/img/coins/bitcoin.png' %}" alt="Bitcoin" width="100">
+          </div>
+        </div>
+        <div class="card coin-card" data-toggle="tooltip" data-placement="bottom" title="Bitcoin Cash">
+          <div class="card-body text-center">
+            <img src="{% static 'account/img/coins/bitcoin_cash.png' %}" alt="Bitcoin Cash" width="100">
+          </div>
+        </div>
+        <div class="card coin-card" data-toggle="tooltip" data-placement="bottom" title="Dash">
+          <div class="card-body text-center">
+            <img src="{% static 'account/img/coins/dash.png' %}" alt="Dash" width="100">
+          </div>
+        </div>
+        <div class="card coin-card" data-toggle="tooltip" data-placement="bottom" title="Ethereum">
+          <div class="card-body text-center">
+            <img src="{% static 'account/img/coins/ethereum.png' %}" alt="Ethereum" width="100">
+          </div>
+        </div>
+        <div class="card coin-card" data-toggle="tooltip" data-placement="bottom" title="Ethereum Classic">
+          <div class="card-body text-center">
+            <img src="{% static 'account/img/coins/ethereum_classic.png' %}" alt="Ethereum Classic" width="100">
+          </div>
+        </div>
+        <div class="card coin-card" data-toggle="tooltip" data-placement="bottom" title="Litecoin">
+          <div class="card-body text-center">
+            <img src="{% static 'account/img/coins/litecoin.png' %}" alt="Litecoin" width="100">
+          </div>
+        </div>
+        <div class="card coin-card" data-toggle="tooltip" data-placement="bottom" title="Monero">
+          <div class="card-body text-center">
+            <img src="{% static 'account/img/coins/monero.png' %}" alt="Monero" width="100">
+          </div>
+        </div>
+        <div class="card coin-card">
+          <div class="card-body text-center" data-toggle="tooltip" data-placement="bottom" title="NEO">
+            <img src="{% static 'account/img/coins/neo.png' %}" alt="NEO" width="100">
+          </div>
+        </div>
+        <div class="card coin-card">
+          <div class="card-body text-center" data-toggle="tooltip" data-placement="bottom" title="Ripple">
+            <img src="{% static 'account/img/coins/ripple.png' %}" alt="Ripple" width="100">
+          </div>
+        </div>
+        <div class="card coin-card">
+          <div class="card-body text-center" data-toggle="tooltip" data-placement="bottom" title="Zcash">
+            <img src="{% static 'account/img/coins/zcash.png' %}" alt="Zcash" width="100">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a href="/account/" class="btn btn-dark btn-lg mt-5 float-right">Confirm</a>
+</div>
+
+{% endblock %}
