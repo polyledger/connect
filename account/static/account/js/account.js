@@ -29,24 +29,37 @@ $(document).on('click', '.nav-pills > .nav-item', (event) => {
   getHistoricalData(period)
 })
 
+let selected = 0
+$('a#confirm-coins').addClass('disabled')
+
 $('.coin-card').click((event) => {
   let $el = $(event.currentTarget)
 
   if ($el.hasClass('border-success')) {
     $el.removeClass('border-success')
+    selected--
+    $el.children('input').val(false)
   } else {
     $el.addClass('border-success')
+    selected++
+    $el.children('input').val(true)
+  }
+
+  if (selected < 2) {
+    $('a#confirm-coins').addClass('disabled')
+  } else {
+    $('a#confirm-coins').removeClass('disabled')
   }
 })
 
 $('.coin-card').on({
   mouseenter (event) {
     let $el = $(event.currentTarget)
-    $el.css('backgroundColor', '#eee')
+    $el.css({'backgroundColor': '#eee', 'cursor': 'pointer'})
   },
   mouseleave (event) {
     let $el = $(event.currentTarget)
-    $el.css('backgroundColor', '#fff')
+    $el.css({'backgroundColor': '#fff', 'cursor': 'auto'})
   }
 })
 

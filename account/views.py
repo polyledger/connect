@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import os
 import pytz
+import json
 import plaid
 import stripe
 import datetime
@@ -138,6 +139,19 @@ def coins(request):
     The coins page allows users to select which coins to include in their
     portfolio.
     """
+    if request.method == 'POST':
+        user = request.user
+        selected_coins = []
+        for field, value in request.POST.items():
+            if field != 'csrfmiddlewaretoken':
+                if json.loads(value):
+                    selected_coins.append(field)
+        user.portfolio, created = Portfolio.objects.get_or_create(user=user)
+        user.portfolio.selected_coins = selected_coins
+        user.profile.coins_selected = True
+        user.portfolio.save()
+        user.save()
+        return redirect('account:index')
     return render(request, 'account/coins.html')
 
 @login_required

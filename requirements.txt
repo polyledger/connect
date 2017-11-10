@@ -1,6 +1,7 @@
 click==6.7
 django==1.11.5
 djangorestframework==3.7.1
+django-multiselectfield==0.1.8
 pytz==2017.2
 plaid-python>=2.0,<2.1
 stripe==1.66.0

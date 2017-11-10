@@ -11,7 +11,7 @@
     </div>
   </div>
   <div class="row py-5">
-    {% if user.profile.account_funded and user.profile.risk_assessment_complete %}
+    {% if user.profile.coins_selected and user.profile.risk_assessment_complete %}
     <div class="col">
       <h2 class="statcard-number text-center">{{ account_value }} <small class="badge" id="percent-change"></small></h2>
       <ul class="nav nav-pills justify-content-center my-4">
@@ -75,7 +75,7 @@
         <div class="card-body">
           <h4 class="card-title">Choose Coins</h4>
           <p class="card-text">Choose which coins you would like in your portfolio. Having more coins in your portfolio increases management overhead but reduces portfolio risk significantly.</p>
-          {% if user.profile.risk_assessment_complete %}
+          {% if user.profile.coins_selected %}
           <a role="button" class="btn btn-link btn-lg btn-block" disabled><span class="text-success">Complete <i class="icon icon-check"></i></span></a>
           {% else %}
           <a href="/account/coins/" class="btn btn-dark btn-lg btn-block">Choose Coins</a>
