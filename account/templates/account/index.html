@@ -5,101 +5,87 @@
 {% block content %}
 
 <div class="container">
-  <div class="row mt-5">
-    <div class="col">
-      <h1>Your account</h1>
-    </div>
-  </div>
-  <div class="row py-5">
-    {% if user.profile.coins_selected and user.profile.risk_assessment_complete %}
-    <div class="col">
-      <h2 class="statcard-number text-center">{{ account_value }} <small class="badge" id="percent-change"></small></h2>
-      <ul class="nav nav-pills justify-content-center my-4">
-        <li class="nav-item">
-          <a class="nav-link active" href="#">7D</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">1M</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">3M</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">6M</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">1Y</a>
-        </li>
-      </ul>
-      <div class="text-center my-5" style="height: 270px; display: flex; justify-content: center; align-items: center;" id="spinner">
-        <i class="fa fa-spinner fa-spin fa-3x"></i>
+  {% if user.profile.coins_selected and user.profile.risk_assessment_complete %}
+    <div class="row py-5">
+      <div class="col">
+        <h2 class="text-center">Your Portfolio</h2>
+        <!-- TODO: Get selected coins -->
       </div>
-      <canvas id="portfolio-value-chart" class="my-5" width="100%" height="25" style="display: none;"></canvas>
-      <h4>Transfer History</h4>
-      <ul class="list-group">
-        {% if not transfers %}
-          No transfers
-        {% endif %}
-        {% for transfer in transfers %}
-        <li class="list-group-item">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h5 class="mb-1">{{transfer.currency}} {{transfer.amount|floatformat:2|intcomma}} {{transfer.transfer_type}}</h5>
-              <small>{{transfer.timestamp}}</small>
-            </div>
-            <span class="badge badge-{% if transfer.status == 'pending' %}primary{% endif %}{% if transfer.status == 'succeeded' %}success{% endif %}">{{transfer.status}}</span>
+    </div>
+    <div class="row py-5">
+      <div class="col-md-12">
+        <h3 class="text-center">Historical Performance</h3>
+        <ul class="nav nav-pills justify-content-center my-4">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">7D</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">1M</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">3M</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">6M</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">1Y</a>
+          </li>
+        </ul>
+        <div class="text-center my-5" style="height: 270px; display: flex; justify-content: center; align-items: center;" id="spinner">
+          <i class="fa fa-spinner fa-spin fa-3x"></i>
+        </div>
+        <canvas id="portfolio-value-chart" class="my-5" width="100%" height="25" style="display: none;"></canvas>
+      </div>
+    </div>
+  {% else %}
+    <div class="row py-5">
+      <div class="col-md-4">
+        <div class="card">
+          <img class="card-img-top" src="{% static 'account/img/dice_icon.png' %}" alt="Dice icon">
+          <div class="card-body">
+            <h4 class="card-title">Complete Risk Assessment</h4>
+            <p class="card-text">Please take our four-question risk assessment so we can understand your appetite for risk. We will develop an appropriate investment strategy for your portfolio.</p>
+            {% if user.profile.risk_assessment_complete %}
+            <a role="button" class="btn btn-link btn-lg btn-block" disabled><span class="text-success">Complete <i class="icon icon-check"></i></span></a>
+            {% else %}
+            <a href="/account/questions/" class="btn btn-dark btn-lg btn-block">Start Assessment</a>
+            {% endif %}
           </div>
-        </li>
-        {% endfor %}
-      </div>
-    </ul>
-    {% else %}
-    <div class="col-md-4">
-      <div class="card">
-        <img class="card-img-top" src="{% static 'account/img/dice_icon.png' %}" alt="Dice icon">
-        <div class="card-body">
-          <h4 class="card-title">Complete Risk Assessment</h4>
-          <p class="card-text">Please take our four-question risk assessment so we can understand your appetite for risk. We will develop an appropriate investment strategy for your portfolio.</p>
-          {% if user.profile.risk_assessment_complete %}
-          <a role="button" class="btn btn-link btn-lg btn-block" disabled><span class="text-success">Complete <i class="icon icon-check"></i></span></a>
-          {% else %}
-          <a href="/account/questions/" class="btn btn-dark btn-lg btn-block">Start Assessment</a>
-          {% endif %}
         </div>
       </div>
-    </div>
 
-    <div class="col-md-4">
-      <div class="card">
-        <img class="card-img-top" src="{% static 'account/img/coins_icon.png' %}" alt="Coins icon">
-        <div class="card-body">
-          <h4 class="card-title">Choose Coins</h4>
-          <p class="card-text">Choose which coins you would like in your portfolio. Having more coins in your portfolio increases management overhead but reduces portfolio risk significantly.</p>
-          {% if user.profile.coins_selected %}
-          <a role="button" class="btn btn-link btn-lg btn-block" disabled><span class="text-success">Complete <i class="icon icon-check"></i></span></a>
-          {% else %}
-          <a href="/account/coins/" class="btn btn-dark btn-lg btn-block">Choose Coins</a>
-          {% endif %}
+      <div class="col-md-4">
+        <div class="card">
+          <img class="card-img-top" src="{% static 'account/img/coins_icon.png' %}" alt="Coins icon">
+          <div class="card-body">
+            <h4 class="card-title">Choose Coins</h4>
+            <p class="card-text">Choose which coins you would like in your portfolio. Having more coins in your portfolio increases management overhead but reduces portfolio risk significantly.</p>
+            {% if user.profile.coins_selected %}
+            <a role="button" class="btn btn-link btn-lg btn-block" disabled><span class="text-success">Complete <i class="icon icon-check"></i></span></a>
+            {% else %}
+            <a href="/account/coins/" class="btn btn-dark btn-lg btn-block">Choose Coins</a>
+            {% endif %}
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-md-4">
-      <div class="card">
-        <img class="card-img-top" src="{% static 'account/img/piggybank_icon.png' %}" alt="Piggybank icon">
-        <div class="card-body">
-          <h4 class="card-title">Fund Account (Premium)</h4>
-          <p class="card-text">To get started with Polyledger's automated cryptocurrency investing, fund your account with BTC or ETH. This option is only available to users with premium accounts.</p>
-          {% if user.profile.account_funded %}
-          <a role="button" class="btn btn-link btn-lg btn-block" disabled><span class="text-success">Complete <i class="icon icon-check"></i></span></a>
-          {% else %}
-          <button class="btn btn-dark btn-lg btn-block" disabled>Fund Account</button>
-          {% endif %}
+      <div class="col-md-4">
+        <div class="card">
+          <img class="card-img-top" src="{% static 'account/img/piggybank_icon.png' %}" alt="Piggybank icon">
+          <div class="card-body">
+            <h4 class="card-title">Fund Account (Premium)</h4>
+            <p class="card-text">To get started with Polyledger's automated cryptocurrency investing, fund your account with BTC or ETH. This option is only available to users with premium accounts.</p>
+            {% if user.profile.account_funded %}
+            <a role="button" class="btn btn-link btn-lg btn-block" disabled><span class="text-success">Complete <i class="icon icon-check"></i></span></a>
+            {% else %}
+            <button class="btn btn-dark btn-lg btn-block" disabled>Fund Account</button>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
-    {% endif %}
-  </div>
+  {% endif %}
 </div>
 
 {% endblock %}
