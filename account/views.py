@@ -265,6 +265,8 @@ def index(request):
         coin = {}
         coin['name'] = coin_name
         selected_coins.append(coin)
+        percent = getattr(request.user.portfolio, coin_name)
+        coin['percent'] = "{0:.0f}%".format(percent * 100)
 
     return render(
         request, 'account/index.html', {
