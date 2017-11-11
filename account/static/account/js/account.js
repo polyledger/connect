@@ -72,7 +72,7 @@ let getHistoricalData = (period) => {
     let percentChange = data.percent_change
     $percentChangeEl = $('#percent-change')
     $percentChangeEl.text(percentChange)
-
+    $percentChangeEl.removeClass('badge-success badge-danger')
     // Set badge class based on non-negativity
     let badgeClass
     percentChange[0] !== '-' ? badgeClass = 'badge-success' : badgeClass = 'badge-danger'

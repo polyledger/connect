@@ -194,6 +194,8 @@ def verify(request):
             user.profile.risk_assessment_score = risk_assessment_score
             user.profile.risk_assessment_complete = True
             user.save()
+            if user.profile.coins_selected:
+                allocate_for_user.delay(user.id)
             return redirect('account:index')
         else:
             form = RiskConfirmationForm()
