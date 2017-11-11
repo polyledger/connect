@@ -7,7 +7,7 @@ import os
 import gdax
 import coinbase
 from custodian.models import Trade
-from lattice.optimize import allocate
+from lattice.optimize import Allocator
 
 
 GDAX_API_KEY = os.environ.get('GDAX_API_KEY')
@@ -42,7 +42,7 @@ def automate_trades(pk, transfer_amount):
     user = get_user_model().objects.get(pk=pk)
     # Create portfolio
     risk_index = user.profile.risk_assessment_score
-    allocation = allocate(risk_index).to_dict()
+    allocation = Allocator().allocate().loc[risk_index].to_dict()
 
     # Place trades
     usd = user.portfolio.usd

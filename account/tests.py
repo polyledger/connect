@@ -28,6 +28,8 @@ class AllocateForUserTestCase(TestCase):
         )
         self.user.profile.risk_assessment_score = 3
         self.user.portfolio = Portfolio.objects.create(user=self.user)
+        self.user.portfolio.selected_coins = ['bitcoin', 'ethereum', 'litecoin']
+        self.user.portfolio.save()
         self.user.save()
 
     def test_no_error(self):

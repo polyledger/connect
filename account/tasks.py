@@ -4,7 +4,7 @@ from celery.schedules import crontab
 from django.contrib.auth import get_user_model
 
 import os
-from lattice.optimize import allocate
+from lattice.optimize import Allocator
 
 
 @shared_task
@@ -13,11 +13,9 @@ def allocate_for_user(pk):
     Rebalances portfolio allocations.
     """
     user = get_user_model().objects.get(pk=pk)
-    start = '2017-01-01'
     risk_score = user.profile.risk_assessment_score
-    allocation = allocate(start).loc[risk_score]
 
-    coin_map = {
+    coin_map_0 = {
         'BTC': 'bitcoin',
         'LTC': 'litecoin',
         'ETH': 'ethereum',
@@ -30,8 +28,27 @@ def allocate_for_user(pk):
         'DASH': 'dash'
     }
 
+    coin_map_1 = {
+        'bitcoin': 'BTC',
+        'litecoin': 'LTC',
+        'ethereum': 'ETH',
+        'ripple': 'XRP',
+        'monero': 'XMR',
+        'zcash': 'ZEC',
+        'bitcoin_cash': 'BCH',
+        'ethereum_classic': 'ETC',
+        'neo': 'NEO',
+        'dash': 'DASH'
+    }
+
+    coins = []
+    for coin in user.portfolio.selected_coins:
+        coins.append(coin_map_1[coin])
+    allocator = Allocator(coins=coins, start='2017-10-01')
+    allocation = allocator.allocate().loc[risk_score]
+
     for coin in allocation.keys():
-        setattr(user.portfolio, coin_map[coin], allocation[coin])
+        setattr(user.portfolio, coin_map_0[coin], allocation[coin])
     user.portfolio.save()
     user.save()
 
@@ -41,5 +58,5 @@ def rebalance():
     """
     Rebalances portfolio allocations.
     """
-    start = '2017-01-01'
-    allocations = allocate(start)
+    allocator = Allocator(start='2017-01-01')
+    allocations = allocator.allocate()
