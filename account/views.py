@@ -305,11 +305,22 @@ def historical_value(request):
         date_format = '%b %-d %Y'
     freq = 'D'
 
-    assets = {
-        'ETC': 100,
-        'LTC': 55,
-        'NEO': 100
+    assets = {}
+    coin_map = {
+        'bitcoin': 'BTC',
+        'litecoin': 'LTC',
+        'ethereum': 'ETH',
+        'ripple': 'XRP',
+        'monero': 'XMR',
+        'zcash': 'ZEC',
+        'bitcoin_cash': 'BCH',
+        'ethereum_classic': 'ETC',
+        'neo': 'NEO',
+        'dash': 'DASH'
     }
+    for coin in request.user.portfolio.selected_coins:
+        assets[coin_map[coin]] = getattr(request.user.portfolio, coin)
+
     portfolio = backtest.Portfolio(assets, start.strftime('%Y-%m-%d'))
     data = portfolio.get_historical_value(start, end, freq, date_format)
 
