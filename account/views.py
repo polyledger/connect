@@ -326,9 +326,10 @@ def historical_value(request):
     data = portfolio.get_historical_value(start, end, freq, date_format)
 
     bitcoin = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
-    bitcoin.trade_asset(100, 'USD', 'BTC')
+    bitcoin.trade_asset(100, 'USD', 'BTC', start.strftime('%Y-%m-%d'))
+    bitcoin_data = bitcoin.get_historical_value(start, end, freq, date_format)
 
-    dataset = data['values']
+    dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
     labels = data['dates']
     percent_change = str(round(portfolio.get_value() - 100, 2)) + '%'
     return JsonResponse({

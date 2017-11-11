@@ -99,24 +99,29 @@ if (window.location.pathname === '/account/') {
   }
 }
 
-let createChart = (data, labels) => {
+let createChart = (dataset, labels) => {
   if (window.chart) window.chart.destroy()
   var ctx = document.getElementById("portfolio-value-chart").getContext('2d')
   window.chart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,
-      datasets: [{
-        label: 'Portfolio Value',
-        data: data,
-        backgroundColor: [
-          'rgba(98, 105, 142, 0.2)'
-        ],
-        borderColor: [
-          'rgba(98, 105, 142, 1)'
-        ],
-        borderWidth: 1
-      }]
+      datasets: [
+        {
+          label: 'Portfolio Value',
+          data: dataset.portfolio,
+          backgroundColor: ['rgba(98, 105, 142, 0.2)'],
+          borderColor: ['rgba(98, 105, 142, 1)'],
+          borderWidth: 1
+        },
+        {
+          label: 'Bitcoin',
+          data: dataset.bitcoin,
+          backgroundColor: ['rgba(255, 194, 69, 0.2)'],
+          borderColor: ['rgba(255, 194, 69, 1)'],
+          borderWidth: 1
+        }
+      ]
     },
     options: {
       legend: {
@@ -124,12 +129,14 @@ let createChart = (data, labels) => {
       },
       tooltips: {
         enabled: true,
+        mode: 'x',
         displayColors: true,
         callbacks: {
           labelColor: (tooltipItem, chart) => {
+            let dataset = chart.config.data.datasets[tooltipItem.datasetIndex]
             return {
-              borderColor: 'rgba(98, 105, 142, 1)',
-              backgroundColor: 'rgba(98, 105, 142, 1)'
+              borderColor: dataset.borderColor[0],
+              backgroundColor: dataset.backgroundColor[0]
             }
           },
           label: (tooltipItem, data) => {
