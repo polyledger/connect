@@ -318,15 +318,19 @@ def historical_value(request):
         'neo': 'NEO',
         'dash': 'DASH'
     }
+    portfolio = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
     for coin in request.user.portfolio.selected_coins:
-        assets[coin_map[coin]] = getattr(request.user.portfolio, coin)
-
-    portfolio = backtest.Portfolio(assets, start.strftime('%Y-%m-%d'))
+        percent = getattr(request.user.portfolio, coin)
+        to_asset = coin_map[coin]
+        portfolio.trade_asset(100 * percent, 'USD', to_asset, start.strftime('%Y-%m-%d'))
     data = portfolio.get_historical_value(start, end, freq, date_format)
+
+    bitcoin = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
+    bitcoin.trade_asset(100, 'USD', 'BTC')
 
     dataset = data['values']
     labels = data['dates']
-    percent_change = '0%' # placeholder
+    percent_change = str(round(portfolio.get_value() - 100, 2)) + '%'
     return JsonResponse({
         'dataset': dataset,
         'labels': labels,
