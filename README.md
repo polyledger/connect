@@ -152,6 +152,38 @@ The app will be hosted on a [Digital Ocean droplet](https://cloud.digitalocean.c
 ❯ ssh root@192.241.220.209
 ```
 
+The app is located in `/home/polyledger`. To update from the master branch, run a git pull:
+
+```
+❯ git pull origin master
+```
+
+Don't forget to copy any new static assets to the static folder
+
+```
+❯ python manage.py collectstatic
+```
+
+Then reload gunicorn
+
+```
+❯ /home/venv/bin/gunicorn --bind 127.0.0.1:8001 --reload polyledger.wsgi
+```
+
+Keep in mind that the celery task is being supervised with [supervisor](http://supervisord.org/) and the config file is located at `/etc/supervisor/conf.d/celery.conf`. Here are basic supervisor commands
+
+```
+❯ sudo supervisorctl status celery
+celery                            RUNNING    pid 18020, uptime 0:00:50
+❯ sudo supervisorctl stop celery
+celery: stopped
+❯ sudo supervisorctl start celery
+celery: started
+❯ sudo supervisorctl restart celery
+celery: stopped
+celery: started
+```
+
 ## Staging
 
 ### Database
@@ -160,10 +192,4 @@ Log into the PostgreSQL database
 
 ```
 ❯ psql -U admin --password -d polyledger_staging
-```
-
-Starting gunicorn
-
-```
-❯ /home/venv/bin/gunicorn --bind 127.0.0.1:8001 --reload polyledger.wsgi
 ```
