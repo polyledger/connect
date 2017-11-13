@@ -30,7 +30,7 @@ $(document).on('click', '.nav-pills > .nav-item', (event) => {
 })
 
 let selected = 0
-$('a#confirm-coins').addClass('disabled')
+$('#confirm-coins').prop('disabled', true)
 
 $('.coin-card').click((event) => {
   let $el = $(event.currentTarget)
@@ -46,9 +46,9 @@ $('.coin-card').click((event) => {
   }
 
   if (selected < 2) {
-    $('a#confirm-coins').addClass('disabled')
+    $('#confirm-coins').prop('disabled', true)
   } else {
-    $('a#confirm-coins').removeClass('disabled')
+    $('#confirm-coins').prop('disabled', false)
   }
 })
 
