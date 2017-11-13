@@ -164,6 +164,12 @@ Then reload gunicorn
 ❯ /home/venv/bin/gunicorn --bind 127.0.0.1:8001 --reload polyledger.wsgi
 ```
 
+Don't forget to copy any new static assets to the static folder
+
+```
+❯ python manage.py collectstatic
+```
+
 Keep in mind that the celery task is being supervised with [supervisor](http://supervisord.org/) and the config file is located at `/etc/supervisor/conf.d/celery.conf`. Here are basic supervisor commands
 
 ```
