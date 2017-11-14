@@ -21,7 +21,7 @@
             {% for coin in selected_coins %}
               <tr>
                 <th scope="row" class="text-center">
-                  {% with 'account/img/coins/'|add:coin.name|add:'.png' as image_url %}
+                  {% with 'account/img/coins/'|add:coin.filename as image_url %}
                     <img src="{% static image_url %}" width="25">
                   {% endwith %}
                 </th>

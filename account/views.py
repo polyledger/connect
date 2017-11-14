@@ -263,12 +263,14 @@ def index(request):
     value.
     """
     selected_coins = []
-    for coin_name in request.user.portfolio.selected_coins:
+    human_readable = request.user.portfolio.get_selected_coins_display().split(', ')
+    for index, name in enumerate(request.user.portfolio.selected_coins):
         coin = {}
-        coin['name'] = coin_name
+        coin['name'] = human_readable[index]
+        coin['filename'] = name + '.png'
         selected_coins.append(coin)
-        percent = getattr(request.user.portfolio, coin_name)
-        coin['percent'] = "{0:.0f}%".format(percent * 100)
+        percent = getattr(request.user.portfolio, name)
+        coin['percent'] = '{0:.2f}%'.format(percent)
 
     return render(
         request, 'account/index.html', {
@@ -324,7 +326,7 @@ def historical_value(request):
     for coin in request.user.portfolio.selected_coins:
         percent = getattr(request.user.portfolio, coin)
         to_asset = coin_map[coin]
-        portfolio.trade_asset(100 * percent, 'USD', to_asset, start.strftime('%Y-%m-%d'))
+        portfolio.trade_asset(percent, 'USD', to_asset, start.strftime('%Y-%m-%d'))
     data = portfolio.get_historical_value(start, end, freq, date_format)
 
     bitcoin = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
