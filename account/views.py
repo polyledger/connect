@@ -154,7 +154,7 @@ def coins(request):
         user.profile.coins_selected = True
         user.portfolio.save()
         user.save()
-        allocate_for_user.delay(user.id)
+        allocate_for_user.apply(args=[user.id])
         return redirect('account:index')
     selected_coins = user.portfolio.selected_coins
     return render(request, 'account/coins.html', {'selected_coins': selected_coins})
