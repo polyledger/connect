@@ -29,8 +29,11 @@ $(document).on('click', '.nav-pills > .nav-item', (event) => {
   getHistoricalData(period)
 })
 
-let selected = 0
-$('#confirm-coins').prop('disabled', true)
+let selected = $('.border-success').length
+
+if (selected < 2) {
+  $('#confirm-coins').prop('disabled', true)
+}
 
 $('.coin-card').click((event) => {
   let $el = $(event.currentTarget)

@@ -141,8 +141,9 @@ def coins(request):
     The coins page allows users to select which coins to include in their
     portfolio.
     """
+    user = request.user
+
     if request.method == 'POST':
-        user = request.user
         selected_coins = []
         for field, value in request.POST.items():
             if field != 'csrfmiddlewaretoken':
@@ -155,7 +156,8 @@ def coins(request):
         user.save()
         allocate_for_user.delay(user.id)
         return redirect('account:index')
-    return render(request, 'account/coins.html')
+    selected_coins = user.portfolio.selected_coins
+    return render(request, 'account/coins.html', {'selected_coins': selected_coins})
 
 @login_required
 def questions(request):
