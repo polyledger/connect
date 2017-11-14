@@ -161,16 +161,17 @@ The app is located in `/home/polyledger`. To update from the master branch, run 
 Don't forget to copy any new static assets to the static folder
 
 ```
-❯ python manage.py collectstatic
+❯ source ../venv/bin/activate
+(venv) ❯ python manage.py collectstatic
 ```
 
-Then reload gunicorn
+Then reload the app
 
 ```
-❯ /home/venv/bin/gunicorn --bind 127.0.0.1:8001 --reload polyledger.wsgi
+❯ sudo supervisorctl reload polyledger
 ```
 
-Keep in mind that the celery task is being supervised with [supervisor](http://supervisord.org/) and the config file is located at `/etc/supervisor/conf.d/celery.conf`. Here are basic supervisor commands
+Reload celery as well, if a tas was updated. Keep in mind that the celery task is being supervised with [supervisor](http://supervisord.org/) and the config file is located at `/etc/supervisor/conf.d/celery.conf`. Here are basic supervisor commands
 
 ```
 ❯ sudo supervisorctl status celery
