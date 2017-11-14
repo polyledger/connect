@@ -71,6 +71,8 @@ let getHistoricalData = (period) => {
     $('#portfolio-value-chart').show()
     $('#spinner').hide()
     let dataset = data.dataset
+    dataset.portfolio = dataset.portfolio.map(x => x - 100)
+    dataset.bitcoin = dataset.bitcoin.map(x => x - 100)
     let labels = data.labels
     let percentChange = data.percent_change
     $percentChangeEl = $('#percent-change')
@@ -145,7 +147,7 @@ let createChart = (dataset, labels) => {
             }
           },
           label: (tooltipItem, data) => {
-            return ' $' + tooltipItem.yLabel.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            return ' ' + tooltipItem.yLabel.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '%'
           }
         }
       },
@@ -167,9 +169,9 @@ let createChart = (dataset, labels) => {
             beginAtZero: false,
             callback: (value, index, values) => {
               if (parseInt(value) >= 1000) {
-                return '$' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '%'
               } else {
-                return '$' + value
+                return value + '%'
               }
             }
           }
