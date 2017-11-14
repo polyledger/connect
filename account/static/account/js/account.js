@@ -124,6 +124,8 @@ let createChart = (dataset, labels) => {
       ]
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       legend: {
         display: false
       },
