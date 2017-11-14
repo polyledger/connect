@@ -113,7 +113,7 @@ let createChart = (dataset, labels) => {
       labels: labels,
       datasets: [
         {
-          label: 'Portfolio Value',
+          label: 'Portfolio',
           data: dataset.portfolio,
           backgroundColor: ['rgba(98, 105, 142, 0.2)'],
           borderColor: ['rgba(98, 105, 142, 1)'],
@@ -132,7 +132,7 @@ let createChart = (dataset, labels) => {
       responsive: true,
       maintainAspectRatio: false,
       legend: {
-        display: false
+        display: true
       },
       tooltips: {
         enabled: true,
