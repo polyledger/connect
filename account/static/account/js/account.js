@@ -67,6 +67,7 @@ $('.coin-card').on({
 })
 
 let getHistoricalData = (period) => {
+  $('#error').empty()
   $.ajax(`/account/historical_value/?period=${period}`).then((data, textStatus, jqXHR) => {
     $('#portfolio-value-chart').show()
     $('#spinner').hide()
@@ -84,7 +85,12 @@ let getHistoricalData = (period) => {
     $percentChangeEl.addClass(badgeClass)
     createChart(dataset, labels)
   }, (jqXHR, textStatus, errorThrown) => {
-    console.error(errorThrown)
+    $('#spinner').hide()
+    $('#error').append(`
+      <div style="height: 270px;" class="d-flex align-items-center justify-content-center">
+        <h5 class="text-center">No data was found for this timeframe.</h5>
+      </div>
+    `)
   })
 }
 
