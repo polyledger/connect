@@ -265,14 +265,16 @@ def index(request):
     value.
     """
     selected_coins = []
-    human_readable = sorted(request.user.portfolio.get_selected_coins_display().split(', '))
-    for index, name in enumerate(sorted(request.user.portfolio.selected_coins)):
-        coin = {}
-        coin['name'] = human_readable[index]
-        coin['filename'] = name + '.png'
-        selected_coins.append(coin)
-        percent = getattr(request.user.portfolio, name)
-        coin['percent'] = '{0:.2f}%'.format(percent)
+
+    if hasattr(request.user, 'portfolio'):    
+        human_readable = sorted(request.user.portfolio.get_selected_coins_display().split(', '))
+        for index, name in enumerate(sorted(request.user.portfolio.selected_coins)):
+            coin = {}
+            coin['name'] = human_readable[index]
+            coin['filename'] = name + '.png'
+            selected_coins.append(coin)
+            percent = getattr(request.user.portfolio, name)
+            coin['percent'] = '{0:.2f}%'.format(percent)
 
     return render(
         request, 'account/index.html', {

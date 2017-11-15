@@ -171,6 +171,12 @@ Then reload the app
 ❯ sudo supervisorctl reload polyledger
 ```
 
+or
+
+```
+❯ /home/venv/bin/gunicorn polyledger.wsgi --bind 127.0.0.1:8001 --reload
+```
+
 Reload celery as well, if a tas was updated. Keep in mind that the celery task is being supervised with [supervisor](http://supervisord.org/) and the config file is located at `/etc/supervisor/conf.d/celery.conf`. Here are basic supervisor commands
 
 ```
@@ -193,4 +199,10 @@ Log into the PostgreSQL database
 
 ```
 ❯ psql -U admin --password -d polyledger_staging
+```
+
+Start PostgreSQL
+
+```
+❯ sudo service postgresql start
 ```
