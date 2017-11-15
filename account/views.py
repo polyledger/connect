@@ -142,6 +142,7 @@ def coins(request):
     portfolio.
     """
     user = request.user
+    selected_coins = []
 
     if request.method == 'POST':
         selected_coins = []
@@ -156,7 +157,9 @@ def coins(request):
         user.save()
         allocate_for_user.apply(args=[user.id])
         return redirect('account:index')
-    selected_coins = user.portfolio.selected_coins
+    
+    if hasattr(user, 'portfolio'):
+        selected_coins = user.portfolio.selected_coins
     return render(request, 'account/coins.html', {'selected_coins': selected_coins})
 
 @login_required
