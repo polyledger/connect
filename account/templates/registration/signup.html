@@ -17,7 +17,7 @@
 
         <div class="form-group">
           <label id="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
-          <input class="form-control" type="text" name="{{ form.first_name.html_name }}">
+          <input class="form-control" type="text" name="{{ form.first_name.html_name }}" autofocus>
           {% if form.first_name.errors %}
             <div class="text-danger">
               {% for error in form.first_name.errors %}
