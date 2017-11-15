@@ -42,7 +42,7 @@ def allocate_for_user(pk):
     }
 
     coins = []
-    for coin in user.portfolio.selected_coins:
+    for coin in sorted(user.portfolio.selected_coins):
         coins.append(coin_map_1[coin])
     allocator = Allocator(coins=coins, start='2017-10-01')
     allocation = allocator.allocate().loc[risk_score]

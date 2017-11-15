@@ -265,8 +265,8 @@ def index(request):
     value.
     """
     selected_coins = []
-    human_readable = request.user.portfolio.get_selected_coins_display().split(', ')
-    for index, name in enumerate(request.user.portfolio.selected_coins):
+    human_readable = sorted(request.user.portfolio.get_selected_coins_display().split(', '))
+    for index, name in enumerate(sorted(request.user.portfolio.selected_coins)):
         coin = {}
         coin['name'] = human_readable[index]
         coin['filename'] = name + '.png'
