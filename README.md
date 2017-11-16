@@ -168,13 +168,9 @@ Don't forget to copy any new static assets to the static folder
 Then reload the app
 
 ```
-❯ sudo supervisorctl reload polyledger
-```
+❯ /home/venv/bin/gunicorn polyledger.wsgi --bind 127.0.0.1:8001 --reload &
+❯ bg
 
-or
-
-```
-❯ /home/venv/bin/gunicorn polyledger.wsgi --bind 127.0.0.1:8001 --reload
 ```
 
 Reload celery as well, if a tas was updated. Keep in mind that the celery task is being supervised with [supervisor](http://supervisord.org/) and the config file is located at `/etc/supervisor/conf.d/celery.conf`. Here are basic supervisor commands
