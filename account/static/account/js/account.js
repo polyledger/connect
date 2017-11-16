@@ -20,6 +20,7 @@ $(document).on('input', '#risk-score-slider', (event) => {
 })
 
 $(document).on('click', '.nav-pills > .nav-item', (event) => {
+  event.preventDefault()
   $('#portfolio-value-chart').hide()
   $('#spinner').show()
   $('a.nav-link').removeClass('active')
