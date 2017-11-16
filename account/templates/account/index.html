@@ -9,26 +9,26 @@
     <div class="row py-5">
       <div class="col">
         <h2 class="text-center">Your Portfolio</h2>
-        <table class="table table-hover table-bordered">
+        <table class="table">
           <thead>
             <tr>
-              <th scope="col"></th>
-              <th scope="col">Coin</th>
-              <th scope="col">Percentage</th>
+              <th scope="row">Coins</th>
+              {% for coin in selected_coins %}
+              <th scope="row" class="text-center" data-toggle="tooltip" data-placement="top" title="{{coin.name}}">
+                {% with 'account/img/coins/'|add:coin.filename as image_url %}
+                  <img src="{% static image_url %}" width="25">
+                {% endwith %}
+              </th>
+              {% endfor %}
             </tr>
           </thead>
           <tbody>
-            {% for coin in selected_coins %}
-              <tr>
-                <th scope="row" class="text-center">
-                  {% with 'account/img/coins/'|add:coin.filename as image_url %}
-                    <img src="{% static image_url %}" width="25">
-                  {% endwith %}
-                </th>
-                <td>{{coin.name}}</td>
-                <td>{{coin.percent}}</td>
-              </tr>
-            {% endfor %}
+
+              <th scope="row">Percent</th>
+              {% for coin in selected_coins %}
+                <td class="text-center">{{coin.percent}}</td>
+              {% endfor %}
+            </tr>
           </tbody>
         </table>
       </div>
