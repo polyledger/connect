@@ -9,7 +9,7 @@
     <div class="row py-5">
       <div class="col">
         <h2 class="text-center">Your Portfolio</h2>
-        <table class="table">
+        <table class="table table-responsive">
           <thead>
             <tr>
               <th scope="row">Coins</th>
@@ -23,7 +23,7 @@
             </tr>
           </thead>
           <tbody>
-
+            <tr>
               <th scope="row">Percent</th>
               {% for coin in selected_coins %}
                 <td class="text-center">{{coin.percent}}</td>
