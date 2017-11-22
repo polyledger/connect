@@ -11,6 +11,7 @@
         <div class="col-md-6">
           <h3>Change Email</h3>
           <form action="#" method="POST">
+            {% csrf_token %}
             <div class="form-group">
               <label for="currentEmail">Current email address</label>
               <input class="form-control short-field" type="email" placeholder="{{email}}" readonly>
@@ -25,6 +26,7 @@
         <div class="col-md-6">
           <h3>Change Password</h3>
           <form action="#" method="POST">
+            {% csrf_token %}
             <div class="form-group">
               <label for="password">Current password</label>
               <input type="password" name="password" class="form-control short-field">
@@ -44,7 +46,10 @@
       <hr>
       <h3>Close Account</h3>
       <p>We're sorry to see you go. This action is non-reversable and permanently closes your account with Polyledger.</p>
-      <button class="btn btn-danger">Close Account</button>
+      <form action="#" method="POST">
+        {% csrf_token %}
+        <button typ="submit" class="btn btn-danger">Close Account</button>
+      </form>
     </div>
   </div>
 </div>
