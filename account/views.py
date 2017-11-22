@@ -229,6 +229,15 @@ def change_password(request):
         messages.error(request, 'Please correct the error below.')
     return render(request, 'account/settings.html', {'form': form})
 
+@login_required
+@require_POST
+def close_account(request):
+    user = request.user
+    user.is_active = False
+    user.save()
+    messages.success(request, 'Account successfully closed.')
+    return redirect('account:login')
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)

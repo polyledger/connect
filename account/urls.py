@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/'
         '(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
+    url(r'^close/$', views.close_account, name='close_account'),
     url(r'^coins/$', views.coins, name='coins'),
     url(r'^deposit/$', views.deposit, name='deposit'),
     url(r'^get_access_token/$', views.get_access_token,name='get_access_token'),

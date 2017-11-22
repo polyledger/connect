@@ -74,7 +74,7 @@
       <hr>
       <h3>Close Account</h3>
       <p>We're sorry to see you go. This action is non-reversable and permanently closes your account with Polyledger.</p>
-      <form name="close_account" action="/account/settings/" method="POST">
+      <form name="close_account" action="/account/close/" method="POST">
         {% csrf_token %}
         <button typ="submit" class="btn btn-danger">Close Account</button>
       </form>
