@@ -11,7 +11,8 @@ from lattice import backtest
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
@@ -157,7 +158,7 @@ def coins(request):
         user.save()
         allocate_for_user.apply(args=[user.id])
         return redirect('account:index')
-    
+
     if hasattr(user, 'portfolio'):
         selected_coins = user.portfolio.selected_coins
     return render(request, 'account/coins.html', {'selected_coins': selected_coins})
@@ -208,10 +209,25 @@ def verify(request):
 
 @login_required
 def settings(request):
-    if request.method == 'POST':
-        pass # TODO: Change email/password and account removal logic
     email = request.user.email
-    return render(request, 'account/settings.html', {'email': email})
+    password_form = PasswordChangeForm(request.user)
+    return render(request, 'account/settings.html', {
+        'email': email,
+        'password_form': password_form
+    })
+
+@login_required
+@require_POST
+def change_password(request):
+    form = PasswordChangeForm(request.user, request.POST)
+    if form.is_valid():
+        user = form.save()
+        update_session_auth_hash(request, user)
+        messages.success(request, 'Your password was successfully updated!')
+        return redirect('account:settings')
+    else:
+        messages.error(request, 'Please correct the error below.')
+    return render(request, 'account/settings.html', {'form': form})
 
 def signup(request):
     if request.method == 'POST':
@@ -269,7 +285,7 @@ def index(request):
     """
     selected_coins = []
 
-    if hasattr(request.user, 'portfolio'):    
+    if hasattr(request.user, 'portfolio'):
         human_readable = sorted(request.user.portfolio.get_selected_coins_display().split(', '))
         for index, name in enumerate(sorted(request.user.portfolio.selected_coins)):
             coin = {}
