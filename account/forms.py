@@ -66,15 +66,18 @@ class SignUpForm(UserCreationForm):
     )
     email = forms.EmailField(
         max_length=254,
-        help_text='Required. Inform a valid email address.',
+        required=True,
+        help_text='Required.',
         widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
     password1 = forms.CharField(
         label='Password',
+        required=True,
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
     password2 = forms.CharField(
         label='Password confirmation',
+        required=True,
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
 
