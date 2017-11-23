@@ -227,7 +227,7 @@ def change_password(request):
         return redirect('account:settings')
     else:
         messages.error(request, 'Please correct the error below.')
-    return render(request, 'account/settings.html', {'form': form})
+    return render(request, 'account/settings.html', {'password_form': form})
 
 @login_required
 @require_POST
