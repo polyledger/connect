@@ -8,22 +8,7 @@
       <h1>Settings</h1>
       <hr>
       <div class="row">
-        <div class="col-md-6">
-          <h3>Change Email</h3>
-          <form name="email" action="/account/settings/" method="POST">
-            {% csrf_token %}
-            <div class="form-group">
-              <label for="currentEmail">Current email address</label>
-              <input class="form-control short-field" type="email" placeholder="{{email}}" readonly>
-            </div>
-            <div class="form-group">
-              <label for="newEmail">New email address</label>
-              <input type="email" name="newEmail" class="form-control short-field">
-            </div>
-            <button class="btn btn-primary" type="submit">Submit</button>
-          </form>
-        </div>
-        <div class="col-md-6">
+        <div class="col-md-12">
           <h3>Change Password</h3>
           <form name="password" action="/account/password/" method="POST">
             {% csrf_token %}
