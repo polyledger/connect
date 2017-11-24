@@ -92,7 +92,10 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 class PortfolioAdmin(admin.ModelAdmin):
-    list_display = ('user', 'usd', 'bitcoin', 'litecoin', 'ethereum')
+    list_display = (
+        'user', 'usd', 'bitcoin', 'bitcoin_cash', 'dash', 'ethereum_classic',
+        'ethereum', 'litecoin', 'monero', 'neo', 'ripple', 'zcash'
+    )
 
 
 class TransferAdmin(admin.ModelAdmin):
