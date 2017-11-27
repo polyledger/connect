@@ -247,7 +247,7 @@ def signup(request):
             env = os.environ.get('DJANGO_SETTINGS_MODULE')
 
             if env == 'polyledger.settings.production':
-                current_site = 'polyledger.com'
+                current_site = 'app.polyledger.com'
             elif env == 'polyledger.settings.staging':
                 current_site = 'staging.polyledger.com'
             else:
