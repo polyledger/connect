@@ -49,6 +49,7 @@ def allocate_for_user(pk):
 
     for coin in allocation.keys():
         setattr(user.portfolio, coin_map_0[coin], allocation[coin])
+        # TODO: Reset non-selected coins to 0.0 allocation
     user.portfolio.save()
     user.save()
 
