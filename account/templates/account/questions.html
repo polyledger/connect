@@ -4,8 +4,8 @@
 
 <ol class="breadcrumb">
   <div class="container">
-    <li class="breadcrumb-item">Asess Your Risk Tolerance</li>
-    <li class="breadcrumb-item text-muted">Verify Risk Assessment</li>
+    <li class="breadcrumb-item">Risk Profile Assessment</li>
+    <li class="breadcrumb-item text-muted">Risk Profile Verification</li>
   </div>
 </ol>
 
@@ -22,55 +22,30 @@
           </div>
         {% endif %}
 
-        <fieldset class="form-group mt-4">
-          <p><strong>Are you an accredited investor?</strong><br><small class="form-text text-muted">Click <a href="#">here</a> to learn if you are an accredited investor.</small></p>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="accredited_investor" id="accredited_investor1" value="1">
-              Yes
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="accredited_investor" id="accredited_investor2" value="0">
-              No
-            </label>
-          </div>
-          {% if form.accredited_investor.errors %}
-            <div class="text-danger">
-              {% for error in form.accredited_investor.errors %}
-                {{ error|escape }}
-              {% endfor %}
-            </div>
-          {% endif %}
-        </fieldset>
-
-        <hr>
-
         <fieldset class="form-group">
           <p><strong>What is your primary reason for investing in cryptocurrencies?</strong></p>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason1" value="0">
+              <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason3" value="0">
               I want to diversify my portfolio
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason2" value="0.5">
-              Mostly speculative; I want to make money
+              <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason1" value="0.5">
+              The utility of Bitcoin, Ethereum, or other coins has a lot of value
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
-              <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason3" value="1">
-              I want to make a lot of money, even though it might be very risky
+              <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason2" value="1">
+              I've heard about gains from a specific coin and I don't want to miss out
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="primary_reason" id="primary_reason4" value="1.5">
-              I want to throw away my money
+              I have money that I'm willing to gamble with
             </label>
           </div>
           {% if form.primary_reason.errors %}
@@ -89,25 +64,25 @@
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="advisor_preference" id="advisor_preference1" value="0">
-              Low-risk cryptocurrency investments
+              Exposure to a low-risk, diversified portfolio
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="advisor_preference" id="advisor_preference2" value="0.5">
-              Auto-managagement of my portfolio
+              A growth-focused, diversified portfolio
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="advisor_preference" id="advisor_preference4" value="1">
-              Daily rebalancing of my portfolio
+              Exposure to select coins that I've heard about
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="advisor_preference" id="advisor_preference3" value="1.5">
-              High yield, high risk investment choices
+              High-yield, high-risk investment choices (upcoming altcoins)
             </label>
           </div>
           {% if form.advisor_preference.errors %}
@@ -126,7 +101,7 @@
           <div class="form-check">
             <label class="form-check-label">
               <input type="radio" class="form-check-input" name="experience_level" id="experience_level1" value="0">
-              I'm new and unfamiliar with different cryptocurrencies
+              I'm new and unfamiliar with cryptocurrencies
             </label>
           </div>
           <div class="form-check">

@@ -4,8 +4,8 @@
 
 <ol class="breadcrumb">
   <div class="container">
-    <li class="breadcrumb-item text-muted">Asess Your Risk Tolerance</li>
-    <li class="breadcrumb-item">Verify Risk Assessment</li>
+    <li class="breadcrumb-item text-muted">Risk Profile Assessment</li>
+    <li class="breadcrumb-item">Risk Profile Verification</li>
   </div>
 </ol>
 
@@ -25,7 +25,8 @@
         <h3 class="text-center my-5"><span class="lead" id="risk-score-output">{{ user.profile.risk_assessment_score }}</span>/5</h3>
 
         <input type="range" name="risk_assessment_score" min="0" max="5" value="{{ user.profile.risk_assessment_score}}" class="slider my-5" id="risk-score-slider">
-        <p class="lead">Based on our calculations, your risk index is {{ user.profile.risk_assessment_score }}/5 (0 = lowest risk, 5 = highest risk). Does this seem right?</p>
+        <p class="text-center">(Where 0 is lowest risk and 5 is highest risk.)</p>
+        <p class="lead">Based on our calculations, your risk score is {{ user.profile.risk_assessment_score }}/5. Does this seem right?</p>
 
         <div class="text-center">
           <input type="submit" class="btn btn-dark btn-lg my-5" value="Confirm">

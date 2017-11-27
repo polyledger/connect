@@ -173,8 +173,6 @@ def questions(request):
         form = RiskAssessmentForm(request.POST)
         if form.is_valid():
             risk_assessment_score = 0
-            accredited_investor = form.cleaned_data['accredited_investor']
-            del form.cleaned_data['accredited_investor']
             for key, value in form.cleaned_data.items():
                 risk_assessment_score += value
             risk_assessment_score = math.floor(max(min(5, risk_assessment_score), 0))

@@ -88,7 +88,6 @@ class SignUpForm(UserCreationForm):
 class RiskAssessmentForm(forms.Form):
     error_css_class = 'is-invalid'
 
-    accredited_investor = forms.BooleanField(required=True)
     primary_reason = forms.FloatField(required=True)
     advisor_preference = forms.FloatField(required=True)
     experience_level = forms.FloatField( required=True)
