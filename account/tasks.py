@@ -15,20 +15,7 @@ def allocate_for_user(pk):
     user = get_user_model().objects.get(pk=pk)
     risk_score = user.profile.risk_assessment_score
 
-    coin_map_0 = {
-        'BTC': 'bitcoin',
-        'LTC': 'litecoin',
-        'ETH': 'ethereum',
-        'XRP': 'ripple',
-        'XMR': 'monero',
-        'ZEC': 'zcash',
-        'BCH': 'bitcoin_cash',
-        'ETC': 'ethereum_classic',
-        'NEO': 'neo',
-        'DASH': 'dash'
-    }
-
-    coin_map_1 = {
+    coin_map = {
         'bitcoin': 'BTC',
         'litecoin': 'LTC',
         'ethereum': 'ETH',
@@ -41,17 +28,19 @@ def allocate_for_user(pk):
         'dash': 'DASH'
     }
 
+    inv_coin_map = {v: k for k, v in coin_map.items()}
+
     coins = []
     for coin in sorted(user.portfolio.selected_coins):
-        coins.append(coin_map_1[coin])
+        coins.append(coin_map[coin])
     allocator = Allocator(coins=coins, start='2017-10-01')
     allocation = allocator.allocate().loc[risk_score]
 
-    for coin in coin_map_0.keys():
+    for coin in coin_map.keys():
         setattr(user.portfolio, coin, 0.0)
 
     for coin in allocation.keys():
-        setattr(user.portfolio, coin_map_0[coin], allocation[coin])
+        setattr(user.portfolio, inv_coin_map[coin], allocation[coin])
     user.portfolio.save()
     user.save()
 
