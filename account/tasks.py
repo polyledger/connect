@@ -47,9 +47,11 @@ def allocate_for_user(pk):
     allocator = Allocator(coins=coins, start='2017-10-01')
     allocation = allocator.allocate().loc[risk_score]
 
+    for coin in coin_map_0.keys():
+        setattr(user.portfolio, coin, 0.0)
+
     for coin in allocation.keys():
         setattr(user.portfolio, coin_map_0[coin], allocation[coin])
-        # TODO: Reset non-selected coins to 0.0 allocation
     user.portfolio.save()
     user.save()
 
