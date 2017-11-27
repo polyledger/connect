@@ -291,7 +291,10 @@ def index(request):
     value.
     """
     selected_coins = []
+    risk_score = 'N/A'
 
+    if request.user.profile.risk_assessment_complete:
+        risk_score = request.user.profile.risk_assessment_score
     if hasattr(request.user, 'portfolio'):
         human_readable = sorted(request.user.portfolio.get_selected_coins_display().split(', '))
         for index, name in enumerate(sorted(request.user.portfolio.selected_coins)):
@@ -304,6 +307,7 @@ def index(request):
 
     return render(
         request, 'account/index.html', {
+            'risk_score': risk_score,
             'selected_coins': selected_coins
         }
     )

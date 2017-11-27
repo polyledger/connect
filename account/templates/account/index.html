@@ -6,7 +6,25 @@
 
 <div class="container">
   {% if user.profile.coins_selected and user.profile.risk_assessment_complete %}
-    <div class="row py-5 text-center">
+
+    <div class="row py-3">
+      <div class="col-md-12">
+        <div class="dashhead">
+          <div class="dashhead-titles">
+            <h6 class="dashhead-subtitle">Portfolio</h6>
+            <h3 class="dashhead-title">Overview</h3>
+          </div>
+
+          <div class="dashhead-toolbar">
+            <div class="dashhead-toolbar-item d-flex" style="height: 34px;">
+              <span class="align-self-center lead">Risk Score: {{risk_score}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row text-center">
       <div class="col">
         <h2>Your Portfolio</h2>
         <div class="table-responsive">
@@ -38,7 +56,6 @@
     <div class="row py-2">
       <div class="col-md-12">
         <h3 class="text-center">Historical Performance</h3>
-        <h2 class="statcard-number text-center"><small class="badge" id="percent-change"></small></h2>
         <ul class="nav nav-pills justify-content-center my-4">
           <li class="nav-item">
             <a class="nav-link active" href="#">7D</a>
@@ -56,6 +73,7 @@
             <a class="nav-link" href="#">1Y</a>
           </li>
         </ul>
+        <h2 class="statcard-number text-center"><small class="badge" id="percent-change"></small></h2>
         <div id="error"></div>
         <div class="text-center my-5" style="height: 270px; display: flex; justify-content: center; align-items: center;" id="spinner">
           <i class="fa fa-spinner fa-spin fa-3x"></i>
