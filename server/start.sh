@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BIN=$(dirname $PWD)/venv/bin/activate
+BIN=$(pwd)/venv/bin/activate
 source $BIN
 
 if [ $# -eq 0 ] ; then

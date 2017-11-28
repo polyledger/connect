@@ -4,8 +4,6 @@ import os
 import pytz
 import math
 import json
-import plaid
-import stripe
 import datetime
 from lattice import backtest
 
@@ -25,22 +23,9 @@ from django.views.decorators.http import require_POST
 
 from account.forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
 from account.tokens import account_activation_token
-from account.models import Portfolio, Profile, Transfer
+from account.models import Portfolio, Profile
 from account.tasks import allocate_for_user, rebalance
-from custodian.models import Trade
 
-
-# Set up Plaid (https://plaid.com/docs/quickstart/)
-PLAID_CLIENT_ID = os.environ.get('PLAID_CLIENT_ID')
-PLAID_SECRET = os.environ.get('PLAID_SECRET')
-PLAID_PUBLIC_KEY = 'af5c2e7385fc3f941340c29c8c88db'
-PLAID_ENV = 'sandbox'
-
-client = plaid.Client(client_id=PLAID_CLIENT_ID, secret=PLAID_SECRET,
-                      public_key=PLAID_PUBLIC_KEY, environment=PLAID_ENV)
-
-# Set up Stripe python client() https://stripe.com/docs/ach)
-stripe.api_key = os.environ.get('STRIPE_SECRET')
 
 def activate(request, uidb64, token):
     """
@@ -62,79 +47,6 @@ def activate(request, uidb64, token):
         message = 'Activation link is invalid!'
         messages.add_message(request, messages.ERROR, message)
         return redirect('account:login')
-
-@login_required
-@require_POST
-def get_access_token(request):
-    """
-    This endpoint uses the Plaid credentials to get a stripe bank access token
-    and initiates an ACH transfer.
-    """
-    global access_token
-    public_token = request.POST['public_token']
-    account_id = request.POST['account_id']
-    # Stripe only accepts charges in cents
-    stripe_amount = int(request.POST['amount'].replace(',', '')) * 100
-    amount = int(request.POST['amount'].replace(',', ''))
-    exchange_response = client.Item.public_token.exchange(public_token)
-    access_token = exchange_response['access_token']
-
-    auth_response = client.Auth.get(access_token)
-    account = next(
-        account for account in auth_response['accounts']
-        if account['account_id'] == account_id
-    )
-    available_balance = account['balances']['available']
-
-    env = os.environ.get('DJANGO_SETTINGS_MODULE')
-
-    if env == 'polyledger.settings.production':
-        minimum = 10000
-    else:
-        # For testing purposes, lower the minimum initial deposit amount
-        minimum = 1
-
-    if amount >= minimum:
-        if available_balance >= amount:
-            stripe_response = client.Processor.stripeBankAccountTokenCreate(
-                access_token, account_id
-            )
-            bank_account_token = stripe_response['stripe_bank_account_token']
-            customer = stripe.Customer.create(
-                source=bank_account_token,
-                email=request.user.email,
-                metadata={
-                    'first_name': request.user.first_name,
-                    'last_name': request.user.last_name
-                }
-            )
-            stripe.Charge.create(
-                amount=stripe_amount,
-                currency='usd',
-                customer=customer.id
-            )
-            user = request.user
-            user.profile.account_funded = True
-            user.profile.account_balance = amount
-            user.profile.stripe_customer_id = customer.id
-            user.portfolio, created = Portfolio.objects.get_or_create(user=user)
-            user.portfolio.save()
-            user.save()
-            return HttpResponse(status=204)
-        else:
-            error_message = 'Your current balance is less than the amount you '
-            'want to fund.'
-    else:
-        error_message = 'The minimum amount is $10,000.'
-    return HttpResponse(error_message, status=400)
-
-@login_required
-def deposit(request):
-    """
-    The deposit page allows users to deposit money into their Polyledger
-    account.
-    """
-    return render(request, 'account/deposit.html')
 
 @login_required
 def coins(request):

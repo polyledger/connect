@@ -3,7 +3,7 @@ clean-pyc:
 	find . -name "__pycache__/" -exec rm -rf {} \;
 
 lint:
-	find account api custodian polyledger -name "*.py" | xargs pylint \
+	find account api polyledger -name "*.py" | xargs pylint \
 	--rcfile=.pylintrc
 
 test: clean-pyc
