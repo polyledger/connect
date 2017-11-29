@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import auth from '../auth'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'SignUp',
@@ -68,8 +68,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['login']),
     handleSubmit () {
-      auth.login(this.email, this.password).catch((error) => {
+      let credentials = { email: this.email, password: this.password }
+      this.$store.dispatch('login', credentials).catch((error) => {
         this.errors = {}
         this.errors.username = error.username
         this.errors.password = error.password

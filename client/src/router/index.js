@@ -5,9 +5,18 @@ import Dashboard from '@/components/Dashboard'
 import SignIn from '@/components/SignIn'
 import SignUp from '@/components/SignUp'
 
-import auth from '../auth'
-
 Vue.use(Router)
+
+let requireAuth = (to, from, next) => {
+  if (!localStorage.token) {
+    next({
+      path: '/signin',
+      query: { redirect: to.fullPath }
+    })
+  } else {
+    next()
+  }
+}
 
 export default new Router({
   mode: 'history',
@@ -26,7 +35,7 @@ export default new Router({
       path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard,
-      beforeEnter: auth.requireAuth
+      beforeEnter: requireAuth
     }
   ]
 })
