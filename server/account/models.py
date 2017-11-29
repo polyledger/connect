@@ -8,6 +8,7 @@ from django.db import models
 from django.dispatch import receiver
 
 from multiselectfield import MultiSelectField
+from rest_framework.authtoken.models import Token
 
 
 class UserManager(BaseUserManager):
@@ -103,6 +104,14 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(models.signals.post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+@receiver(models.signals.post_save, sender=User)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    """
+    Create an authentication token for new users
+    """
+    if created:
+        Token.objects.create(user=instance)
 
 class Portfolio(models.Model):
     SUPPORTED_COINS = (
