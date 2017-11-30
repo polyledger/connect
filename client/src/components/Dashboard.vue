@@ -115,6 +115,16 @@ export default {
   name: 'dashboard',
   data () {
     return {}
+  },
+  mounted () {
+    this.$http({
+      url: '/api/users/',
+      method: 'get'
+    }).then((response) => {
+      console.log(response)
+    }).catch((error) => {
+      console.log(error)
+    })
   }
 }
 </script>

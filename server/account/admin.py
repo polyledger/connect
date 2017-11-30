@@ -87,8 +87,7 @@ class UserAdmin(BaseUserAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'risk_assessment_complete', 'risk_assessment_score',
-                    'account_funded', 'stripe_customer_id')
+    list_display = ('user', 'risk_score')
 
 
 class PortfolioAdmin(admin.ModelAdmin):

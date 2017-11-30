@@ -39,7 +39,8 @@ let actions = {
         method: 'POST',
         data: {
           username: credentials.email,
-          password: credentials.password
+          password: credentials.password,
+          remember: credentials.remember
         }
       }).then((response) => {
         localStorage.token = response.data.token

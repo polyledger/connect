@@ -36,7 +36,7 @@
               <div class="form-group">
                 <div class="form-check">
                   <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox">
+                    <input class="form-check-input" type="checkbox" v-model="remember">
                     <small>Keep me signed in</small>
                   </label>
                 </div>
@@ -63,6 +63,7 @@ export default {
     return {
       email: '',
       password: '',
+      remember: false,
       validated: false,
       errors: {}
     }
@@ -70,7 +71,11 @@ export default {
   methods: {
     ...mapActions(['login']),
     handleSubmit () {
-      let credentials = { email: this.email, password: this.password }
+      let credentials = {
+        email: this.email,
+        password: this.password,
+        remember: this.remember
+      }
       this.$store.dispatch('login', credentials).catch((error) => {
         this.errors = {}
         this.errors.username = error.username

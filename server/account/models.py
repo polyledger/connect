@@ -11,6 +11,19 @@ from multiselectfield import MultiSelectField
 from rest_framework.authtoken.models import Token
 
 
+SUPPORTED_COINS = (
+    ('bitcoin', 'Bitcoin'),
+    ('bitcoin_cash', 'Bitcoin Cash'),
+    ('dash', 'Dash'),
+    ('ethereum', 'Ethereum'),
+    ('ethereum_classic', 'Ethereum Classic'),
+    ('litecoin', 'Litecoin'),
+    ('monero', 'Monero'),
+    ('neo', 'NEO'),
+    ('ripple', 'Ripple'),
+    ('zcash', 'Zcash')
+)
+
 class UserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password=None):
         """
@@ -89,12 +102,8 @@ class User(AbstractBaseUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    risk_assessment_score = models.IntegerField(default=0)
-    risk_assessment_complete = models.BooleanField(default=False)
-    account_funded = models.BooleanField(default=False)
-    coins_selected = models.BooleanField(default=False)
-    stripe_customer_id = models.CharField(max_length=30, unique=True,
-                                          null=True, blank=True)
+    risk_score = models.IntegerField(default=0)
+    coins = MultiSelectField(choices=SUPPORTED_COINS, null=True, blank=True)
 
 @receiver(models.signals.post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -114,22 +123,8 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 class Portfolio(models.Model):
-    SUPPORTED_COINS = (
-        ('bitcoin', 'Bitcoin'),
-        ('bitcoin_cash', 'Bitcoin Cash'),
-        ('dash', 'Dash'),
-        ('ethereum', 'Ethereum'),
-        ('ethereum_classic', 'Ethereum Classic'),
-        ('litecoin', 'Litecoin'),
-        ('monero', 'Monero'),
-        ('neo', 'NEO'),
-        ('ripple', 'Ripple'),
-        ('zcash', 'Zcash')
-    )
-
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    selected_coins = MultiSelectField(choices=SUPPORTED_COINS, null=True, blank=True)
     usd = models.FloatField(default=0)
     bitcoin = models.FloatField(default=0)
     bitcoin_cash = models.FloatField(default=0)
