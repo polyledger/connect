@@ -9,7 +9,7 @@
           </div>
           <div class="dashhead-toolbar">
             <div class="dashhead-toolbar-item d-flex">
-              <span class="align-self-center lead">Risk Score: </span>
+              <span class="align-self-center lead">Risk Score: {{riskScore}}</span>
             </div>
           </div>
         </div>
@@ -23,15 +23,15 @@
             <thead>
               <tr>
                 <th scope="row">Coins</th>
-                <!-- <th scope="row" class="text-center" data-toggle="tooltip" data-placement="top" v-for="coin in portfolio" title="{{coin.name}}"> -->
-                  <!-- <img :src="'../assets/img/' + {{coin.name}} + '.png'" width="25"> -->
-                <!-- </th> -->
+                <th scope="row" class="text-center" data-toggle="tooltip" data-placement="top" v-for="percent, coin in portfolio" :title="coin">
+                  <img :src="imagePath(coin)" width="25">
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <th scope="row">Percent</th>
-                <!-- <td class="text-center" v-for="coin in portfolio">{{coin.percent}}</td> -->
+                <td class="text-center" v-for="percent, coin in portfolio">{{percent}}%</td>
               </tr>
             </tbody>
           </table>
@@ -76,14 +76,26 @@
 export default {
   name: 'dashboard',
   data () {
-    return {}
+    return {
+      riskScore: '',
+      portfolio: null
+    }
+  },
+  methods: {
+    imagePath (coin) {
+      return require(`@/assets/img/coins/${coin}.png`)
+    }
   },
   mounted () {
     this.$http({
-      url: '/api/users/',
-      method: 'get'
+      url: '/api/users/current/',
+      method: 'get',
+      headers: {
+        'Authorization': `Token ${localStorage.token}`
+      }
     }).then((response) => {
-      console.log(response)
+      this.riskScore = response.data.risk_score
+      this.portfolio = response.data.portfolio
     }).catch((error) => {
       console.log(error)
     })

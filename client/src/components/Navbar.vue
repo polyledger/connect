@@ -48,7 +48,7 @@
             </router-link>
           </li>
           <li class="nav-item" @click.prevent="logout" v-if="isLoggedIn">
-            <a role="button" tabindex="0" class="nav-link">Log out</a>
+            <a role="button" href="" class="nav-link">Log out</a>
           </li>
         </ul>
       </div>
