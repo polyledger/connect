@@ -74,6 +74,9 @@ export default {
 </script>
 
 <style scoped>
+.navbar-dark .navbar-toggler {
+  border-color: none !important;
+}
 .nav-item > .nav-link {
   font-weight: 600;
 }

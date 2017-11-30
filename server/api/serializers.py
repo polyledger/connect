@@ -8,7 +8,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Portfolio
         fields = ('bitcoin', 'bitcoin_cash', 'dash', 'ethereum',
-            'ethereum_classic', 'litecoin', 'monero', 'neo', 'ripple')
+            'ethereum_classic', 'litecoin', 'monero', 'neo', 'ripple', 'zcash')
 
 class UserSerializer(serializers.ModelSerializer):
     risk_score = serializers.IntegerField(source='profile.risk_score')

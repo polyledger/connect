@@ -9,5 +9,6 @@ router.register(r'users', views.UserViewSet)
 app_name = 'api'
 urlpatterns = [
     url(r'^account/authenticate/', authtoken_views.obtain_auth_token),
+    url(r'^chart/', views.chart_view),
     url(r'^', include(router.urls, namespace='api'))
 ]

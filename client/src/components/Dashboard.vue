@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="row py-3">
+    <div class="row py-4">
       <div class="col-md-12">
         <div class="dashhead">
           <div class="dashhead-titles">
@@ -38,35 +38,43 @@
         </div>
       </div>
     </div>
-    <div class="row py-2">
-      <div class="col-md-12">
-        <h5 class="text-center">Historical Performance</h5>
-        <ul class="nav nav-pills justify-content-center my-4">
-          <li class="nav-item">
-            <a class="nav-link active" role="button" tabindex="0">7D</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" role="button" tabindex="0">1M</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" role="button" tabindex="0">3M</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" role="button" tabindex="0">6M</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" role="button" tabindex="0">1Y</a>
-          </li>
-        </ul>
-        <h2 class="statcard-number text-center">
-          <small class="badge">
-            <!-- {{percentChange}} -->
-          </small>
-        </h2>
-        <div class="text-center my-5">
-          <i class="fa fa-spinner fa-spin fa-3x"></i>
+    <div class="row text-center">
+      <div class="col">
+        <div class="card my-4">
+          <div class="card-body">
+            <div class="row py-2">
+              <div class="col-md-12">
+                <h5 class="text-center">Historical Performance</h5>
+                <ul class="nav nav-pills justify-content-center my-4">
+                  <li class="nav-item">
+                    <a class="nav-link active" role="button" href="" data-toggle="tab" @click.prevent="getChart('7D')">7D</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" role="button" href="" data-toggle="tab" @click.prevent="getChart('1M')">1M</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" role="button" href="" data-toggle="tab" @click.prevent="getChart('3M')">3M</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" role="button" href="" data-toggle="tab" @click.prevent="getChart('6M')">6M</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" role="button" href="" data-toggle="tab" @click.prevent="getChart('1Y')">1Y</a>
+                  </li>
+                </ul>
+                <h5 class="text-center mb-4">
+                  <small class="badge badge-success">{{chart.change}}</small>
+                </h5>
+                <div class="chart-container">
+                  <div class="d-flex align-items-center justify-content-center spinner" v-if="chart.loading">
+                    <i class="fa fa-spinner fa-spin fa-3x"></i>
+                  </div>
+                  <canvas id="chart" height="270"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <canvas id="portfolio-value-chart" class="my-5" height="270"></canvas>
       </div>
     </div>
   </div>
@@ -78,36 +86,151 @@ export default {
   data () {
     return {
       riskScore: '',
-      portfolio: null
+      portfolio: null,
+      chart: {
+        labels: [],
+        dataset: [],
+        change: '0.00%',
+        loading: true,
+        period: '7D'
+      }
     }
   },
   methods: {
     imagePath (coin) {
       return require(`@/assets/img/coins/${coin}.png`)
+    },
+    getPortfolio () {
+      this.$http({
+        url: '/api/users/current/',
+        method: 'get',
+        headers: {
+          'Authorization': `Token ${localStorage.token}`
+        }
+      }).then((response) => {
+        this.riskScore = response.data.risk_score
+        this.portfolio = response.data.portfolio
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    getChart (period) {
+      this.chart.loading = true
+      this.chart.period = period
+      if (window.instance) { window.instance.destroy() }
+      this.$http({
+        url: `/api/chart/?period=${period}`,
+        method: 'get',
+        headers: {
+          'Authorization': `Token ${localStorage.token}`
+        }
+      }).then((response) => {
+        this.chart.loading = false
+        this.chart.dataset = response.data.dataset
+        this.chart.labels = response.data.labels
+        this.chart.change = response.data.change
+        this.createChart()
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    createChart () {
+      let ctx = document.getElementById('chart').getContext('2d')
+      window.instance = new window.Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: this.chart.labels,
+          datasets: [
+            {
+              label: 'Portfolio',
+              data: this.chart.dataset.portfolio,
+              backgroundColor: ['rgba(98, 105, 142, 0.2)'],
+              borderColor: ['rgba(98, 105, 142, 1)'],
+              borderWidth: 1
+            },
+            {
+              label: 'Bitcoin',
+              data: this.chart.dataset.bitcoin,
+              backgroundColor: ['rgba(255, 194, 69, 0.2)'],
+              borderColor: ['rgba(255, 194, 69, 1)'],
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          legend: {
+            display: true
+          },
+          tooltips: {
+            enabled: true,
+            mode: 'x',
+            displayColors: true,
+            callbacks: {
+              labelColor: (tooltipItem, chart) => {
+                let dataset = chart.config.data.datasets[tooltipItem.datasetIndex]
+                return {
+                  borderColor: dataset.borderColor[0],
+                  backgroundColor: dataset.backgroundColor[0]
+                }
+              },
+              label: (tooltipItem, data) => {
+                return ' ' + tooltipItem.yLabel.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '%'
+              }
+            }
+          },
+          scales: {
+            xAxes: [{
+              gridLines: {
+                display: false
+              },
+              ticks: {
+                maxTicksLimit: 7
+              }
+            }],
+            yAxes: [{
+              gridLines: {
+                display: false
+              },
+              ticks: {
+                maxTicksLimit: 5,
+                beginAtZero: false,
+                callback: (value, index, values) => {
+                  if (parseInt(value) >= 1000) {
+                    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '%'
+                  } else {
+                    return value + '%'
+                  }
+                }
+              }
+            }]
+          }
+        }
+      })
     }
   },
   mounted () {
-    this.$http({
-      url: '/api/users/current/',
-      method: 'get',
-      headers: {
-        'Authorization': `Token ${localStorage.token}`
-      }
-    }).then((response) => {
-      this.riskScore = response.data.risk_score
-      this.portfolio = response.data.portfolio
-    }).catch((error) => {
-      console.log(error)
-    })
+    this.getPortfolio()
+    this.getChart('7D')
   }
 }
 </script>
 
 <style scoped>
-.navbar-dark .navbar-toggler {
-  border-color: none !important;
-}
 .dashhead-toolbar-item {
   height: 34px;
+}
+.spinner {
+  color: #333;
+  height: 270px;
+}
+.chart-container {
+  position: relative;
+  max-height: 270px;
+}
+.card h5,
+.card .nav > li > a:not(.active) {
+  color: #333;
 }
 </style>

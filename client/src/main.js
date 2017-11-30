@@ -6,6 +6,8 @@ import App from './App'
 import router from './router'
 import store from './store'
 
+import './assets/js/chart.min.js'
+
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
