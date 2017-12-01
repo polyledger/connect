@@ -17,9 +17,6 @@ export default {
 </script>
 
 <style>
-.page {
-  margin: 3.5rem auto;
-}
 h2 {
   text-align: center;
   margin-bottom: 3.5rem;
@@ -27,7 +24,8 @@ h2 {
 .card {
   box-shadow: 0px 1px 46px -4px rgba(0,0,0,0.28);
 }
-.form-check-label {
+.form-check-label,
+.custom-control-description {
   color: #333;
 }
 .account-extras {

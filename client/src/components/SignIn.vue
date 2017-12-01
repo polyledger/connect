@@ -1,5 +1,5 @@
 <template>
-  <div class="page container">
+  <div class="py-5 container">
     <h2>Sign in to Polyledger</h2>
     <div class="row justify-content-center">
       <div class="col-md-4">
