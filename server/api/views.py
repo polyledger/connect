@@ -4,6 +4,7 @@ from account.models import Profile
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from django.http import JsonResponse
+from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer

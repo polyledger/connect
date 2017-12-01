@@ -2,6 +2,21 @@
   <div class="container">
     <div class="row py-4">
       <div class="col-md-12">
+        <div class="alert alert-danger alert-dismissable fade show" role="alert" v-for="error in errors">
+          <div class="row">
+            <div class="col-1 d-flex align-items-center justify-content-center">
+              <i class="icon icon-warning"></i>&nbsp;
+            </div>
+            <div class="col-10">
+              <span>{{error}}</span>
+            </div>
+            <div class="col-1 d-flex align-items-center justify-content-end">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          </div>
+        </div>
         <div class="dashhead">
           <div class="dashhead-titles">
             <h6 class="dashhead-subtitle">Portfolio</h6>
@@ -93,7 +108,8 @@ export default {
         change: '0.00%',
         loading: true,
         period: '7D'
-      }
+      },
+      errors: []
     }
   },
   methods: {
@@ -111,7 +127,8 @@ export default {
         this.riskScore = response.data.risk_score
         this.portfolio = response.data.portfolio
       }).catch((error) => {
-        console.log(error)
+        console.error(error)
+        this.errors.push('Unable to get your portfolio. Please try again later.')
       })
     },
     getChart (period) {
@@ -131,7 +148,8 @@ export default {
         this.chart.change = response.data.change
         this.createChart()
       }).catch((error) => {
-        console.log(error)
+        console.error(error)
+        this.errors.push('Unable to render historical performance chart. Please try again later.')
       })
     },
     createChart () {
