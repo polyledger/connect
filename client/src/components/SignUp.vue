@@ -46,7 +46,6 @@
               <div class="form-group">
                 <div class="input-group">
                   <input type="password" ref="input" v-model="password" class="form-control" placeholder="Password" required>
-
                   <div class="input-group-addon">
                     <i class="icon" :class="[isSecure ? 'icon-check text-success' : '', !isSecure ? 'icon-cross text-danger' : '' ]"></i>
                   </div>
@@ -128,7 +127,6 @@ export default {
       }).then((response) => {
         console.log(response)
       }).catch((error) => {
-        console.log(error.response)
         this.errors = {}
         this.errors.firstName = error.response.data.first_name
         this.errors.lastName = error.response.data.last_name
@@ -144,6 +142,10 @@ export default {
 </script>
 
 <style scoped>
+.input-group-addon {
+  background-color: #eee;
+  border: 1px solid #ced4da;
+}
 .custom-control-indicator {
   background-color: #ccc;
 }
