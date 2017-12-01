@@ -155,7 +155,7 @@ def signup(request):
         user.save()
         recipient = form.cleaned_data.get('email')
         send_confirmation_email.apply(args=[user.id, recipient])
-        return HttpResponse(status_code='201')
+        return HttpResponse(status='201')
     return JsonResponse(
         data=form.errors,
         status=400
