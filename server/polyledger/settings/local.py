@@ -1,5 +1,7 @@
 from .base import *
 
+CLIENT_URL = 'http://localhost:8081/activation/'
+
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'polyledger.ngrok.io']

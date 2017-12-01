@@ -1,6 +1,7 @@
 import axios from 'axios'
 import router from '@/router'
 
+const ACTIVATE = 'ACTIVATE'
 const SIGNUP = 'SIGNUP'
 const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS'
 const LOGIN = 'LOGIN'
@@ -14,6 +15,9 @@ let state = {
 }
 
 let mutations = {
+  [ACTIVATE] (state) {
+    state.isLoggedIn = true
+  },
   [SIGNUP] (state) {
     state.pending = true
   },
@@ -34,6 +38,18 @@ let mutations = {
 }
 
 let actions = {
+  activate ({state, commit, rootState}, token) {
+    return new Promise((resolve, reject) => {
+      if (token) {
+        localStorage.token = token
+        commit(ACTIVATE)
+        router.push('/dashboard')
+        resolve()
+      } else {
+        reject(Error('There was an issue activating your account.'))
+      }
+    })
+  },
   signup ({state, commit, rootState}, credentials) {
     commit(SIGNUP)
 

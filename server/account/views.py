@@ -7,17 +7,19 @@ import json
 import datetime
 from lattice import backtest
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.sites.shortcuts import get_current_site
-from django.http import HttpResponse, JsonResponse, QueryDict
+from django.http import HttpResponse, JsonResponse, QueryDict, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.http import require_POST
+from rest_framework.authtoken.models import Token
 
 from account.forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
 from account.tokens import account_activation_token
@@ -37,14 +39,11 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        login(request, user)
-        message = 'Welcome to Polyledger!'
-        messages.add_message(request, messages.SUCCESS, message)
-        return redirect('account:index')
+        token = Token.objects.get_or_create(user=user)
+        params = '?token={0}'.format(token[0])
+        return HttpResponseRedirect(settings.CLIENT_URL + params)
     else:
-        message = 'Activation link is invalid!'
-        messages.add_message(request, messages.ERROR, message)
-        return redirect('account:login')
+        return HttpResponseRedirect(settings.CLIENT_URL)
 
 @login_required
 def coins(request):
@@ -114,15 +113,6 @@ def verify(request):
         else:
             form = RiskConfirmationForm()
     return render(request, 'account/verify.html')
-
-@login_required
-def settings(request):
-    email = request.user.email
-    password_form = PasswordChangeForm(request.user)
-    return render(request, 'account/settings.html', {
-        'email': email,
-        'password_form': password_form
-    })
 
 @login_required
 @require_POST

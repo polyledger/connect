@@ -6,6 +6,7 @@ import Dashboard from '@/components/Dashboard'
 import SignIn from '@/components/SignIn'
 import SignUp from '@/components/SignUp'
 import ConfirmEmail from '@/components/ConfirmEmail'
+import Activation from '@/components/Activation'
 
 Vue.use(Router)
 
@@ -20,12 +21,20 @@ let requireAuth = (to, from, next) => {
   }
 }
 
-let requireSignup = (to, from, next) => {
+let requireSignedUp = (to, from, next) => {
   if (!store.getters.isSignedUp) {
     next({
       path: '/signup',
       query: { redirect: to.fullPath }
     })
+  } else {
+    next()
+  }
+}
+
+let requireAnonymous = (to, from, next) => {
+  if (store.getters.isLoggedIn) {
+    next({path: '/dashboard'})
   } else {
     next()
   }
@@ -48,7 +57,13 @@ export default new Router({
       path: '/confirm-email',
       name: 'ConfirmEmail',
       component: ConfirmEmail,
-      beforeEnter: requireSignup
+      beforeEnter: requireSignedUp
+    },
+    {
+      path: '/activation',
+      name: 'Activation',
+      component: Activation,
+      beforeEnter: requireAnonymous
     },
     {
       path: '/dashboard',
