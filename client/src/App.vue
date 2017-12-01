@@ -23,6 +23,7 @@ h2 {
 }
 .card {
   box-shadow: 0px 1px 46px -4px rgba(0,0,0,0.28);
+  color: #333;
 }
 .form-check-label,
 .custom-control-description {

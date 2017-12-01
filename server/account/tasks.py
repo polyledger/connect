@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.utils.encoding import force_bytes
 from account.tokens import account_activation_token
 
 import os
@@ -49,12 +50,13 @@ def allocate_for_user(pk):
     user.save()
 
 @shared_task
-def send_confirmation_email(pk, recipient):
+def send_confirmation_email(pk, recipient, current_site):
     user = get_user_model().objects.get(pk=pk)
     email_context = {
         'user': user,
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': account_activation_token.make_token(user),
+        'current_site': current_site
     }
     text_content = render_to_string(
         'registration/account_activation_email.txt', email_context

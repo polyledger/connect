@@ -90,6 +90,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import PasswordStrengthMeter from '@/components/PasswordStrengthMeter'
 
 export default {
@@ -112,6 +113,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['signup']),
     handleSubmit () {
       let credentials = {
         first_name: this.firstName,
@@ -120,20 +122,14 @@ export default {
         password1: this.password,
         password2: this.passwordConfirm
       }
-      this.$http({
-        url: '/account/signup/',
-        method: 'POST',
-        data: credentials
-      }).then((response) => {
-        console.log(response)
-      }).catch((error) => {
+      this.$store.dispatch('signup', credentials).catch((error) => {
         this.errors = {}
-        this.errors.firstName = error.response.data.first_name
-        this.errors.lastName = error.response.data.last_name
-        this.errors.email = error.response.data.email
-        this.errors.password = error.response.data.password1
-        this.errors.passwordConfirm = error.response.data.password2
-        this.errors.nonFieldErrors = error.response.data.non_field_errors
+        this.errors.firstName = error.first_name
+        this.errors.lastName = error.last_name
+        this.errors.email = error.email
+        this.errors.password = error.password1
+        this.errors.passwordConfirm = error.password2
+        this.errors.nonFieldErrors = error.non_field_errors
       })
       this.validated = true
     }

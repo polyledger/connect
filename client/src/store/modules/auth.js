@@ -1,22 +1,32 @@
 import axios from 'axios'
 import router from '@/router'
 
+const SIGNUP = 'SIGNUP'
+const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS'
 const LOGIN = 'LOGIN'
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 const LOGOUT = 'LOGOUT'
 
 let state = {
+  pending: false,
+  isSignedUp: false,
   isLoggedIn: localStorage.token
 }
 
 let mutations = {
+  [SIGNUP] (state) {
+    state.pending = true
+  },
+  [SIGNUP_SUCCESS] (state) {
+    state.pending = false
+    state.isSignedUp = true
+  },
   [LOGIN] (state) {
     state.pending = true
   },
   [LOGIN_SUCCESS] (state) {
     state.isLoggedIn = true
     state.pending = false
-    router.push('/dashboard')
   },
   [LOGOUT] (state) {
     state.isLoggedIn = false
@@ -24,13 +34,36 @@ let mutations = {
 }
 
 let actions = {
+  signup ({state, commit, rootState}, credentials) {
+    commit(SIGNUP)
+
+    return new Promise((resolve, reject) => {
+      axios({
+        url: '/account/signup/',
+        method: 'POST',
+        data: credentials
+      }).then((response) => {
+        commit(SIGNUP_SUCCESS)
+        router.push('/confirm-email')
+        resolve()
+      }).catch((error) => {
+        let response = error.response
+
+        if (response.status === 400) {
+          reject(response.data)
+        } else if (response.status === 500) {
+          reject(Error('Unable to signup. Please try again later.'))
+        }
+      })
+    })
+  },
   login ({state, commit, rootState}, credentials) {
     commit(LOGIN)
 
     return new Promise((resolve, reject) => {
       if (localStorage.token) {
-        router.push('/dashboard')
         commit(LOGIN_SUCCESS)
+        router.push('/dashboard')
         resolve()
       }
 
@@ -68,6 +101,9 @@ let actions = {
 let getters = {
   isLoggedIn (state) {
     return state.isLoggedIn
+  },
+  isSignedUp (state) {
+    return state.isSignedUp
   }
 }
 

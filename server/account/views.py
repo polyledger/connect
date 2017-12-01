@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse, JsonResponse, QueryDict
 from django.shortcuts import redirect, render
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.http import require_POST
 
@@ -154,8 +154,9 @@ def signup(request):
         user.is_active = False
         user.save()
         recipient = form.cleaned_data.get('email')
-        send_confirmation_email.apply(args=[user.id, recipient])
-        return HttpResponse(status='201')
+        current_site = get_current_site(request).domain
+        send_confirmation_email.delay(user.id, recipient, current_site)
+        return HttpResponse(status='200')
     return JsonResponse(
         data=form.errors,
         status=400
