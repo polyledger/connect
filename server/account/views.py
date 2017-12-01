@@ -13,18 +13,16 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse, JsonResponse
-from django.template.loader import render_to_string
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.http import require_POST
 
 from account.forms import RiskAssessmentForm, RiskConfirmationForm, SignUpForm
 from account.tokens import account_activation_token
 from account.models import Portfolio, Profile
-from account.tasks import allocate_for_user, rebalance
+from account.tasks import allocate_for_user, send_confirmation_email
 
 
 def activate(request, uidb64, token):
@@ -149,51 +147,18 @@ def close_account(request):
     return redirect('account:login')
 
 def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-
-            env = os.environ.get('DJANGO_SETTINGS_MODULE')
-
-            if env == 'polyledger.settings.production':
-                current_site = 'app.polyledger.com'
-            elif env == 'polyledger.settings.staging':
-                current_site = 'staging.polyledger.com'
-            else:
-                current_site = get_current_site(request)
-            email_context = {
-                'user': user,
-                'image_url': 'https://staging.polyledger.com',
-                'site_url': current_site,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            }
-            text_content = render_to_string(
-                'registration/account_activation_email.txt', email_context
-            )
-            html_content = render_to_string(
-                'registration/account_activation_email.html', email_context
-            )
-            mail_subject = 'Activate your Polyledger account.'
-            from_email = 'Ari at Polyledger <ari@polyledger.com>'
-            to_email = form.cleaned_data.get('email')
-            email = EmailMultiAlternatives(
-                mail_subject, text_content, from_email, to=[to_email]
-            )
-            email.attach_alternative(html_content, "text/html")
-            email.send()
-            return render(request, 'registration/confirm_account.html')
-    else:
-        form = SignUpForm()
-    return render(request, 'registration/signup.html', {'form': form})
-
-@login_required
-def logout(request):
-    logout(request)
-    return redirect('account:login')
+    form = SignUpForm(request.POST)
+    if form.is_valid():
+        user = form.save(commit=False)
+        user.is_active = False
+        user.save()
+        recipient = form.cleaned_data.get('email')
+        send_confirmation_email.apply(args=[user.id, recipient])
+        return HttpResponse(status_code='201')
+    return JsonResponse(
+        data=form.errors,
+        status=400
+    )
 
 @login_required
 def index(request):
@@ -223,67 +188,3 @@ def index(request):
             'selected_coins': selected_coins
         }
     )
-
-@login_required
-def historical_value(request):
-    """
-    Example request: https://polyledger.com/account/historical_value/?period=1d
-    Responds with historical data points over the period with the percent change
-    {'historical_data_points': [...], 'percent_change': 'x.x%'}
-    """
-    period = request.GET.get('period')
-
-    if period not in ['7D', '1M', '3M', '6M', '1Y']:
-        return HttpResponse('Invalid parameter value for period', status=400)
-
-    end = datetime.datetime.now()
-
-    if period == '7D':
-        start = end - datetime.timedelta(days=7)
-        date_format = '%b %-d %Y'
-    elif period == '1M':
-        start = end - datetime.timedelta(days=30)
-        date_format = '%b %-d %Y'
-    elif period == '3M':
-        start = end - datetime.timedelta(days=90)
-        date_format = '%b %-d %Y'
-    elif period == '6M':
-        start = end - datetime.timedelta(days=182)
-        date_format = '%b %-d %Y'
-    elif period == '1Y':
-        start = end - datetime.timedelta(days=364)
-        date_format = '%b %-d %Y'
-    freq = 'D'
-
-    assets = {}
-    coin_map = {
-        'bitcoin': 'BTC',
-        'litecoin': 'LTC',
-        'ethereum': 'ETH',
-        'ripple': 'XRP',
-        'monero': 'XMR',
-        'zcash': 'ZEC',
-        'bitcoin_cash': 'BCH',
-        'ethereum_classic': 'ETC',
-        'neo': 'NEO',
-        'dash': 'DASH'
-    }
-    portfolio = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
-    for coin in request.user.portfolio.selected_coins:
-        percent = getattr(request.user.portfolio, coin)
-        to_asset = coin_map[coin]
-        portfolio.trade_asset(percent, 'USD', to_asset, start.strftime('%Y-%m-%d'))
-    data = portfolio.get_historical_value(start, end, freq, date_format)
-
-    bitcoin = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
-    bitcoin.trade_asset(100, 'USD', 'BTC', start.strftime('%Y-%m-%d'))
-    bitcoin_data = bitcoin.get_historical_value(start, end, freq, date_format)
-
-    dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
-    labels = data['dates']
-    percent_change = str(round(portfolio.get_value() - 100, 2)) + '%'
-    return JsonResponse({
-        'dataset': dataset,
-        'labels': labels,
-        'percent_change': percent_change
-    })

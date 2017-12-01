@@ -67,13 +67,13 @@ export default {
         password: this.password
       }
       this.$http({
-        url: '/api/signup/',
+        url: '/account/signup/',
         method: 'post',
         data: credentials
       }).then((response) => {
         console.log(response)
       }).catch((error) => {
-        console.log(error)
+        console.log(error.response.data)
       })
       this.validated = true
     }

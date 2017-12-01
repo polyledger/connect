@@ -11,7 +11,6 @@ urlpatterns = [
         views.activate, name='activate'),
     url(r'^close/$', views.close_account, name='close_account'),
     url(r'^coins/$', views.coins, name='coins'),
-    url(r'^historical_value/$', views.historical_value,name='historical_value'),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
     url(r'^password/$', views.change_password, name='change_password'),
