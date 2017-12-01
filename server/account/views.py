@@ -13,7 +13,7 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.sites.shortcuts import get_current_site
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, QueryDict
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode
@@ -147,6 +147,7 @@ def close_account(request):
     return redirect('account:login')
 
 def signup(request):
+    request.POST = json.loads(request.body)
     form = SignUpForm(request.POST)
     if form.is_valid():
         user = form.save(commit=False)

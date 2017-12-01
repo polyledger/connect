@@ -17,16 +17,16 @@
           <div class="card-body">
             <form :class="{'was-validated': validated}" novalidate>
               <div class="form-group">
-                <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" v-model="email" required>
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                <div class="invalid-feedback" v-if="errors.username">
-                  <span v-for="error in errors.username">
+                <input type="email" class="form-control" placeholder="Enter email" v-model="email" required>
+                <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                <div class="invalid-feedback" v-if="errors.email">
+                  <span v-for="error in errors.email">
                     {{error}}
                   </span>
                 </div>
               </div>
               <div class="form-group">
-                <input type="password" class="form-control" id="password" placeholder="Password" v-model="password" required>
+                <input type="password" class="form-control" placeholder="Password" v-model="password" required>
                 <div class="invalid-feedback" v-if="errors.password">
                   <span v-for="error in errors.password">
                     {{error}}
@@ -78,7 +78,7 @@ export default {
       }
       this.$store.dispatch('login', credentials).catch((error) => {
         this.errors = {}
-        this.errors.username = error.username
+        this.errors.email = error.username
         this.errors.password = error.password
         this.errors.nonFieldErrors = error.non_field_errors
       })
