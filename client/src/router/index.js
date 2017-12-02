@@ -7,6 +7,7 @@ import SignIn from '@/components/SignIn'
 import SignUp from '@/components/SignUp'
 import ConfirmEmail from '@/components/ConfirmEmail'
 import Activation from '@/components/Activation'
+import GettingStarted from '@/components/GettingStarted'
 
 Vue.use(Router)
 
@@ -64,6 +65,12 @@ export default new Router({
       name: 'Activation',
       component: Activation,
       beforeEnter: requireAnonymous
+    },
+    {
+      path: '/getting-started',
+      name: 'GettingStarted',
+      component: GettingStarted,
+      beforeEnter: requireAuth
     },
     {
       path: '/dashboard',

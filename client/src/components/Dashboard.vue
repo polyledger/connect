@@ -228,8 +228,15 @@ export default {
       })
     }
   },
-  mounted () {
-    this.getPortfolio()
+  async mounted () {
+    await this.getPortfolio()
+
+    // If they haven't created a portfolio, prompt them to do so.
+    if (!this.portfolio) {
+      this.$router.push('/getting-started')
+      return
+    }
+
     this.getChart('7D')
   }
 }
