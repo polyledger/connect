@@ -7,7 +7,7 @@ import SignIn from '@/components/SignIn'
 import SignUp from '@/components/SignUp'
 import ConfirmEmail from '@/components/ConfirmEmail'
 import Activation from '@/components/Activation'
-import GettingStarted from '@/components/GettingStarted'
+import Coins from '@/components/Coins'
 
 Vue.use(Router)
 
@@ -67,9 +67,9 @@ export default new Router({
       beforeEnter: requireAnonymous
     },
     {
-      path: '/getting-started',
-      name: 'GettingStarted',
-      component: GettingStarted,
+      path: '/coins',
+      name: 'Coins',
+      component: Coins,
       beforeEnter: requireAuth
     },
     {

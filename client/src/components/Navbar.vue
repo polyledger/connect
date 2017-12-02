@@ -16,13 +16,13 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/markets" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
-              <i class="icon icon-area-graph"></i> Markets
+            <router-link to="/coins" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
+              <i class="icon icon-grid"></i> Coins
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/wallets" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
-              <i class="icon icon-wallet"></i> Wallets
+            <router-link to="/markets" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
+              <i class="icon icon-area-graph"></i> Markets
             </router-link>
           </li>
           <li class="nav-item">
@@ -74,8 +74,8 @@ export default {
 </script>
 
 <style scoped>
-.navbar-dark .navbar-toggler {
-  border-color: none !important;
+.navbar-toggler {
+  border: none;
 }
 .nav-item > .nav-link {
   font-weight: 600;

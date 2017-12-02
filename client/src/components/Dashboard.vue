@@ -233,7 +233,7 @@ export default {
 
     // If they haven't created a portfolio, prompt them to do so.
     if (!this.portfolio) {
-      this.$router.push('/getting-started')
+      this.$router.push('/coins')
       return
     }
 
