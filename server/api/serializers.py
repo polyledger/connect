@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from account.models import Portfolio
+from account.models import Portfolio, Coin
 from rest_framework import fields, serializers
 
 
@@ -21,3 +21,9 @@ class UserSerializer(serializers.ModelSerializer):
             'id': {'read_only': True},
             'password': {'write_only': True}
         }
+
+class CoinSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Coin
+        fields = ('symbol', 'name', 'slug', 'image')

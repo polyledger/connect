@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from .models import User, Profile, Portfolio
+from .models import User, Profile, Portfolio, Coin, Holding
 
 
 class UserCreationForm(forms.ModelForm):
@@ -87,20 +87,30 @@ class UserAdmin(BaseUserAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'risk_score')
+    list_display = ('pk', 'user', 'risk_score')
 
+
+class HoldingInline(admin.TabularInline):
+    extra = 1
+    model = Holding
 
 class PortfolioAdmin(admin.ModelAdmin):
-    list_display = (
-        'user', 'usd', 'bitcoin', 'bitcoin_cash', 'dash', 'ethereum_classic',
-        'ethereum', 'litecoin', 'monero', 'neo', 'ripple', 'zcash'
-    )
+    list_display = ('pk', 'user', 'usd', 'coin_list')
+    inlines = [HoldingInline]
 
+class CoinAdmin(admin.ModelAdmin):
+    list_display = ('symbol', 'name', 'slug', 'image')
+
+
+class HoldingAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'coin', 'amount', 'portfolio')
 
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Portfolio, PortfolioAdmin)
+admin.site.register(Holding, HoldingAdmin)
+admin.site.register(Coin, CoinAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)

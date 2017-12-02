@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from decimal import *
 
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, validate_comma_separated_integer_list
 from django.db import models
 from django.dispatch import receiver
 
@@ -122,17 +122,37 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 
+class Coin(models.Model):
+    """
+    All coins supported on Polyledger.
+    """
+    symbol = models.CharField(primary_key=True, max_length=4)
+    name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=50, null=True)
+    image = models.FilePathField(path='account/static/account/img/coins/', null=True)
+
+    def __str__(self):
+        return self.name
+
 class Portfolio(models.Model):
+    """
+    A user's portfolio containing coins.
+    """
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     usd = models.FloatField(default=0)
-    bitcoin = models.FloatField(default=0)
-    bitcoin_cash = models.FloatField(default=0)
-    dash = models.FloatField(default=0)
-    ethereum = models.FloatField(default=0)
-    ethereum_classic = models.FloatField(default=0)
-    litecoin = models.FloatField(default=0)
-    monero = models.FloatField(default=0)
-    neo = models.FloatField(default=0)
-    ripple = models.FloatField(default=0)
-    zcash = models.FloatField(default=0)
+    coins = models.ManyToManyField(Coin)
+
+    def __str__(self):
+        return '{0}\'s portfolio'.format(self.user)
+
+    def coin_list(self):
+        return ', '.join([coin.name for coin in self.coins.all()])
+
+class Holding(models.Model):
+    """
+    A holding of a coin in a portfolio.
+    """
+    coin = models.OneToOneField(Coin)
+    amount = models.FloatField(default=0.0)
+    portfolio = models.ForeignKey(Portfolio)

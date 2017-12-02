@@ -1,15 +1,15 @@
 import datetime
 
-from account.models import Profile
+from account.models import Profile, Coin
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework import status
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.decorators import api_view, renderer_classes
-from api.serializers import UserSerializer
+from api.serializers import UserSerializer, CoinSerializer
 from lattice import backtest
 
 class UserViewSet(ModelViewSet):
@@ -24,6 +24,13 @@ class UserViewSet(ModelViewSet):
         if self.kwargs.get('pk') == 'current':
             return self.request.user
         return super(UserViewSet, self).get_object()
+
+class CoinViewSet(ReadOnlyModelViewSet):
+    """
+    This viewset provides `list` and `retrieve` actions only.
+    """
+    queryset = Coin.objects.all()
+    serializer_class = CoinSerializer
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer, ))
