@@ -99,7 +99,7 @@ class PortfolioAdmin(admin.ModelAdmin):
     inlines = [HoldingInline]
 
 class CoinAdmin(admin.ModelAdmin):
-    list_display = ('symbol', 'name', 'slug', 'image')
+    list_display = ('symbol', 'name', 'slug', 'image_url')
 
 
 class HoldingAdmin(admin.ModelAdmin):

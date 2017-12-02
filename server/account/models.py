@@ -129,7 +129,7 @@ class Coin(models.Model):
     symbol = models.CharField(primary_key=True, max_length=4)
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, null=True)
-    image = models.FilePathField(path='account/static/account/img/coins/', null=True)
+    image_url = models.FilePathField(path='/static/account/static/account/img/coins/', null=True)
 
     def __str__(self):
         return self.name

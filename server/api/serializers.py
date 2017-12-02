@@ -26,4 +26,4 @@ class CoinSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Coin
-        fields = ('symbol', 'name', 'slug', 'image')
+        fields = ('symbol', 'name', 'slug', 'image_url')
