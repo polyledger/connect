@@ -87,23 +87,26 @@ class UserAdmin(BaseUserAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'user', 'risk_score')
+    list_display = ('user', 'risk_score')
 
 
 class HoldingInline(admin.TabularInline):
     extra = 1
     model = Holding
 
+
 class PortfolioAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'user', 'usd', 'coin_list')
+    list_display = ('user', 'usd')
     inlines = [HoldingInline]
 
+
 class CoinAdmin(admin.ModelAdmin):
-    list_display = ('symbol', 'name', 'slug', 'image_url')
+    list_display = ('symbol', 'name', 'slug')
 
 
 class HoldingAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'coin', 'amount', 'portfolio')
+    list_display = ('coin', 'amount', 'portfolio')
+
 
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)

@@ -11,19 +11,6 @@ from multiselectfield import MultiSelectField
 from rest_framework.authtoken.models import Token
 
 
-SUPPORTED_COINS = (
-    ('bitcoin', 'Bitcoin'),
-    ('bitcoin_cash', 'Bitcoin Cash'),
-    ('dash', 'Dash'),
-    ('ethereum', 'Ethereum'),
-    ('ethereum_classic', 'Ethereum Classic'),
-    ('litecoin', 'Litecoin'),
-    ('monero', 'Monero'),
-    ('neo', 'NEO'),
-    ('ripple', 'Ripple'),
-    ('zcash', 'Zcash')
-)
-
 class UserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password=None):
         """
@@ -103,7 +90,6 @@ class User(AbstractBaseUser):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     risk_score = models.IntegerField(default=0)
-    coins = MultiSelectField(choices=SUPPORTED_COINS, null=True, blank=True)
 
 @receiver(models.signals.post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -129,7 +115,6 @@ class Coin(models.Model):
     symbol = models.CharField(primary_key=True, max_length=4)
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, null=True)
-    image_url = models.FilePathField(path='/static/account/static/account/img/coins/', null=True)
 
     def __str__(self):
         return self.name
@@ -141,18 +126,18 @@ class Portfolio(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     usd = models.FloatField(default=0)
-    coins = models.ManyToManyField(Coin)
+    coins = models.ManyToManyField(Coin, blank=True, through='Holding')
 
     def __str__(self):
         return '{0}\'s portfolio'.format(self.user)
-
-    def coin_list(self):
-        return ', '.join([coin.name for coin in self.coins.all()])
 
 class Holding(models.Model):
     """
     A holding of a coin in a portfolio.
     """
-    coin = models.OneToOneField(Coin)
+    coin = models.ForeignKey(Coin)
     amount = models.FloatField(default=0.0)
-    portfolio = models.ForeignKey(Portfolio)
+    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = [('coin', 'portfolio'),]
