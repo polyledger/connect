@@ -1,6 +1,6 @@
 import datetime
 
-from account.models import Profile, Coin
+from account.models import Profile, Coin, Portfolio
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -9,7 +9,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.decorators import api_view, renderer_classes
-from api.serializers import UserSerializer, CoinSerializer
+from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from lattice import backtest
 
 class UserViewSet(ModelViewSet):
@@ -31,6 +31,10 @@ class CoinViewSet(ReadOnlyModelViewSet):
     """
     queryset = Coin.objects.all()
     serializer_class = CoinSerializer
+
+class PortfolioViewSet(ModelViewSet):
+    queryset = Portfolio.objects.all()
+    serializer_class = PortfolioSerializer
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer, ))

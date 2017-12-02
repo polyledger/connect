@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from decimal import *
 
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
-from django.core.validators import MinValueValidator, validate_comma_separated_integer_list
 from django.db import models
 from django.dispatch import receiver
-
-from multiselectfield import MultiSelectField
 from rest_framework.authtoken.models import Token
 
 
@@ -126,14 +122,14 @@ class Portfolio(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     usd = models.FloatField(default=0)
-    coins = models.ManyToManyField(Coin, blank=True, through='Holding')
+    coins = models.ManyToManyField(Coin, blank=True, through='Position')
 
     def __str__(self):
         return '{0}\'s portfolio'.format(self.user)
 
-class Holding(models.Model):
+class Position(models.Model):
     """
-    A holding of a coin in a portfolio.
+    A position of a coin in a portfolio.
     """
     coin = models.ForeignKey(Coin)
     amount = models.FloatField(default=0.0)
