@@ -133,7 +133,7 @@ class Position(models.Model):
     """
     coin = models.ForeignKey(Coin)
     amount = models.FloatField(default=0.0)
-    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE)
+    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name='positions')
 
     class Meta:
         unique_together = [('coin', 'portfolio'),]
@@ -147,6 +147,10 @@ class MockPortfolio(models.Model):
     usd = models.FloatField(default=0)
     coins = models.ManyToManyField(Coin, blank=True, through='MockPosition')
 
+    class Meta:
+        default_related_name = 'mock_portfolios'
+        db_table = 'mock_portfolio'
+
     def __str__(self):
         return '{0}\'s mock portfolio'.format(self.user)
 
@@ -156,7 +160,9 @@ class MockPosition(models.Model):
     """
     coin = models.ForeignKey(Coin)
     amount = models.FloatField(default=0.0)
-    portfolio = models.ForeignKey(MockPortfolio, on_delete=models.CASCADE)
+    mock_portfolio = models.ForeignKey(MockPortfolio, on_delete=models.CASCADE, related_name='mock_positions', null=True)
 
     class Meta:
-        unique_together = [('coin', 'portfolio'),]
+        unique_together = [('coin', 'mock_portfolio'),]
+        db_table = 'mock_position'
+        default_related_name = 'mock_positions'

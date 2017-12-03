@@ -65,10 +65,10 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_admin')
+    list_display = ('pk', 'email', 'first_name', 'last_name', 'is_active', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('pk', 'email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name')}),
         ('Permissions', {'fields': ('is_active', 'is_admin',)}),
     )
@@ -79,6 +79,7 @@ class UserAdmin(BaseUserAdmin):
             {
                 'classes': ('wide',),
                 'fields': (
+                    'pk',
                     'email',
                     'first_name',
                     'last_name',
@@ -118,7 +119,7 @@ class MockPortfolioAdmin(admin.ModelAdmin):
     inlines = [MockPositionInline]
 
 class MockPositionAdmin(admin.ModelAdmin):
-    list_display = ('coin', 'amount', 'portfolio')
+    list_display = ('coin', 'amount', 'mock_portfolio')
 
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
@@ -126,6 +127,8 @@ admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Portfolio, PortfolioAdmin)
 admin.site.register(Position, PositionAdmin)
 admin.site.register(Coin, CoinAdmin)
+admin.site.register(MockPortfolio, MockPortfolioAdmin)
+admin.site.register(MockPosition, MockPositionAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
