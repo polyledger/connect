@@ -38,15 +38,15 @@
             <thead>
               <tr>
                 <th scope="row">Coins</th>
-                <th scope="row" class="text-center" data-toggle="tooltip" data-placement="top" v-for="percent, coin in portfolio" :title="coin">
-                  <img :src="imagePath(coin)" width="25">
+                <th scope="row" class="text-center" data-toggle="tooltip" data-placement="top" v-for="position in positions" :title="position.name">
+                  <img :src="imagePath(position.slug)" width="25">
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <th scope="row">Percent</th>
-                <td class="text-center" v-for="percent, coin in portfolio">{{percent}}%</td>
+                <th scope="row">Amount</th>
+                <td class="text-center" v-for="position in positions">{{position.amount}}</td>
               </tr>
             </tbody>
           </table>
@@ -78,7 +78,7 @@
                   </li>
                 </ul>
                 <h5 class="text-center mb-4">
-                  <small class="badge badge-success">{{chart.change}}</small>
+                  <small class="badge badge-success">${{chart.change}}</small>
                 </h5>
                 <div class="chart-container">
                   <div class="d-flex align-items-center justify-content-center spinner" v-if="chart.loading">
@@ -101,11 +101,11 @@ export default {
   data () {
     return {
       riskScore: '',
-      portfolio: null,
+      positions: null,
       chart: {
         labels: [],
         dataset: [],
-        change: '0.00%',
+        change: '0.00',
         loading: true,
         period: '7D'
       },
@@ -114,7 +114,7 @@ export default {
   },
   methods: {
     imagePath (coin) {
-      return require(`@/assets/img/coins/${coin}.png`)
+      return require(`@/assets/img/coins/${coin.toLowerCase()}.png`)
     },
     getPortfolio () {
       this.$http({
@@ -125,7 +125,7 @@ export default {
         }
       }).then((response) => {
         this.riskScore = response.data.risk_score
-        this.portfolio = response.data.portfolio
+        this.positions = response.data.portfolio.positions
       }).catch((error) => {
         console.error(error)
         this.errors.push('Unable to get your portfolio. Please try again later.')
@@ -194,7 +194,7 @@ export default {
                 }
               },
               label: (tooltipItem, data) => {
-                return ' ' + tooltipItem.yLabel.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '%'
+                return ' $' + tooltipItem.yLabel.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
               }
             }
           },
@@ -216,9 +216,9 @@ export default {
                 beginAtZero: false,
                 callback: (value, index, values) => {
                   if (parseInt(value) >= 1000) {
-                    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '%'
+                    return '$' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   } else {
-                    return value + '%'
+                    return '$' + value
                   }
                 }
               }

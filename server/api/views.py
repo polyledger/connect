@@ -55,38 +55,25 @@ def chart_view(request, format=None):
     elif period == '1Y':
         start = end - datetime.timedelta(days=364)
 
-    coin_map = {
-        'bitcoin': 'BTC',
-        'litecoin': 'LTC',
-        'ethereum': 'ETH',
-        'ripple': 'XRP',
-        'monero': 'XMR',
-        'zcash': 'ZEC',
-        'bitcoin_cash': 'BCH',
-        'ethereum_classic': 'ETC',
-        'neo': 'NEO',
-        'dash': 'DASH'
-    }
-
     portfolio = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
 
-    for coin in request.user.profile.coins:
-        percent = getattr(request.user.portfolio, coin)
+    for position in request.user.portfolio.position_set.all():
         portfolio.trade_asset(
-            amount=percent,
+            amount=position.amount,
             from_asset='USD',
-            to_asset=coin_map[coin],
+            to_asset=position.coin.symbol,
             datetime=start.strftime('%Y-%m-%d')
         )
     data = portfolio.get_historical_value(start, end, freq, date_format)
 
-    bitcoin = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
-    bitcoin.trade_asset(100, 'USD', 'BTC', start.strftime('%Y-%m-%d'))
-    bitcoin_data = bitcoin.get_historical_value(start, end, freq, date_format)
+    # bitcoin = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
+    # bitcoin.trade_asset(100, 'USD', 'BTC', start.strftime('%Y-%m-%d'))
+    # bitcoin_data = bitcoin.get_historical_value(start, end, freq, date_format)
+    # dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
 
-    dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
+    dataset = {'portfolio': data['values'], 'bitcoin': []}
     labels = data['dates']
-    change = str(round(portfolio.get_value() - 100, 2)) + '%'
+    change = str(round(portfolio.get_value() - 100, 2))
 
     content = {
         'dataset': dataset,

@@ -1,6 +1,5 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-from celery.schedules import crontab
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string

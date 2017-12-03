@@ -8,13 +8,6 @@ if [ $# -eq 0 ] ; then
 elif [[ "$1" = 'server' ]] ; then
   set -m
   python manage.py runserver 8080 &
-  PID=$!
-  sleep 3
-  if ps -p $PID > /dev/null ; then
-    kill -TSTP $PID
-    open http://localhost:8080/account/
-    fg %1
-  fi
 elif [[ "$1" = 'worker' ]] ; then
   (
     redis-server --daemonize yes

@@ -1,15 +1,17 @@
 from django.contrib.auth import get_user_model
 from account.models import Portfolio, Coin, Position
+from account.models import MockPortfolio, MockPosition
 from rest_framework import fields, serializers
 
 
 class PositionSerializer(serializers.ModelSerializer):
     symbol = serializers.ReadOnlyField(source='coin.symbol')
     name = serializers.ReadOnlyField(source='coin.name')
+    slug = serializers.ReadOnlyField(source='coin.slug')
 
     class Meta:
         model = Position
-        fields = ('id', 'symbol', 'name', 'amount')
+        fields = ('id', 'symbol', 'name', 'slug', 'amount')
 
 class PortfolioSerializer(serializers.ModelSerializer):
     positions = PositionSerializer(source='position_set', many=True, read_only=True)
@@ -35,3 +37,19 @@ class CoinSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coin
         fields = ('symbol', 'name', 'slug')
+
+class MockPositionSerializer(serializers.ModelSerializer):
+    symbol = serializers.ReadOnlyField(source='coin.symbol')
+    name = serializers.ReadOnlyField(source='coin.name')
+    slug = serializers.ReadOnlyField(source='coin.slug')
+
+    class Meta:
+        model = MockPosition
+        fields = ('id', 'symbol', 'name', 'slug', 'amount')
+
+class MockPortfolioSerializer(serializers.ModelSerializer):
+    positions = MockPositionSerializer(source='position_set', many=True)
+
+    class Meta:
+        model = MockPortfolio
+        fields = ('pk', 'user', 'usd', 'positions')

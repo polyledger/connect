@@ -129,11 +129,34 @@ class Portfolio(models.Model):
 
 class Position(models.Model):
     """
-    A position of a coin in a portfolio.
+    A read-only position of a coin in a portfolio.
     """
     coin = models.ForeignKey(Coin)
     amount = models.FloatField(default=0.0)
     portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = [('coin', 'portfolio'),]
+
+class MockPortfolio(models.Model):
+    """
+    A mock portfolio containing mock positions.
+    """
+    timestamp = models.DateTimeField(auto_now_add=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    usd = models.FloatField(default=0)
+    coins = models.ManyToManyField(Coin, blank=True, through='MockPosition')
+
+    def __str__(self):
+        return '{0}\'s mock portfolio'.format(self.user)
+
+class MockPosition(models.Model):
+    """
+    A writable position of a coin in a mock portfolio.
+    """
+    coin = models.ForeignKey(Coin)
+    amount = models.FloatField(default=0.0)
+    portfolio = models.ForeignKey(MockPortfolio, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = [('coin', 'portfolio'),]

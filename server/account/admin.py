@@ -7,7 +7,8 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from .models import User, Profile, Portfolio, Coin, Position
+from account.models import User, Profile, Portfolio, Coin, Position
+from account.models import MockPortfolio, MockPosition
 
 
 class UserCreationForm(forms.ModelForm):
@@ -38,7 +39,6 @@ class UserCreationForm(forms.ModelForm):
             user.save()
         return user
 
-
 class UserChangeForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's
@@ -56,7 +56,6 @@ class UserChangeForm(forms.ModelForm):
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
         return self.initial["password"]
-
 
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
@@ -76,37 +75,50 @@ class UserAdmin(BaseUserAdmin):
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'first_name', 'last_name', 'password1', 'password2')}
+        (None,
+            {
+                'classes': ('wide',),
+                'fields': (
+                    'email',
+                    'first_name',
+                    'last_name',
+                    'password1',
+                    'password2'
+                )
+            }
         ),
     )
     search_fields = ('email',)
     ordering = ('email',)
     filter_horizontal = ()
 
-
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'risk_score')
-
 
 class PositionInline(admin.TabularInline):
     extra = 1
     model = Position
 
-
 class PortfolioAdmin(admin.ModelAdmin):
     list_display = ('user', 'usd')
     inlines = [PositionInline]
 
-
 class CoinAdmin(admin.ModelAdmin):
     list_display = ('symbol', 'name', 'slug')
-
 
 class PositionAdmin(admin.ModelAdmin):
     list_display = ('coin', 'amount', 'portfolio')
 
+class MockPositionInline(admin.TabularInline):
+    extra = 1
+    model = MockPosition
+
+class MockPortfolioAdmin(admin.ModelAdmin):
+    list_display = ('user', 'usd')
+    inlines = [MockPositionInline]
+
+class MockPositionAdmin(admin.ModelAdmin):
+    list_display = ('coin', 'amount', 'portfolio')
 
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
