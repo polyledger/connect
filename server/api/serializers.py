@@ -12,22 +12,11 @@ class PositionSerializer(serializers.ModelSerializer):
         fields = ('id', 'symbol', 'name', 'amount')
 
 class PortfolioSerializer(serializers.ModelSerializer):
-    positions = PositionSerializer(source='position_set', many=True)
+    positions = PositionSerializer(source='position_set', many=True, read_only=True)
 
     class Meta:
         model = Portfolio
         fields = ('pk', 'user', 'usd', 'positions')
-
-    def create(self, validated_data):
-        positions_data = validated_data.pop('positions')
-        portfolio = Portfolio.objects.create(**validated_data)
-        for position_data in positions_data:
-            Position.objects.create(portfolio=portfolio, **position_data)
-        return portfolio
-
-    def update(self, validated_data):
-        # TODO: Write custom update method to update nested positions
-        return portfolio
 
 class UserSerializer(serializers.ModelSerializer):
     risk_score = serializers.IntegerField(source='profile.risk_score', required=False)

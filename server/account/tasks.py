@@ -18,34 +18,20 @@ def allocate_for_user(pk):
     Rebalances portfolio allocations.
     """
     user = get_user_model().objects.get(pk=pk)
-    risk_score = user.profile.risk_assessment_score
-
-    coin_map = {
-        'bitcoin': 'BTC',
-        'litecoin': 'LTC',
-        'ethereum': 'ETH',
-        'ripple': 'XRP',
-        'monero': 'XMR',
-        'zcash': 'ZEC',
-        'bitcoin_cash': 'BCH',
-        'ethereum_classic': 'ETC',
-        'neo': 'NEO',
-        'dash': 'DASH'
-    }
-
-    inv_coin_map = {v: k for k, v in coin_map.items()}
+    risk_score = user.profile.risk_score
 
     coins = []
-    for coin in sorted(user.portfolio.selected_coins):
-        coins.append(coin_map[coin])
+    for position in user.portfolio.position_set.all():
+        coins.append(position.coin.symbol)
     allocator = Allocator(coins=coins, start='2017-10-01')
     allocation = allocator.allocate().loc[risk_score]
 
-    for coin in coin_map.keys():
-        setattr(user.portfolio, coin, 0.0)
+    for position in user.portfolio.position_set.all():
+        position.amount = 0.0
 
     for coin in allocation.keys():
-        setattr(user.portfolio, inv_coin_map[coin], allocation[coin])
+        position, created = user.portfolio.position_set.all().get_or_create(coin=coin)
+        position.amount = allocation[coin]
     user.portfolio.save()
     user.save()
 
