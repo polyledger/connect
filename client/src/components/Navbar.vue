@@ -16,11 +16,6 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/coins" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
-              <i class="icon icon-grid"></i> Coins
-            </router-link>
-          </li>
-          <li class="nav-item">
             <router-link to="/markets" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
               <i class="icon icon-area-graph"></i> Markets
             </router-link>
