@@ -55,7 +55,7 @@ let actions = {
 
     return new Promise((resolve, reject) => {
       axios({
-        url: '/account/signup/',
+        url: '/api/users/',
         method: 'POST',
         data: credentials
       }).then((response) => {
@@ -84,7 +84,7 @@ let actions = {
       }
 
       axios({
-        url: '/api/account/authenticate/',
+        url: '/api/authenticate/',
         method: 'POST',
         data: {
           username: credentials.email,
