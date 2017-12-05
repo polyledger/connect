@@ -1,6 +1,6 @@
 import datetime
 
-from account.models import User, Profile, Coin, Portfolio
+from api.models import User, Profile, Coin, Portfolio
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -22,6 +22,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return User.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        user = request.user
+        return super(UserViewSet, self).destroy(request, *args, **kwargs)
 
 class PortfolioViewSet(viewsets.ModelViewSet):
     model = Portfolio

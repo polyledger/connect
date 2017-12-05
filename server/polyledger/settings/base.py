@@ -27,7 +27,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # Application definition
 
 INSTALLED_APPS = [
-    'account.apps.AccountConfig',
     'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -89,7 +88,7 @@ WSGI_APPLICATION = 'polyledger.wsgi.application'
 
 
 # https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#specifying-a-custom-user-model
-AUTH_USER_MODEL = 'account.User'
+AUTH_USER_MODEL = 'api.User'
 
 
 # Password validation

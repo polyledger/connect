@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
-from account.models import Portfolio, Coin, Position
+from django.contrib.sites.shortcuts import get_current_site
+from api.models import User, Portfolio, Coin, Position
+from api.tasks import send_confirmation_email
 from rest_framework import fields, serializers, status
 
 
@@ -53,7 +55,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
         return instance
 
 class UserSerializer(serializers.ModelSerializer):
-    risk_score = serializers.IntegerField(source='profile.risk_score')
+    risk_score = serializers.IntegerField(source='profile.risk_score', required=False)
     portfolios = PortfolioSerializer(many=True, read_only=True)
 
     class Meta:
@@ -66,3 +68,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_queryset(self):
         return self.request.user
+
+    def create(self, validated_data):
+        user = User(**validated_data)
+        user.is_active = False
+        user.save()
+        current_site = get_current_site(self.context['request'])
+        send_confirmation_email(user.id, user.email, current_site)
+        return user
