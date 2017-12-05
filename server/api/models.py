@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
 from django.db import models
 from django.dispatch import receiver
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from rest_framework.authtoken.models import Token
 from decimal import *
 
@@ -86,8 +86,7 @@ class User(AbstractBaseUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # TODO: Set minimum value of 1 and maximum value of 5
-    risk_score = models.IntegerField(default=0)
+    # TODO: Add demographic information about user, such as age, income, etc.
 
 @receiver(models.signals.post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -124,6 +123,10 @@ class Portfolio(models.Model):
     """
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
+    risk_score = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
     user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='portfolios')
     usd = models.FloatField(default=0)
 

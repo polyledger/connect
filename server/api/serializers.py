@@ -24,7 +24,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Portfolio
-        fields = ('id', 'created', 'title', 'usd', 'coins', 'positions')
+        fields = ('id', 'created', 'title', 'risk_score', 'usd', 'coins', 'positions')
         read_only_fields = ('id', 'created',)
 
     def get_queryset(self):

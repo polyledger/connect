@@ -93,14 +93,14 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'risk_score')
+    list_display = ('user',)
 
 class PositionInline(admin.TabularInline):
     extra = 1
     model = Position
 
 class PortfolioAdmin(admin.ModelAdmin):
-    list_display = ('user', 'title', 'usd')
+    list_display = ('user', 'title', 'risk_score', 'usd')
     inlines = [PositionInline]
 
 class CoinAdmin(admin.ModelAdmin):
