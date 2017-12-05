@@ -10,6 +10,6 @@ router.register(r'users', views.UserViewSet, base_name='user')
 
 app_name = 'api'
 urlpatterns = [
-    url(r'^account/authenticate/', authtoken_views.obtain_auth_token),
+    url(r'^authenticate/', authtoken_views.obtain_auth_token),
     url(r'^', include(router.urls, namespace='api'))
 ]

@@ -55,13 +55,13 @@ def allocate_for_user(pk):
     user.save()
 
 @shared_task
-def send_confirmation_email(pk, recipient, current_site):
+def send_confirmation_email(pk, recipient, site_url):
     user = get_user_model().objects.get(pk=pk)
     email_context = {
         'user': user,
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': account_activation_token.make_token(user),
-        'current_site': current_site
+        'site_url': site_url
     }
     text_content = render_to_string(
         'account_activation_email.txt', email_context

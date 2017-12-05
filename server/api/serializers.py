@@ -12,11 +12,11 @@ class CoinSerializer(serializers.ModelSerializer):
         fields = ('symbol', 'name', 'slug')
 
 class PositionSerializer(serializers.ModelSerializer):
-    symbol = serializers.ReadOnlyField(source='coin.symbol')
+    coin = CoinSerializer()
 
     class Meta:
         model = Position
-        fields = ('id', 'symbol', 'amount')
+        fields = ('id', 'coin', 'amount')
 
 class PortfolioSerializer(serializers.ModelSerializer):
     positions = PositionSerializer(many=True, read_only=True)

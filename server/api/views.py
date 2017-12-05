@@ -2,14 +2,27 @@ import datetime
 
 from api.models import User, Profile, Coin, Portfolio
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse
+from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import get_object_or_404
-from rest_framework import status, permissions, authentication, generics, viewsets
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
+from rest_framework import permissions, authentication, viewsets, status
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
-from rest_framework.decorators import api_view, renderer_classes, detail_route
+from rest_framework.decorators import detail_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
+from api.tokens import account_activation_token
 from lattice import backtest
+
+class IsCreationOrIsAuthenticated(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated():
+            if view.action == 'create':
+                return True
+            else:
+                return False
+        else:
+            return True
 
 class UserViewSet(viewsets.ModelViewSet):
     model = User
@@ -18,10 +31,33 @@ class UserViewSet(viewsets.ModelViewSet):
         authentication.TokenAuthentication,
     )
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsCreationOrIsAuthenticated]
 
     def get_queryset(self):
         return User.objects.all()
+
+    def get_object(self):
+        pk = self.kwargs.get('pk')
+
+        if pk == 'current':
+            return self.request.user
+        return super(UserViewSet, self).get_object()
+
+    @detail_route(
+        methods=['GET'],
+        permission_classes=[permissions.AllowAny]
+    )
+    def activate(self, request, pk=None):
+        try:
+            uid = force_text(urlsafe_base64_decode(pk))
+            user = get_user_model().objects.get(pk=uid)
+            token = request.query_params.get('token', None)
+        except(TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+            user = None
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+        return Response(status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         user = request.user
