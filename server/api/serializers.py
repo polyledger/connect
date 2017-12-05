@@ -1,8 +1,13 @@
 from django.contrib.auth import get_user_model
 from account.models import Portfolio, Coin, Position
-from account.models import MockPortfolio, MockPosition
 from rest_framework import fields, serializers, status
 
+
+class CoinSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Coin
+        fields = ('symbol', 'name', 'slug')
 
 class PositionSerializer(serializers.ModelSerializer):
     symbol = serializers.ReadOnlyField(source='coin.symbol')
@@ -12,57 +17,52 @@ class PositionSerializer(serializers.ModelSerializer):
         fields = ('id', 'symbol', 'amount')
 
 class PortfolioSerializer(serializers.ModelSerializer):
-    positions = PositionSerializer(source='positions', many=True, read_only=True)
+    positions = PositionSerializer(many=True, read_only=True)
+    coins = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=Coin.objects.all())
 
     class Meta:
         model = Portfolio
-        fields = ('pk', 'user', 'usd', 'positions')
+        fields = ('id', 'created', 'title', 'usd', 'coins', 'positions')
+        read_only_fields = ('id', 'created',)
+
+    def get_queryset(self):
+        user = self.request.user
+        return Portfolio.objects.filter(user=user)
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        coins = validated_data.pop('coins')
+        portfolio = Portfolio.objects.create(**validated_data, user=user)
+        for coin in coins:
+            position = Position(coin=coin, amount=0, portfolio=portfolio)
+            position.save()
+            portfolio.positions.add(position)
+        portfolio.save()
+        return portfolio
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.usd = validated_data.get('usd', instance.usd)
+        if validated_data.get('coins'):
+            instance.coins.clear()
+            for coin in validated_data.get('coins'):
+                position = Position(coin=coin, amount=0, portfolio=instance)
+                position.save()
+                instance.positions.add(position)
+        instance.save()
+        return instance
 
 class UserSerializer(serializers.ModelSerializer):
-    risk_score = serializers.IntegerField(source='profile.risk_score', required=False)
-    portfolio = PortfolioSerializer(read_only=True, required=False)
+    risk_score = serializers.IntegerField(source='profile.risk_score')
+    portfolios = PortfolioSerializer(many=True, read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ('email', 'first_name', 'last_name', 'risk_score', 'portfolio')
+        fields = ('id', 'email', 'first_name', 'last_name', 'risk_score', 'portfolios')
         extra_kwargs = {
             'id': {'read_only': True},
             'password': {'write_only': True}
         }
 
-class CoinSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Coin
-        fields = ('symbol', 'name', 'slug')
-
-class MockPositionSerializer(serializers.ModelSerializer):
-    symbol = serializers.CharField(source='coin.symbol')
-
-    class Meta:
-        model = MockPosition
-        fields = ('id', 'symbol', 'amount')
-
-class MockPortfolioSerializer(serializers.ModelSerializer):
-    mock_positions = MockPositionSerializer(
-        many=True,
-        read_only=False
-    )
-
-    class Meta:
-        model = MockPortfolio
-        fields = ('pk', 'user', 'usd', 'mock_positions')
-
-    def create(self, validated_data):
-        mock_positions = validated_data.pop('mock_positions')
-        instance = MockPortfolio.objects.create(**validated_data)
-        for mock_position in mock_positions:
-            coin = Coin.objects.get(pk=mock_position['coin']['symbol'])
-            amount = mock_position['amount']
-            MockPosition.objects.create(coin=coin, amount=amount, mock_portfolio=instance)
-        return instance
-
-    def to_representation(self, instance):
-        representation = super(MockPortfolioSerializer, self).to_representation(instance)
-        representation['mock_positions'] = MockPositionSerializer(instance.mock_positions.all(), many=True).data
-        return representation
+    def get_queryset(self):
+        return self.request.user

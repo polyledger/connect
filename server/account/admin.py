@@ -7,8 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from account.models import User, Profile, Portfolio, Coin, Position
-from account.models import MockPortfolio, MockPosition
+from account.models import User, Profile, Portfolio, Coin, Position, Transaction
 
 
 class UserCreationForm(forms.ModelForm):
@@ -101,7 +100,7 @@ class PositionInline(admin.TabularInline):
     model = Position
 
 class PortfolioAdmin(admin.ModelAdmin):
-    list_display = ('user', 'usd')
+    list_display = ('user', 'title', 'usd')
     inlines = [PositionInline]
 
 class CoinAdmin(admin.ModelAdmin):
@@ -110,25 +109,12 @@ class CoinAdmin(admin.ModelAdmin):
 class PositionAdmin(admin.ModelAdmin):
     list_display = ('coin', 'amount', 'portfolio')
 
-class MockPositionInline(admin.TabularInline):
-    extra = 1
-    model = MockPosition
-
-class MockPortfolioAdmin(admin.ModelAdmin):
-    list_display = ('user', 'usd')
-    inlines = [MockPositionInline]
-
-class MockPositionAdmin(admin.ModelAdmin):
-    list_display = ('coin', 'amount', 'mock_portfolio')
-
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Portfolio, PortfolioAdmin)
 admin.site.register(Position, PositionAdmin)
 admin.site.register(Coin, CoinAdmin)
-admin.site.register(MockPortfolio, MockPortfolioAdmin)
-admin.site.register(MockPosition, MockPositionAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)

@@ -85,6 +85,7 @@ class User(AbstractBaseUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # TODO: Set minimum value of 1 and maximum value of 5
     risk_score = models.IntegerField(default=0)
 
 @receiver(models.signals.post_save, sender=User)
@@ -111,6 +112,7 @@ class Coin(models.Model):
     symbol = models.CharField(primary_key=True, max_length=4)
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, null=True)
+    portfolio = models.ManyToManyField('Portfolio', blank=True, through='Position', related_name='coins')
 
     def __str__(self):
         return self.name
@@ -119,50 +121,27 @@ class Portfolio(models.Model):
     """
     A user's portfolio containing coins.
     """
-    timestamp = models.DateTimeField(auto_now_add=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=100)
+    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='portfolios')
     usd = models.FloatField(default=0)
-    coins = models.ManyToManyField(Coin, blank=True, through='Position')
 
     def __str__(self):
         return '{0}\'s portfolio'.format(self.user)
 
 class Position(models.Model):
     """
-    A read-only position of a coin in a portfolio.
+    A position of a coin in a portfolio.
     """
-    coin = models.ForeignKey(Coin)
+    coin = models.ForeignKey('Coin')
+    portfolio = models.ForeignKey('Portfolio', related_name='positions', null=True)
     amount = models.FloatField(default=0.0)
-    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name='positions')
 
-    class Meta:
-        unique_together = [('coin', 'portfolio'),]
-
-class MockPortfolio(models.Model):
+class Transaction(models.Model):
     """
-    A mock portfolio containing mock positions.
+    A crypto-crypto transaction in the portfolio
     """
-    timestamp = models.DateTimeField(auto_now_add=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    usd = models.FloatField(default=0)
-    coins = models.ManyToManyField(Coin, blank=True, through='MockPosition')
-
-    class Meta:
-        default_related_name = 'mock_portfolios'
-        db_table = 'mock_portfolio'
-
-    def __str__(self):
-        return '{0}\'s mock portfolio'.format(self.user)
-
-class MockPosition(models.Model):
-    """
-    A writable position of a coin in a mock portfolio.
-    """
-    coin = models.ForeignKey(Coin)
-    amount = models.FloatField(default=0.0)
-    mock_portfolio = models.ForeignKey(MockPortfolio, on_delete=models.CASCADE, related_name='mock_positions', null=True)
-
-    class Meta:
-        unique_together = [('coin', 'mock_portfolio'),]
-        db_table = 'mock_position'
-        default_related_name = 'mock_positions'
+    date = models.DateTimeField(auto_now_add=True)
+    portfolio = models.ForeignKey('Portfolio', on_delete=models.CASCADE, related_name='transactions')
+    base = models.ForeignKey('Coin', related_name='base_transactions')
+    quote = models.ForeignKey('Coin', related_name='quote_transactions')
