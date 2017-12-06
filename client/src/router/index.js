@@ -61,7 +61,7 @@ export default new Router({
       beforeEnter: requireSignedUp
     },
     {
-      path: '/activation',
+      path: '/activate',
       name: 'Activation',
       component: Activation,
       beforeEnter: requireAnonymous

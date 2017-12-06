@@ -144,7 +144,6 @@ export default {
         }
       }).then((response) => {
         this.$router.push('/dashboard')
-        console.log(this.portfolio)
       }).catch((error) => {
         console.error(error)
         this.errors.push('Unable to add the coins to your mock portfolio. Please try again later.')

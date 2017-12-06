@@ -1,8 +1,9 @@
 import datetime
 
-from api.models import User, Profile, Coin, Portfolio
+from api.models import User, Profile, Coin, Portfolio, Token
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
@@ -57,7 +58,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if user is not None and account_activation_token.check_token(user, token):
             user.is_active = True
             user.save()
-        return Response(status=status.HTTP_200_OK)
+            auth_token = Token.objects.get(user=user)
+        return HttpResponseRedirect('http://localhost:8081/activate/?token=' + str(auth_token))
 
     def destroy(self, request, *args, **kwargs):
         user = request.user
