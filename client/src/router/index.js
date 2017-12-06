@@ -7,7 +7,7 @@ import SignIn from '@/components/SignIn'
 import SignUp from '@/components/SignUp'
 import ConfirmEmail from '@/components/ConfirmEmail'
 import Activation from '@/components/Activation'
-import Coins from '@/components/Coins'
+import Portfolio from '@/components/Portfolio'
 
 Vue.use(Router)
 
@@ -67,15 +67,15 @@ export default new Router({
       beforeEnter: requireAnonymous
     },
     {
-      path: '/coins',
-      name: 'Coins',
-      component: Coins,
-      beforeEnter: requireAuth
-    },
-    {
       path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard,
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/portfolios/:id',
+      name: 'Portfolio',
+      component: Portfolio,
       beforeEnter: requireAuth
     }
   ]

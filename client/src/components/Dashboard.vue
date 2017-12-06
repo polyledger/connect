@@ -20,20 +20,11 @@
         <div class="dashhead">
           <div class="dashhead-titles">
             <h6 class="dashhead-subtitle">Portfolio</h6>
-            <h3 class="dashhead-title">Overview</h3>
+            <h3 class="dashhead-title">Home</h3>
           </div>
           <div class="dashhead-toolbar">
             <div class="dashhead-toolbar-item">
-              <select class="custom-select" v-model="portfolio" @change="getChart('7D')">
-                <option v-for="portfolio in portfolios" :value="portfolio">{{portfolio.title}}</option>
-              </select>
-            </div>
-            <div class="dashhead-toolbar-item">
-              <button type="button" class="btn btn-dark"><i class="icon icon-pencil"></i> Edit</button>
-            </div>
-            <span class="dashhead-toolbar-divider hidden-xs"></span>
-            <div class="dashhead-toolbar-item">
-              <button type="button" class="btn btn-dark"><i class="icon icon-plus"></i> New</button>
+              <router-link :to="`/portfolios/${portfolio.id}`" tag="a" role="button" class="btn btn-dark"><i class="icon icon-pencil"></i> Edit</router-link>
             </div>
             <span class="dashhead-toolbar-divider hidden-xs"></span>
             <div class="dashhead-toolbar-item">
@@ -45,7 +36,7 @@
     </div>
     <div class="row text-center">
       <div class="col">
-        <h5>Your Portfolio</h5>
+        <h5>{{portfolio.title}}</h5>
         <div class="table-responsive">
           <table class="table">
             <tbody>
@@ -262,16 +253,14 @@ export default {
 </script>
 
 <style scoped>
-.dashhead-toolbar-item > button,
-.custom-select {
-  height: 2.15rem;
-  border-radius: 0;
-  border-color: #5a617b;
+.dashhead-toolbar-item > a[role="button"] {
   cursor: pointer;
 }
 .spinner {
-  color: #333;
   height: 270px;
+}
+i.fa-spinner {
+  color: #fff;
 }
 .chart-container {
   position: relative;
