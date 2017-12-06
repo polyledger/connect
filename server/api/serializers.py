@@ -61,11 +61,11 @@ class PortfolioSerializer(serializers.ModelSerializer):
         return instance
 
 class UserSerializer(serializers.ModelSerializer):
-    portfolios = PortfolioSerializer(many=True, read_only=True)
+    portfolio = PortfolioSerializer(read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'first_name', 'last_name', 'portfolios')
+        fields = ('id', 'email', 'first_name', 'last_name', 'portfolio')
         extra_kwargs = {
             'id': {'read_only': True},
             'password': {'write_only': True}

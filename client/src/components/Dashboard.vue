@@ -102,7 +102,6 @@ export default {
   name: 'dashboard',
   data () {
     return {
-      portfolios: [],
       portfolio: {},
       chart: {
         labels: [],
@@ -126,8 +125,7 @@ export default {
           'Authorization': `Token ${localStorage.token}`
         }
       }).then((response) => {
-        this.portfolios = response.data.portfolios
-        this.portfolio = this.portfolios[0]
+        this.portfolio = response.data.portfolio
         this.getChart('7D', this.portfolio)
       }).catch((error) => {
         console.error(error)

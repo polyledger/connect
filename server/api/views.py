@@ -75,11 +75,14 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.portfolios.all()
+        return self.request.user.portfolio
+
+    def get_object(self):
+        return self.request.user.portfolio
 
     @detail_route(methods=['GET'])
     def chart(self, request, pk=None):
-        portfolio = get_object_or_404(self.get_queryset(), id=pk)
+        portfolio = self.get_object()
 
         period = request.GET.get('period')
         end = datetime.datetime.now()

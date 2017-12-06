@@ -89,13 +89,28 @@ class Profile(models.Model):
     # TODO: Add demographic information about user, such as age, income, etc.
 
 @receiver(models.signals.post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_user_profile(sender, instance=None, created=False, **kwargs):
+    """
+    Create a profile for new users
+    """
     if created:
         Profile.objects.create(user=instance)
 
 @receiver(models.signals.post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+@receiver(models.signals.post_save, sender=User)
+def create_user_portfolio(sender, instance=None, created=False, **kwargs):
+    """
+    Create a profile for new users
+    """
+    if created:
+        Portfolio.objects.create(user=instance)
+
+@receiver(models.signals.post_save, sender=User)
+def save_user_portfolio(sender, instance, **kwargs):
+    instance.portfolio.save()
 
 @receiver(models.signals.post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -127,7 +142,7 @@ class Portfolio(models.Model):
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
-    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='portfolios')
+    user = models.OneToOneField('User', on_delete=models.CASCADE)
     usd = models.FloatField(default=0)
 
     def __str__(self):
