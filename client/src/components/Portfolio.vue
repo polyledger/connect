@@ -64,7 +64,7 @@
                   </div>
                 </div>
                 <div class="d-flex justify-content-end">
-                  <button @click.prevent="handleSelectAll" class="btn btn-dark btn-lg mt-5 mx-1">Select All</button>
+                  <button @click.prevent="handleSelectAll" class="btn btn-dark btn-lg mt-5 mx-1">{{buttonValue}}</button>
                   <button @click.prevent="handleConfirm" class="btn btn-dark btn-lg mt-5 mx-1" :disabled="selectedCount < 2">Confirm</button>
                 </div>
               </div>
@@ -84,6 +84,7 @@ export default {
       portfolio: {},
       allSelected: false,
       selectedCount: 0,
+      buttonValue: 'Select All',
       coins: [],
       errors: []
     }
@@ -124,6 +125,10 @@ export default {
           }
           return coin
         })
+        if (this.selectedCount === this.coins.length) {
+          this.allSelected = true
+          this.buttonValue = 'Deselect All'
+        }
       }).catch((error) => {
         console.error(error)
         this.errors.push('Unable to retrieve coins from the server. Please try again later.')
@@ -150,10 +155,16 @@ export default {
       if (coin.selected) {
         this.selectedCount++
         this.portfolio.coins.push(coin.symbol)
+        if (this.selectedCount === this.coins.length) {
+          this.allSelected = true
+          this.buttonValue = 'Deselect All'
+        }
       } else {
         this.selectedCount--
         let index = this.portfolio.coins.indexOf(coin.symbol)
         this.portfolio.coins.splice(index, 1)
+        this.buttonValue = 'Select All'
+        this.allSelected = false
       }
     },
     handleSelectAll () {
@@ -164,6 +175,7 @@ export default {
           coin.selected = true
           this.portfolio.coins.push(coin.symbol)
         })
+        this.buttonValue = 'Deselect All'
       } else {
         this.selectedCount = 0
         this.coins.forEach(coin => {
@@ -171,6 +183,7 @@ export default {
           let index = this.portfolio.coins.indexOf(coin.symbol)
           this.portfolio.coins.splice(index, 1)
         })
+        this.buttonValue = 'Select All'
       }
     }
   },
