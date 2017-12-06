@@ -47,8 +47,12 @@
                 </td>
               </tr>
               <tr>
+                <th scope="row">Percent</th>
+                <td class="text-center" v-for="position in portfolio.positions">{{(position.amount).toFixed(2)}}%</td>
+              </tr>
+              <tr>
                 <th scope="row">Amount</th>
-                <td class="text-center" v-for="position in portfolio.positions">{{position.amount}}</td>
+                <td class="text-center" v-for="position in portfolio.positions">{{((position.amount/100)*portfolio.usd) | currency}}</td>
               </tr>
             </tbody>
           </table>

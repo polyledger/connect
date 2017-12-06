@@ -5,6 +5,7 @@ import axios from 'axios'
 import App from './App'
 import router from './router'
 import store from './store'
+import numeral from 'numeral'
 
 import './assets/js/chart.min.js'
 
@@ -21,4 +22,8 @@ new Vue({
   router,
   template: '<App/>',
   components: { App }
+})
+
+Vue.filter('currency', (value) => {
+  return numeral(value).format('$0,0.00')
 })

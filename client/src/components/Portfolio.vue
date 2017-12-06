@@ -146,7 +146,7 @@ export default {
         this.$router.push('/dashboard')
       }).catch((error) => {
         console.error(error)
-        this.errors.push('Unable to add the coins to your mock portfolio. Please try again later.')
+        this.errors.push('Unable to add the coins to your portfolio. Please try again later.')
       })
     },
     handleSelect (coin) {
