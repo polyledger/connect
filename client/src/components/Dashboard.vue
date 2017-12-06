@@ -48,15 +48,13 @@
         <h5>Your Portfolio</h5>
         <div class="table-responsive">
           <table class="table">
-            <thead>
+            <tbody>
               <tr>
                 <th scope="row">Coins</th>
-                <th scope="row" class="text-center" data-toggle="tooltip" data-placement="top" v-for="position in portfolio.positions" :title="position.coin.name">
+                <td class="text-center" data-toggle="tooltip" data-placement="top" v-for="position in portfolio.positions" :title="position.coin.name">
                   <img :src="imagePath(position.coin.slug)" width="25">
-                </th>
+                </td>
               </tr>
-            </thead>
-            <tbody>
               <tr>
                 <th scope="row">Amount</th>
                 <td class="text-center" v-for="position in portfolio.positions">{{position.amount}}</td>
@@ -176,15 +174,15 @@ export default {
             {
               label: 'Portfolio',
               data: this.chart.dataset.portfolio,
-              backgroundColor: ['rgba(98, 105, 142, 0.2)'],
+              backgroundColor: ['rgba(98, 105, 142, 0.5)'],
               borderColor: ['rgba(98, 105, 142, 1)'],
               borderWidth: 1
             },
             {
               label: 'Bitcoin',
               data: this.chart.dataset.bitcoin,
-              backgroundColor: ['rgba(255, 194, 69, 0.2)'],
-              borderColor: ['rgba(255, 194, 69, 1)'],
+              backgroundColor: ['rgba(255, 227, 133, 0.5)'],
+              borderColor: ['rgba(255, 227, 133, 1)'],
               borderWidth: 1
             }
           ]
@@ -193,7 +191,10 @@ export default {
           responsive: true,
           maintainAspectRatio: false,
           legend: {
-            display: true
+            display: true,
+            labels: {
+              fontColor: '#fff'
+            }
           },
           tooltips: {
             enabled: true,
@@ -218,7 +219,8 @@ export default {
                 display: false
               },
               ticks: {
-                maxTicksLimit: 7
+                maxTicksLimit: 7,
+                fontColor: '#fff'
               }
             }],
             yAxes: [{
@@ -227,6 +229,7 @@ export default {
               },
               ticks: {
                 maxTicksLimit: 5,
+                fontColor: '#fff',
                 beginAtZero: false,
                 callback: (value, index, values) => {
                   if (parseInt(value) >= 1000) {
@@ -274,8 +277,10 @@ export default {
   position: relative;
   max-height: 270px;
 }
-.card h5,
-.card .nav > li > a:not(.active) {
-  color: #333;
+.card-body {
+  background-color: #252830;
+}
+.card {
+  border-color: #5a617b;
 }
 </style>
