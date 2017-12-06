@@ -24,7 +24,7 @@ import pytz
 import requests
 import pandas as pd
 from datetime import datetime
-from api.models import Price
+from api.models import Price, Position
 from lattice.optimize import Allocator
 
 SUPPORTED_COINS = [
@@ -32,25 +32,25 @@ SUPPORTED_COINS = [
 ]
 
 @shared_task
-def allocate_for_user(pk):
+def allocate_for_user(pk, coins):
     """
     Rebalances portfolio allocations.
     """
     user = get_user_model().objects.get(pk=pk)
-    risk_score = user.profile.risk_score
+    risk_score = user.portfolio.risk_score
 
-    coins = []
-    for position in user.portfolio.position_set.all():
-        coins.append(position.coin.symbol)
-    allocator = Allocator(coins=coins, start='2017-10-01')
+    symbols = list(map(lambda c: c.symbol, coins))
+
+    allocator = Allocator(coins=symbols, start='2017-10-01')
     allocation = allocator.allocate().loc[risk_score]
 
-    for position in user.portfolio.position_set.all():
-        position.amount = 0.0
+    user.portfolio.positions.clear()
 
-    for coin in allocation.keys():
-        position, created = user.portfolio.position_set.all().get_or_create(coin=coin)
-        position.amount = allocation[coin]
+    for coin in coins:
+        position = Position(coin=coin, amount=allocation[coin.symbol], portfolio=user.portfolio)
+        position.save()
+        user.portfolio.positions.add(position)
+
     user.portfolio.save()
     user.save()
 

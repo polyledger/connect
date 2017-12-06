@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from api.models import User, Portfolio, Coin, Position
-from api.tasks import send_confirmation_email
+from api.tasks import send_confirmation_email, allocate_for_user
 from rest_framework import fields, serializers, status
 
 
@@ -44,6 +44,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
             position = Position(coin=coin, amount=0, portfolio=portfolio)
             position.save()
             portfolio.positions.add(position)
+        allocate_for_user(user.id, coins)
         portfolio.save()
         return portfolio
 
@@ -51,12 +52,9 @@ class PortfolioSerializer(serializers.ModelSerializer):
         instance.title = validated_data.get('title', instance.title)
         instance.usd = validated_data.get('usd', instance.usd)
         instance.risk_score = validated_data.get('risk_score', instance.risk_score)
-        if validated_data.get('coins'):
-            instance.coins.clear()
-            for coin in validated_data.get('coins'):
-                position = Position(coin=coin, amount=0, portfolio=instance)
-                position.save()
-                instance.positions.add(position)
+        user = self.context['request'].user
+        coins = validated_data.get('coins')
+        allocate_for_user(user.id, coins)
         instance.save()
         return instance
 
