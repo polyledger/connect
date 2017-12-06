@@ -30,7 +30,7 @@
         <div class="card my-4">
           <div class="card-body">
             <div class="row py-2">
-              <div class="col-md-4 offset-4">
+              <div class="col-md-4 offset-md-4">
                 <h5 class="text-center">Details</h5>
                 <form>
                   <div class="form-group">
@@ -65,7 +65,7 @@
                 </div>
                 <div class="d-flex justify-content-end">
                   <button @click.prevent="handleSelectAll" class="btn btn-dark btn-lg mt-5 mx-1">{{buttonValue}}</button>
-                  <button @click.prevent="handleConfirm" class="btn btn-dark btn-lg mt-5 mx-1" :disabled="selectedCount < 2">Confirm</button>
+                  <button @click.prevent="updatePortfolio" class="btn btn-dark btn-lg mt-5 mx-1" :disabled="selectedCount < 2">Confirm</button>
                 </div>
               </div>
             </div>
@@ -134,7 +134,7 @@ export default {
         this.errors.push('Unable to retrieve coins from the server. Please try again later.')
       })
     },
-    handleConfirm () {
+    updatePortfolio () {
       this.$http({
         url: `/api/portfolios/${this.$route.params.id}/`,
         method: 'PUT',

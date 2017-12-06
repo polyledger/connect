@@ -20,12 +20,17 @@ class PositionSerializer(serializers.ModelSerializer):
 
 class PortfolioSerializer(serializers.ModelSerializer):
     positions = PositionSerializer(many=True, read_only=True)
-    coins = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=Coin.objects.all())
+    coins = serializers.PrimaryKeyRelatedField(
+        many=True,
+        read_only=False,
+        queryset=Coin.objects.all()
+    )
 
     class Meta:
         model = Portfolio
-        fields = ('id', 'created', 'title', 'risk_score', 'usd', 'coins', 'positions')
-        read_only_fields = ('id', 'created',)
+        fields = ('id', 'created', 'title', 'risk_score', 'usd', 'coins',
+            'positions')
+        read_only_fields = ('id', 'created', 'positions',)
 
     def get_queryset(self):
         user = self.request.user
@@ -45,6 +50,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
         instance.usd = validated_data.get('usd', instance.usd)
+        instance.risk_score = validated_data.get('risk_score', instance.risk_score)
         if validated_data.get('coins'):
             instance.coins.clear()
             for coin in validated_data.get('coins'):
@@ -55,12 +61,11 @@ class PortfolioSerializer(serializers.ModelSerializer):
         return instance
 
 class UserSerializer(serializers.ModelSerializer):
-    risk_score = serializers.IntegerField(source='profile.risk_score', required=False)
     portfolios = PortfolioSerializer(many=True, read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'first_name', 'last_name', 'risk_score', 'portfolios')
+        fields = ('id', 'email', 'first_name', 'last_name', 'portfolios')
         extra_kwargs = {
             'id': {'read_only': True},
             'password': {'write_only': True}
