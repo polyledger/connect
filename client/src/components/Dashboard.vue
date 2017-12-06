@@ -23,8 +23,21 @@
             <h3 class="dashhead-title">Overview</h3>
           </div>
           <div class="dashhead-toolbar">
-            <div class="dashhead-toolbar-item d-flex">
-              <span class="align-self-center lead">Risk Score: {{riskScore}}</span>
+            <div class="dashhead-toolbar-item">
+              <select class="custom-select" v-model="portfolio" @change="getChart('7D')">
+                <option v-for="portfolio in portfolios" :value="portfolio">{{portfolio.title}}</option>
+              </select>
+            </div>
+            <div class="dashhead-toolbar-item">
+              <button type="button" class="btn btn-dark"><i class="icon icon-pencil"></i> Edit</button>
+            </div>
+            <span class="dashhead-toolbar-divider hidden-xs"></span>
+            <div class="dashhead-toolbar-item">
+              <button type="button" class="btn btn-dark"><i class="icon icon-plus"></i> New</button>
+            </div>
+            <span class="dashhead-toolbar-divider hidden-xs"></span>
+            <div class="dashhead-toolbar-item">
+              <span class="lead">Risk: {{portfolio.risk_score}}/5</span>
             </div>
           </div>
         </div>
@@ -38,15 +51,15 @@
             <thead>
               <tr>
                 <th scope="row">Coins</th>
-                <th scope="row" class="text-center" data-toggle="tooltip" data-placement="top" v-for="position in positions" :title="position.name">
-                  <img :src="imagePath(position.slug)" width="25">
+                <th scope="row" class="text-center" data-toggle="tooltip" data-placement="top" v-for="position in portfolio.positions" :title="position.coin.name">
+                  <img :src="imagePath(position.coin.slug)" width="25">
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <th scope="row">Amount</th>
-                <td class="text-center" v-for="position in positions">{{position.amount}}</td>
+                <td class="text-center" v-for="position in portfolio.positions">{{position.amount}}</td>
               </tr>
             </tbody>
           </table>
@@ -100,8 +113,8 @@ export default {
   name: 'dashboard',
   data () {
     return {
-      riskScore: '',
-      positions: null,
+      portfolios: [],
+      portfolio: {},
       chart: {
         labels: [],
         dataset: [],
@@ -114,7 +127,7 @@ export default {
   },
   methods: {
     imagePath (coin) {
-      return require(`@/assets/img/coins/${coin.toLowerCase()}.png`)
+      return require(`@/assets/img/coins/${coin}.png`)
     },
     getPortfolio () {
       this.$http({
@@ -124,8 +137,9 @@ export default {
           'Authorization': `Token ${localStorage.token}`
         }
       }).then((response) => {
-        this.riskScore = response.data.risk_score
-        this.positions = response.data.portfolio.positions
+        this.portfolios = response.data.portfolios
+        this.portfolio = this.portfolios[0]
+        this.getChart('7D', this.portfolio)
       }).catch((error) => {
         console.error(error)
         this.errors.push('Unable to get your portfolio. Please try again later.')
@@ -136,7 +150,7 @@ export default {
       this.chart.period = period
       if (window.instance) { window.instance.destroy() }
       this.$http({
-        url: `/api/chart/?period=${period}`,
+        url: `/api/portfolios/${this.portfolio.id}/chart/?period=${period}`,
         method: 'get',
         headers: {
           'Authorization': `Token ${localStorage.token}`
@@ -233,18 +247,24 @@ export default {
 
     // If they haven't created a portfolio, prompt them to do so.
     if (!this.portfolio) {
-      this.$router.push('/coins')
-      return
+      // this.$router.push('/coins')
+      // return
     }
-
-    this.getChart('7D')
+  },
+  async updated () {
+    await this.$nextTick
+    window.$('[data-toggle="tooltip"]').tooltip()
   }
 }
 </script>
 
 <style scoped>
-.dashhead-toolbar-item {
-  height: 34px;
+.dashhead-toolbar-item > button,
+.custom-select {
+  height: 2.15rem;
+  border-radius: 0;
+  border-color: #5a617b;
+  cursor: pointer;
 }
 .spinner {
   color: #333;
