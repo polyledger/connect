@@ -2,10 +2,12 @@
 
 1. [Development](#development)
     - [Prerequisites](#prerequisites)
-    - [Account app](#account-app)
-    - [Admin app](#admin-app)
-2. [Deployment](#deployment)
-    - [Database](#database)
+    - [API App](#api-app)
+    - [Admin App](#admin-app)
+2. [Database](#database)
+    - [Development](#development)
+    - [Staging and Production](#staging-and-production)
+3. [Deployment](#deployment)
 
 ## Development
 
@@ -23,7 +25,7 @@ Then copy the content of your public key to clipboard (`id_rsa.pub`)
 
 In your GitHub account go to [Settings > SSH and GPG Keys](https://github.com/settings/keys) and add it.
 
-### Account app
+### API app
 
 Clone the repository to your home folder
 
@@ -47,23 +49,19 @@ Install requirements
 (venv) ❯ pip3 install -r requirements.txt
 ```
 
-Set up the environment variables (this step may vary depending on your system configuration)
+Set up the environment variables inside your `~/.bash_profile` (this step may vary depending on your system configuration)
 
 ```
-(venv) ❯ echo "
-dquote> SECRET_KEY={A secret key goes here}
-dquote> EMAIL_HOST_PASSWORD={The email host password goes here}
-dquote> PLAID_CLIENT_ID={Plaid client ID goes here}
-dquote> PLAID_SECRET={Plaid secret key goes here}
-dquote> STRIPE_SECRET={Stripe secret key goes here}
-dquote> GDAX_API_KEY={GDAX API key goes here}
-dquote> GDAX_SECRET_KEY={GDAX secret key goes here}
-dquote> GDAX_PASSPHRASE={GDAX passphrase goes here}
-dquote> POSTGRESQL_NAME={PostgreSQL name goes here}
-dquote> POSTGRESQL_USER={PostgreSQL user goes here}
-dquote> POSTGRESQL_PASSWORD={PostgreSQL password goes here}
-dquote> DJANGO_SETTINGS_MODULE=polyledger.settings.local
-dquote>" >> ~/.bash_profile
+SECRET_KEY={A secret key goes here}
+EMAIL_HOST_PASSWORD={The email host password goes here}
+
+# Settings module will vary depending on the environment
+DJANGO_SETTINGS_MODULE=polyledger.settings.local
+
+# Only for production
+POSTGRESQL_NAME={PostgreSQL name goes here}
+POSTGRESQL_USER={PostgreSQL user goes here}
+POSTGRESQL_PASSWORD={PostgreSQL password goes here}
 ```
 
 Run the migrations
@@ -88,41 +86,20 @@ The application should now be running at http://localhost:8080/account/login
 
 ### Admin app
 
-The admin app allows Polyledger admins to use an admin interface for managing content on the site. If the web server is already running, you can log in at http://localhost:8080/admin/.
+The admin app allows Polyledger admins to use an admin interface for managing content on the site. If the web server is already running, you can log in at these URLs:
 
-## Deployment
+Local:   http://localhost:8080/admin/
+Staging: https://staging.polyledger.com/admin/
 
-The staging and production apps are hosted on [Digital Ocean](https://cloud.digitalocean.com) droplet instances. To access the droplets, you must have SSH key access.
+## Database
 
-```
-❯ ssh root@192.241.220.209 # Staging
-❯ ssh root@107.170.200.103 # Production
-```
+### Development
 
-The app is located in `/home/polyledger`. To update from the master branch, run a git pull:
+By default, Django uses a SQLite database for development.
 
-```
-❯ git pull origin master
-```
+### Staging and Production
 
-Don't forget to copy any new static assets to the static folder
-
-```
-❯ source ./server/venv/bin/activate
-(venv) ❯ python manage.py collectstatic
-```
-
-Then reload the app
-
-```
-❯ /home/polyledger/server/venv/bin/gunicorn polyledger.wsgi --bind 127.0.0.1:8001 --reload &
-❯ bg
-
-```
-
-### Database
-
-There are currently two main PostgreSQL users: `postgres` and `admin`.
+The staging and production databases are accessible on the DigitalOcean respective droplets. There are currently two main PostgreSQL users: `postgres` and `admin`.
 
 Log into the PostgreSQL database
 
@@ -150,4 +127,35 @@ Drop the database (staging environment only, do NOT run in production)
 
 ```
 ❯ dropdb -U postgres 'DATABASE_NAME'
+```
+
+## Deployment
+
+The staging and production apps are hosted on [Digital Ocean](https://cloud.digitalocean.com) droplet instances. To access the droplets, you must have SSH key access.
+
+```
+❯ ssh root@192.241.220.209 # Staging
+❯ ssh root@107.170.200.103 # Production
+```
+
+The app is located in `/home/polyledger`. To update from the master branch, run a git pull:
+
+```
+❯ git pull origin master
+```
+
+Don't forget to copy any new static assets to the static folder
+
+```
+❯ cd /home/polyledger/server
+❯ source venv/bin/activate
+(venv) ❯ python manage.py collectstatic
+```
+
+Then reload the app
+
+```
+❯ /home/polyledger/server/venv/bin/gunicorn polyledger.wsgi --bind 127.0.0.1:8001 --reload &
+❯ bg
+
 ```
