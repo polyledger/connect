@@ -8,6 +8,8 @@
     - [Development](#development)
     - [Staging and Production](#staging-and-production)
 3. [Deployment](#deployment)
+4. [Web Server](#web-server)
+5. [Proxy Server](#proxy-server)
 
 ## Development
 
@@ -155,7 +157,32 @@ Don't forget to copy any new static assets to the static folder
 Then reload the app
 
 ```
+❯ pkill gunicorn
 ❯ /home/polyledger/server/venv/bin/gunicorn polyledger.wsgi --bind 127.0.0.1:8001 --reload &
 ❯ bg
 
 ```
+
+## Proxy Server
+
+[Nginx](https://www.nginx.com/) is used as a proxy between incoming requests and the HTTP server. The configuration file is located at `/etc/nginx/sites-available/polyledger`.
+
+Various helpful commands for Nginx:
+
+```
+❯ service nginx (start|stop|restart|reload|status)
+```
+
+Log locations:
+- Access logs: `/var/log/nginx/access.log`
+- Error logs: `/var/log/nginx/error.log`
+
+For debugging purposes, it may be helpful to tail the log files like so:
+
+```
+❯ tail -f /var/log/nginx/error.log
+```
+
+## HTTP Server
+
+[Gunicorn](http://gunicorn.org/) is the HTTP interface between Nginx and the Polyledger Django web application. Gunicorn processes the incoming API requests.
