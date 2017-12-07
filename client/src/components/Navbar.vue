@@ -15,21 +15,6 @@
               <i class="icon icon-home"></i> Home
             </router-link>
           </li>
-          <li class="nav-item">
-            <router-link to="/markets" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
-              <i class="icon icon-area-graph"></i> Markets
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/tools" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
-              <i class="icon icon-tools"></i> Tools
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/settings" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
-              <i class="icon icon-cog"></i> Settings
-            </router-link>
-          </li>
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
