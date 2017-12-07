@@ -115,20 +115,23 @@ export default {
   methods: {
     ...mapActions(['signup']),
     handleSubmit () {
+      if (this.password !== this.passwordConfirm) {
+        this.errors.passwordConfirm = ['The passwords do not match.']
+        this.validated = true
+        return
+      }
       let credentials = {
         first_name: this.firstName,
         last_name: this.lastName,
         email: this.email,
-        password1: this.password,
-        password2: this.passwordConfirm
+        password: this.password
       }
       this.$store.dispatch('signup', credentials).catch((error) => {
         this.errors = {}
         this.errors.firstName = error.first_name
         this.errors.lastName = error.last_name
         this.errors.email = error.email
-        this.errors.password = error.password1
-        this.errors.passwordConfirm = error.password2
+        this.errors.password = error.password
         this.errors.nonFieldErrors = error.non_field_errors
       })
       this.validated = true
