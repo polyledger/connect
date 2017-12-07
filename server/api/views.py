@@ -100,30 +100,35 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         elif period == '1Y':
             start = end - datetime.timedelta(days=364)
 
-        backtested = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
+        backtested = backtest.Portfolio({'USD': portfolio.usd}, start.strftime('%Y-%m-%d'))
 
         for position in portfolio.positions.all():
             backtested.trade_asset(
-                amount=position.amount,
+                amount=(position.amount/100)*portfolio.usd,
                 from_asset='USD',
                 to_asset=position.coin.symbol,
                 datetime=start.strftime('%Y-%m-%d')
             )
         data = backtested.get_historical_value(start, end, freq, date_format)
 
-        bitcoin = backtest.Portfolio({'USD': 100}, start.strftime('%Y-%m-%d'))
-        bitcoin.trade_asset(100, 'USD', 'BTC', start.strftime('%Y-%m-%d'))
+        bitcoin = backtest.Portfolio({'USD': portfolio.usd}, start.strftime('%Y-%m-%d'))
+        bitcoin.trade_asset(portfolio.usd, 'USD', 'BTC', start.strftime('%Y-%m-%d'))
         bitcoin_data = bitcoin.get_historical_value(start, end, freq, date_format)
         dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
 
         dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
         labels = data['dates']
-        change = str(round(backtested.get_value() - 100, 2))
+        value = backtested.get_value()
+        change = {
+            'dollar': value - portfolio.usd,
+            'percent': ((value - portfolio.usd)/portfolio.usd)*100
+        }
 
         content = {
             'dataset': dataset,
             'labels': labels,
-            'change': change
+            'change': change,
+            'value': value
         }
         return Response(content)
 

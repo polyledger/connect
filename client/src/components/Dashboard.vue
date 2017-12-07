@@ -48,7 +48,7 @@
               </tr>
               <tr>
                 <th scope="row">Percent</th>
-                <td class="text-center" v-for="position in portfolio.positions">{{(position.amount).toFixed(2)}}%</td>
+                <td class="text-center" v-for="position in portfolio.positions">{{position.amount/100 | percent}}</td>
               </tr>
               <tr>
                 <th scope="row">Amount</th>
@@ -83,8 +83,10 @@
                     <a class="nav-link" role="button" href="" data-toggle="tab" @click.prevent="getChart('1Y')">1Y</a>
                   </li>
                 </ul>
-                <h5 class="text-center mb-4">
-                  <small class="badge badge-success">${{chart.change}}</small>
+                <h6>Current Value: {{chart.value | currency}}</h6>
+                <h5 class="mb-4">
+                  <small class="badge badge-success">{{chart.change.dollar | currency}}</small>
+                  <small class="badge badge-success">{{chart.change.percent | percent}}</small>
                 </h5>
                 <div class="chart-container">
                   <div class="d-flex align-items-center justify-content-center spinner" v-if="chart.loading">
@@ -102,6 +104,8 @@
 </template>
 
 <script>
+import numeral from 'numeral'
+
 export default {
   name: 'dashboard',
   data () {
@@ -110,7 +114,10 @@ export default {
       chart: {
         labels: [],
         dataset: [],
-        change: '0.00',
+        change: {
+          dollar: '0.00',
+          percent: '0.00'
+        },
         loading: true,
         period: '7D'
       },
@@ -151,6 +158,7 @@ export default {
         this.chart.dataset = response.data.dataset
         this.chart.labels = response.data.labels
         this.chart.change = response.data.change
+        this.chart.value = response.data.value
         this.createChart()
       }).catch((error) => {
         console.error(error)
@@ -238,14 +246,16 @@ export default {
       })
     }
   },
-  async mounted () {
-    await this.getPortfolio()
-
-    // If they haven't created a portfolio, prompt them to do so.
-    if (!this.portfolio) {
-      // this.$router.push('/coins')
-      // return
+  filters: {
+    currency (value) {
+      return numeral(value).format('$0,0.00')
+    },
+    percent (value) {
+      return `${Number(value).toFixed(2)}%`
     }
+  },
+  async mounted () {
+    this.getPortfolio()
   },
   async updated () {
     await this.$nextTick
