@@ -1,0 +1,10 @@
+click==6.7
+django==1.11.5
+djangorestframework==3.7.1
+django-multiselectfield==0.1.8
+pytz==2017.2
+celery==4.1
+redis==2.10.6
+psycopg2==2.7.3.1
+gunicorn==19.7
+git+ssh://git@github.com/polyledger/lattice.git@0.4.4
