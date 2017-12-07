@@ -122,15 +122,32 @@ Then reload the app
 
 ### Database
 
+There are currently two main PostgreSQL users: `postgres` and `admin`.
+
 Log into the PostgreSQL database
 
 ```
-❯ psql -U admin --password -d polyledger_staging # Staging
-❯ psql -U admin --password -d polyledger_production # Production
+❯ psql -U postgres --password -d polyledger_staging    # Staging
+❯ psql -U postgres --password -d polyledger_production # Production
 ```
 
-Start PostgreSQL
+Start or stop PostgreSQL
 
 ```
-❯ sudo service postgresql start
+❯ sudo service postgresql (start|stop)
+```
+
+Create a database
+
+```
+❯ psql postgres -U postgres
+postgres=# CREATE DATABASE 'DATABASE_NAME';
+CREATE DATABASE
+postgres=> \q
+```
+
+Drop the database (staging environment only, do NOT run in production)
+
+```
+❯ dropdb -U postgres 'DATABASE_NAME'
 ```
