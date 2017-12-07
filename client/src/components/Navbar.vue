@@ -15,6 +15,11 @@
               <i class="icon icon-home"></i> Home
             </router-link>
           </li>
+          <li class="nav-item">
+            <a href="https://polyledger.zendesk.com/hc/en-us" target="blank" class="nav-link">
+              <i class="icon icon-lifebuoy"></i> Support
+            </a>
+          </li>
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
