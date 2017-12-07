@@ -48,11 +48,11 @@
               </tr>
               <tr>
                 <th scope="row">Percent</th>
-                <td class="text-center" v-for="position in portfolio.positions">{{position.amount/100 | percent}}</td>
+                <td class="text-center" v-for="position in portfolio.positions">{{position.amount | percent}}</td>
               </tr>
               <tr>
                 <th scope="row">Amount</th>
-                <td class="text-center" v-for="position in portfolio.positions">{{((position.amount/100)*portfolio.usd) | currency}}</td>
+                <td class="text-center" v-for="position in portfolio.positions">{{((position.amount/100)*portfolio.value) | currency}}</td>
               </tr>
             </tbody>
           </table>
@@ -83,7 +83,7 @@
                     <a class="nav-link" role="button" href="" data-toggle="tab" @click.prevent="getChart('1Y')">1Y</a>
                   </li>
                 </ul>
-                <h6>Current Value: {{chart.value | currency}}</h6>
+                <h6>Current Value: {{portfolio.value | currency}}</h6>
                 <h5 class="mb-4">
                   <small class="badge badge-success">{{chart.change.dollar | currency}}</small>
                   <small class="badge badge-success">{{chart.change.percent | percent}}</small>
@@ -158,7 +158,7 @@ export default {
         this.chart.dataset = response.data.dataset
         this.chart.labels = response.data.labels
         this.chart.change = response.data.change
-        this.chart.value = response.data.value
+        this.portfolio.value = response.data.value
         this.createChart()
       }).catch((error) => {
         console.error(error)
@@ -251,7 +251,7 @@ export default {
       return numeral(value).format('$0,0.00')
     },
     percent (value) {
-      return `${Number(value).toFixed(2)}%`
+      return numeral(Number(value / 100)).format('0,0.00%')
     }
   },
   async mounted () {
