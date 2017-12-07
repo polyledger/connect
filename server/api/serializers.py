@@ -63,7 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'first_name', 'last_name', 'portfolio')
+        fields = ('id', 'email', 'first_name', 'last_name', 'password', 'portfolio')
         extra_kwargs = {
             'id': {'read_only': True},
             'password': {'write_only': True}
@@ -73,8 +73,10 @@ class UserSerializer(serializers.ModelSerializer):
         return self.request.user
 
     def create(self, validated_data):
+        password = validated_data.pop('password')
         user = User(**validated_data)
         user.is_active = False
+        user.set_password(password)
         user.save()
         current_site = get_current_site(self.context['request'])
         send_confirmation_email(user.id, user.email, current_site)
