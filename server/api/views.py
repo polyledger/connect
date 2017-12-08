@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
+from django.conf import settings
 from rest_framework import permissions, authentication, viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
@@ -59,7 +60,8 @@ class UserViewSet(viewsets.ModelViewSet):
             user.is_active = True
             user.save()
             auth_token = Token.objects.get(user=user)
-        return HttpResponseRedirect('http://localhost:8081/activate/?token=' + str(auth_token))
+        redirect_url = settings.CLIENT_URL + '?token=' + str(auth_token)
+        return HttpResponseRedirect(redirect_url)
 
     def destroy(self, request, *args, **kwargs):
         user = request.user

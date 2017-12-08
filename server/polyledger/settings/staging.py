@@ -1,5 +1,7 @@
 from .base import *
 
+CLIENT_URL = 'https://staging.polyledger.com/activate/'
+
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
