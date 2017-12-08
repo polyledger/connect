@@ -7,6 +7,8 @@ import router from './router'
 import store from './store'
 
 import './assets/js/chart.min.js'
+import './assets/js/toolkit.min.js'
+import './assets/css/toolkit-inverse.min.css'
 
 Vue.prototype.$http = axios
 Vue.config.productionTip = false

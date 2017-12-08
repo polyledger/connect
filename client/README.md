@@ -38,8 +38,24 @@ Run the development server
 
 ## Deployment
 
-After pulling new changes from the master branch, ensure that any new dependencies are installed. Then run the following command to build for production and view the bundle analyzer report
+The staging and production apps are hosted on [Digital Ocean](https://cloud.digitalocean.com) droplet instances. To access the droplets, you must have SSH key access.
 
 ```
-npm run build --report
+❯ ssh root@192.241.220.209 # Staging
 ```
+
+The app is located in `/var/www/staging.polyledger.com/polyledger`. To update from the master branch, run a git pull:
+
+```
+❯ git pull origin master
+```
+
+After pulling new changes from the master branch, ensure that any new dependencies are installed with `npm i`. Then run the following command to build for production
+
+```
+npm run build
+```
+
+---
+
+[Back to Main](./README.md)
