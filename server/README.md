@@ -1,3 +1,7 @@
+# Polyledger
+
+> The backend API for the Polyledger platform
+
 ## Table of Contents
 
 1. [Development](#development)
@@ -29,7 +33,7 @@ In your GitHub account go to [Settings > SSH and GPG Keys](https://github.com/se
 
 ### API app
 
-Clone the repository to your home folder
+Clone the repository to your home folder if you haven't already
 
 ```
 ❯ cd ~ && git clone https://github.com/polyledger/polyledger.git

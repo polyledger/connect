@@ -1,30 +1,45 @@
 # Polyledger
 
-> The front-end client for the Polyledger platform
+> The frontend client for the Polyledger platform
 
-## Build Setup
+## Table of Contents
 
-``` bash
-# install dependencies
-npm install
+1. [Development](#development)
+    - [Prerequisites](#prerequisites)
+    - [Getting Started](#getting-started)
+2. [Deployment](#deployment)
 
-# serve with hot reload at localhost:8080
-npm run dev
+## Development
 
-# build for production with minification
-npm run build
+### Prerequisites
 
-# build for production and view the bundle analyzer report
-npm run build --report
+Before continuing, you should have [Node.js](https://nodejs.org/en/) (preferably > version 8) and [npm](https://www.npmjs.com/get-npm) installed on your system.
 
-# run unit tests
-npm run unit
+### Getting Started
 
-# run e2e tests
-npm run e2e
+Clone the repository to your home folder if you haven't already
 
-# run all tests
-npm test
+```
+❯ cd ~ && git clone https://github.com/polyledger/polyledger.git
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+Install dependencies
+
+```
+❯ cd ./polyledger/client
+❯ npm install
+```
+
+Run the development server
+
+```
+❯ npm run dev
+```
+
+## Deployment
+
+After pulling new changes from the master branch, ensure that any new dependencies are installed. Then run the following command to build for production and view the bundle analyzer report
+
+```
+npm run build --report
+```
