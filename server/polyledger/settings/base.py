@@ -9,13 +9,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-from django.contrib import messages
 from celery.schedules import crontab
 
-# See https://docs.djangoproject.com/en/1.11/ref/contrib/messages/#message-tags
-MESSAGE_TAGS = {
-    messages.constants.ERROR: 'danger'
-}
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -121,9 +116,7 @@ USE_TZ = True
 
 # Set auth redirects and URLs
 # https://docs.djangoproject.com/en/1.11/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = '/account/'
-LOGIN_URL = '/account/login/'
-LOGOUT_REDIRECT_URL = '/account/login/'
+LOGOUT_REDIRECT_URL = '/admin/login/'
 
 # Set admins for code error notifications
 # https://docs.djangoproject.com/en/1.11/ref/settings/#admins

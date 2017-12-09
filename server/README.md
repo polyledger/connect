@@ -73,7 +73,7 @@ POSTGRESQL_PASSWORD={PostgreSQL password goes here}
 Run the migrations
 
 ```
-(venv) ❯ python manage.py migrate
+(venv) ❯ python3 manage.py migrate
 ```
 
 Start the web application
@@ -141,10 +141,9 @@ The staging and production apps are hosted on [Digital Ocean](https://cloud.digi
 
 ```
 ❯ ssh root@192.241.220.209 # Staging
-❯ ssh root@107.170.200.103 # Production
 ```
 
-The app is located in `/home/polyledger`. To update from the master branch, run a git pull:
+The app is located in `/var/www/staging.polyledger.com/polyledger`. To update from the master branch, run a git pull:
 
 ```
 ❯ git pull origin master
@@ -153,7 +152,7 @@ The app is located in `/home/polyledger`. To update from the master branch, run 
 Don't forget to copy any new static assets to the static folder
 
 ```
-❯ cd /home/polyledger/server
+❯ cd /var/www/staging.polyledger.com/polyledger/server
 ❯ source venv/bin/activate
 (venv) ❯ python manage.py collectstatic
 ```
@@ -161,9 +160,9 @@ Don't forget to copy any new static assets to the static folder
 Then reload the app
 
 ```
-❯ pkill gunicorn
-❯ /home/polyledger/server/venv/bin/gunicorn polyledger.wsgi --bind 127.0.0.1:8001 --reload &
-❯ bg
+(venv) ❯ pkill gunicorn
+(venv) ❯ gunicorn polyledger.wsgi --bind 127.0.0.1:8001 --reload &
+(venv) ❯ bg
 
 ```
 
@@ -190,3 +189,7 @@ For debugging purposes, it may be helpful to tail the log files like so:
 ## HTTP Server
 
 [Gunicorn](http://gunicorn.org/) is the HTTP interface between Nginx and the Polyledger Django web application. Gunicorn processes the incoming API requests.
+
+---
+
+[Back to Main](./README.md)

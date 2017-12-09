@@ -9,10 +9,10 @@ ALLOWED_HOSTS = ['*']
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = '/home/static'
+STATIC_URL = '/staticfiles/'
+STATIC_ROOT = '/var/www/staging.polyledger.com/staticfiles'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "/var/www/staging.polyledger.com/staticfiles"),
 ]
 
 POSTGRESQL_NAME = os.environ.get('POSTGRESQL_NAME')
