@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row py-4">
       <div class="col-md-12">
-        <div class="alert alert-danger alert-dismissable fade show" role="alert" v-for="error in errors">
+        <div class="alert alert-danger alert-dismissable fade show" role="alert" v-for="error in errors.serverErrors">
           <div class="row">
             <div class="col-1 d-flex align-items-center justify-content-center">
               <i class="icon icon-warning"></i>&nbsp;
@@ -112,7 +112,9 @@ export default {
       buttonValue: 'Select All',
       coins: [],
       validated: false,
-      errors: []
+      errors: {
+        serverErrors: []
+      }
     }
   },
   methods: {
@@ -157,7 +159,7 @@ export default {
         }
       }).catch((error) => {
         console.error(error)
-        this.errors.push('Unable to retrieve coins from the server. Please try again later.')
+        this.errors.serverErrors.push('Unable to retrieve coins from the server. Please try again later.')
       })
     },
     updatePortfolio () {
@@ -172,10 +174,13 @@ export default {
         this.$router.push('/dashboard')
       }).catch((error) => {
         console.error(error)
-        this.errors = {}
+        this.errors = {
+          serverErrors: []
+        }
         this.errors.risk_score = error.response.data.risk_score
         this.errors.title = error.response.data.title
         this.errors.usd = error.response.data.usd
+        this.errors.nonFieldErrors = error.response.data.non_field_errors
         this.validated = true
       })
     },
