@@ -137,7 +137,12 @@ export default {
         }
       }).then((response) => {
         this.portfolio = response.data.portfolio
-        this.getChart('7D', this.portfolio)
+
+        if (this.portfolio.positions) {
+          this.getChart('7D', this.portfolio)
+        } else {
+          this.$router.push(`/portfolios/${this.portfolio.id}`)
+        }
       }).catch((error) => {
         console.error(error)
         this.errors.push('Unable to get your portfolio. Please try again later.')
