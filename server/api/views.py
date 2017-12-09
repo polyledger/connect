@@ -121,9 +121,13 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
         labels = data['dates']
         value = backtested.get_value()
+        if portfolio.usd > 0:
+            percent = ((value - portfolio.usd)/portfolio.usd)*100
+        else:
+            percent = 0
         change = {
             'dollar': value - portfolio.usd,
-            'percent': ((value - portfolio.usd)/portfolio.usd)*100
+            'percent': percent
         }
 
         content = {

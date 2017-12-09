@@ -32,19 +32,44 @@
             <div class="row py-2">
               <div class="col-md-4 offset-md-4">
                 <h5 class="text-center">Details</h5>
-                <form>
+                <div class="alert alert-danger" role="alert" v-if="errors.nonFieldErrors">
+                  <div class="row">
+                    <div class="col-1 d-flex align-items-center">
+                      <i class="icon icon-warning"></i>&nbsp;
+                    </div>
+                    <div class="col-11">
+                      <span v-for="error in errors.nonFieldErrors">{{error}}</span>
+                    </div>
+                  </div>
+                </div>
+                <form :class="{'was-validated': validated}" novalidate>
                   <div class="form-group">
                     <label for="title">Title</label>
-                    <input class="form-control" name="title" type="text" v-model="portfolio.title">
+                    <input class="form-control" placeholder="My Portfolio" name="title" type="text" v-model="portfolio.title" required>
+                    <div class="invalid-feedback" v-if="errors.title">
+                      <span v-for="error in errors.title">
+                        {{error}}
+                      </span>
+                    </div>
                   </div>
                   <div class="form-group">
                     <label for="investment">Investment</label>
-                    <input class="form-control" name="investment" type="number" min="1" v-model.number="portfolio.usd">
+                    <input class="form-control" name="investment" type="number" min="1" v-model.number="portfolio.usd" required>
+                    <div class="invalid-feedback" v-if="errors.usd">
+                      <span v-for="error in errors.usd">
+                        {{error}}
+                      </span>
+                    </div>
                   </div>
                   <div class="form-group">
                     <div class="form-group">
                       <label for="risk_score">Risk Score</label>
-                      <input class="form-control" name="risk_score" type="number" min="1" max="5" v-model.number="portfolio.risk_score">
+                      <input class="form-control" name="risk_score" type="number" min="1" max="5" v-model.number="portfolio.risk_score" required>
+                      <div class="invalid-feedback" v-if="errors.risk_score">
+                        <span v-for="error in errors.risk_score">
+                          {{error}}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </form>
@@ -86,6 +111,7 @@ export default {
       selectedCount: 0,
       buttonValue: 'Select All',
       coins: [],
+      validated: false,
       errors: []
     }
   },
@@ -146,7 +172,11 @@ export default {
         this.$router.push('/dashboard')
       }).catch((error) => {
         console.error(error)
-        this.errors.push('Unable to add the coins to your portfolio. Please try again later.')
+        this.errors = {}
+        this.errors.risk_score = error.response.data.risk_score
+        this.errors.title = error.response.data.title
+        this.errors.usd = error.response.data.usd
+        this.validated = true
       })
     },
     handleSelect (coin) {

@@ -138,7 +138,7 @@ export default {
       }).then((response) => {
         this.portfolio = response.data.portfolio
 
-        if (this.portfolio.positions) {
+        if (this.portfolio.positions.length > 0) {
           this.getChart('7D', this.portfolio)
         } else {
           this.$router.push(`/portfolios/${this.portfolio.id}`)
