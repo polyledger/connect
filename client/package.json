@@ -19,6 +19,7 @@
     "numeral": "^2.0.6",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
+    "vue-slider-component": "^2.4.7",
     "vuex": "^3.0.1",
     "zxcvbn": "^4.4.2"
   },

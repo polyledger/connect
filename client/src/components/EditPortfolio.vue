@@ -66,8 +66,8 @@
                   </div>
                   <div class="form-group">
                     <div class="form-group">
-                      <label for="risk_score">Risk Score</label>
-                      <input class="form-control" name="risk_score" type="number" min="1" max="5" v-model.number="portfolio.risk_score" required>
+                      <label for="risk_score">Risk Score: {{portfolio.risk_score}}</label>
+                      <vue-slider ref="slider" name="risk_score" v-model="portfolio.risk_score" :min="1" :max="5" :tooltip="false" required></vue-slider>
                       <div class="invalid-feedback" v-if="errors.risk_score">
                         <span v-for="error in errors.risk_score">
                           {{error}}
@@ -106,11 +106,13 @@
 
 <script>
 import CleaveInput from '@/components/CleaveInput'
+import vueSlider from 'vue-slider-component'
 
 export default {
   name: 'edit-portfolio',
   components: {
-    CleaveInput
+    CleaveInput,
+    vueSlider
   },
   data () {
     return {
