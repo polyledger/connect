@@ -1,6 +1,6 @@
 from .base import *
 
-CLIENT_URL = 'http://localhost:8081/activate/'
+CLIENT_URL = 'http://localhost:8080/activate/'
 
 DEBUG = True
 
