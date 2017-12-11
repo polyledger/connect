@@ -54,7 +54,10 @@
                   </div>
                   <div class="form-group">
                     <label for="investment">Investment</label>
-                    <input class="form-control" name="investment" type="number" min="1" v-model.number="portfolio.usd" required>
+                    <div class="input-group mb-2 mb-sm-0">
+                      <div class="input-group-addon">$</div>
+                      <cleave-input class="form-control" name="investment" v-model="portfolio.usd" :options="{numeral: true, numeralPositiveOnly: true}" required></cleave-input>
+                    </div>
                     <div class="invalid-feedback" v-if="errors.usd">
                       <span v-for="error in errors.usd">
                         {{error}}
@@ -102,8 +105,13 @@
 </template>
 
 <script>
+import CleaveInput from '@/components/CleaveInput'
+
 export default {
-  name: 'portfolio',
+  name: 'edit-portfolio',
+  components: {
+    CleaveInput
+  },
   data () {
     return {
       portfolio: {},
@@ -171,7 +179,7 @@ export default {
           'Authorization': `Token ${localStorage.token}`
         }
       }).then((response) => {
-        this.$router.push('/dashboard')
+        this.$router.push('/portfolio')
       }).catch((error) => {
         console.error(error)
         this.errors = {

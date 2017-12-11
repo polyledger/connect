@@ -107,7 +107,7 @@
 import numeral from 'numeral'
 
 export default {
-  name: 'dashboard',
+  name: 'view-portfolio',
   data () {
     return {
       portfolio: {},

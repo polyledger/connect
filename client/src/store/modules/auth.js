@@ -43,7 +43,7 @@ let actions = {
       if (token) {
         localStorage.token = token
         commit(ACTIVATE)
-        router.push('/dashboard')
+        router.push('/portfolio')
         resolve()
       } else {
         reject(Error('There was an issue activating your account.'))
@@ -79,7 +79,7 @@ let actions = {
     return new Promise((resolve, reject) => {
       if (localStorage.token) {
         commit(LOGIN_SUCCESS)
-        router.push('/dashboard')
+        router.push('/portfolio')
         resolve()
       }
 
@@ -94,7 +94,7 @@ let actions = {
       }).then((response) => {
         localStorage.token = response.data.token
         commit(LOGIN_SUCCESS)
-        router.push('/dashboard')
+        router.push('/portfolio')
         resolve()
       }).catch((error) => {
         let response = error.response

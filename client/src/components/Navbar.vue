@@ -11,7 +11,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <router-link to="/dashboard" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
+            <router-link to="/portfolio" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
               <i class="icon icon-home"></i> Home
             </router-link>
           </li>

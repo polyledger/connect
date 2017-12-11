@@ -2,12 +2,12 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store'
 
-import Dashboard from '@/components/Dashboard'
+import ViewPortfolio from '@/components/ViewPortfolio'
 import SignIn from '@/components/SignIn'
 import SignUp from '@/components/SignUp'
 import ConfirmEmail from '@/components/ConfirmEmail'
 import Activation from '@/components/Activation'
-import Portfolio from '@/components/Portfolio'
+import EditPortfolio from '@/components/EditPortfolio'
 
 Vue.use(Router)
 
@@ -67,15 +67,15 @@ export default new Router({
       beforeEnter: requireAnonymous
     },
     {
-      path: '/dashboard',
-      name: 'Dashboard',
-      component: Dashboard,
+      path: '/portfolio',
+      name: 'ViewPortfolio',
+      component: ViewPortfolio,
       beforeEnter: requireAuth
     },
     {
       path: '/portfolios/:id',
-      name: 'Portfolio',
-      component: Portfolio,
+      name: 'EditPortfolio',
+      component: EditPortfolio,
       beforeEnter: requireAuth
     }
   ]
