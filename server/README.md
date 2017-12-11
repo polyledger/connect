@@ -79,7 +79,7 @@ Run the migrations
 Start the web application
 
 ```
-(venv) ❯ python3 manage.py runserver 8080
+(venv) ❯ python3 manage.py runserver 8000
 ```
 
 Alternatively, you can use the shell script to start the app
@@ -88,7 +88,7 @@ Alternatively, you can use the shell script to start the app
 (venv) ❯ ./start.sh server
 ```
 
-The application should now be running at http://localhost:8080/account/login
+The application should now be running at http://localhost:8000/api
 
 ### Admin app
 
