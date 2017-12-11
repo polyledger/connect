@@ -7,6 +7,7 @@
 1. [Development](#development)
     - [Prerequisites](#prerequisites)
     - [API App](#api-app)
+      - [Task Queue](#task-queue)
     - [Admin App](#admin-app)
 2. [Database](#database)
     - [Development](#development)
@@ -89,6 +90,22 @@ Alternatively, you can use the shell script to start the app
 ```
 
 The application should now be running at http://localhost:8000/api
+
+#### Task Queue
+
+The admin app uses a distributed task queue called [Celery](http://www.celeryproject.org/) to asynchronously perform tasks such as sending email, calculating allocations, and retrieving daily prices. These tasks can be found in `./api/tasks.py`.
+
+To start the Celery task queue, use this command
+
+```
+./start.sh worker
+```
+
+Or alternatively, start redis with `redis-server` and run this command:
+
+```
+(venv) ❯ celery -E -A polyledger worker --loglevel=info -B
+```
 
 ### Admin app
 
