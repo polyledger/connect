@@ -1,5 +1,4 @@
-import datetime
-
+from datetime import datetime, timedelta
 from api.models import User, Profile, Coin, Portfolio, Token
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
@@ -87,34 +86,34 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         portfolio = self.get_object()
 
         period = request.GET.get('period')
-        end = datetime.datetime.now()
+        end = datetime.now()
         date_format = '%b %-d %Y'
         freq = 'D'
 
         if period == '7D':
-            start = end - datetime.timedelta(days=7)
+            start = end - timedelta(days=7)
         elif period == '1M':
-            start = end - datetime.timedelta(days=30)
+            start = end - timedelta(days=30)
         elif period == '3M':
-            start = end - datetime.timedelta(days=90)
+            start = end - timedelta(days=90)
         elif period == '6M':
-            start = end - datetime.timedelta(days=182)
+            start = end - timedelta(days=182)
         elif period == '1Y':
-            start = end - datetime.timedelta(days=364)
+            start = end - timedelta(days=364)
 
-        backtested = backtest.Portfolio({'USD': portfolio.usd}, start.strftime('%Y-%m-%d'))
+        backtested = backtest.Portfolio({'USD': portfolio.usd}, start)
 
         for position in portfolio.positions.all():
             backtested.trade_asset(
                 amount=(position.amount/100)*portfolio.usd,
                 from_asset='USD',
                 to_asset=position.coin.symbol,
-                datetime=start.strftime('%Y-%m-%d')
+                timestamp=start
             )
         data = backtested.get_historical_value(start, end, freq, date_format)
 
-        bitcoin = backtest.Portfolio({'USD': portfolio.usd}, start.strftime('%Y-%m-%d'))
-        bitcoin.trade_asset(portfolio.usd, 'USD', 'BTC', start.strftime('%Y-%m-%d'))
+        bitcoin = backtest.Portfolio({'USD': portfolio.usd}, start)
+        bitcoin.trade_asset(portfolio.usd, 'USD', 'BTC', start)
         bitcoin_data = bitcoin.get_historical_value(start, end, freq, date_format)
         dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
 

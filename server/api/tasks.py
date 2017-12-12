@@ -27,6 +27,7 @@ from datetime import datetime
 from api.models import Price, Position
 from api.utils import queryset_to_dataframe
 from lattice.optimize import Allocator
+from lattice.data import Manager
 
 SUPPORTED_COINS = [
     'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH', 'ZEC', 'XMR', 'ETC', 'NEO'
@@ -49,16 +50,21 @@ def allocate_for_user(pk, coins, risk_score):
                             .values('date', *symbols)
     columns = list(symbols).append('date')
 
-    dataframe = queryset_to_dataframe(queryset, columns)
+    df = queryset_to_dataframe(queryset, columns)
+    manager = Manager(coins=symbols, df=df)
 
-    allocator = Allocator(coins=symbols)
-    allocations = allocator.allocate(dataframe=dataframe)
+    allocator = Allocator(coins=symbols, manager=manager)
+    allocations = allocator.allocate()
     allocation = allocations.loc[risk_score-1]
 
     user.portfolio.positions.clear()
 
     for coin in coins:
-        position = Position(coin=coin, amount=allocation[coin.symbol], portfolio=user.portfolio)
+        position = Position(
+            coin=coin,
+            amount=allocation[coin.symbol],
+            portfolio=user.portfolio
+        )
         position.save()
         user.portfolio.positions.add(position)
 
