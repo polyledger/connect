@@ -139,7 +139,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'US/Pacific'
 CELERY_BEAT_SCHEDULE = {
-    'fill_daily_historical_prices': {
+    'get-new-day-prices': {
         'task': 'api.tasks.get_current_prices',
         'schedule': crontab(hour=0, minute=0)
     }
