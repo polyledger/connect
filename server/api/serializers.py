@@ -44,7 +44,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
             position = Position(coin=coin, amount=0, portfolio=portfolio)
             position.save()
             portfolio.positions.add(position)
-        allocate_for_user(user.id, coins)
+        allocate_for_user.apply(args=[user.id, coins, validated_data.get('risk_score')])
         portfolio.save()
         return portfolio
 
@@ -54,7 +54,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
         instance.risk_score = validated_data.get('risk_score', instance.risk_score)
         user = self.context['request'].user
         coins = validated_data.get('coins')
-        allocate_for_user(user.id, coins)
+        allocate_for_user.apply(args=[user.id, coins, instance.risk_score])
         instance.save()
         return instance
 

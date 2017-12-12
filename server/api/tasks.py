@@ -32,17 +32,26 @@ SUPPORTED_COINS = [
 ]
 
 @shared_task
-def allocate_for_user(pk, coins):
+def allocate_for_user(pk, coins, risk_score):
     """
     Rebalances portfolio allocations.
     """
     user = get_user_model().objects.get(pk=pk)
-    risk_score = user.portfolio.risk_score
+    symbols = sorted(list(map(lambda c: c.symbol, coins)))
+    excluded = {}
 
-    symbols = list(map(lambda c: c.symbol, coins))
+    for symbol in symbols:
+        excluded[symbol + '__isnull'] = False
 
-    allocator = Allocator(coins=symbols, start='2017-10-01')
-    allocation = allocator.allocate().loc[risk_score]
+    queryset = Price.objects.filter(**excluded, date__gte='2017-10-01').order_by('-date').values('date', *symbols)
+    columns = list(symbols).append('date')
+    df = pd.DataFrame(data=list(queryset), columns=columns)
+    df['date'] = df['date'].dt.date
+    df.set_index('date', inplace=True)
+    df.index = pd.to_datetime(df.index)
+    allocator = Allocator(coins=symbols)
+    allocations = allocator.allocate(dataframe=df)
+    allocation = allocations.loc[risk_score-1]
 
     user.portfolio.positions.clear()
 
