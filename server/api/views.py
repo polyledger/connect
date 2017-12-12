@@ -103,7 +103,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         elif period == '1Y':
             start = end - timedelta(days=364)
 
-        df = prices_to_dataframe()
+        df = prices_to_dataframe(coins=portfolio.coins.all())
         manager = Manager(df=df)
 
         backtested = backtest.Portfolio(

@@ -1,12 +1,14 @@
 import pandas as pd
+from datetime import date, timedelta
 from api.models import Coin, Price
 
-def prices_to_dataframe(queryset=None, columns=None):
-    coins = Coin.objects.all()
-    symbols = sorted(list(map(lambda c: c.symbol, coins)))
+def prices_to_dataframe(queryset=None, coins=None):
 
-    if columns is None:
-        columns = list(symbols).append('date')
+    if coins is None:
+        coins = Coin.objects.all()
+
+    symbols = sorted(list(map(lambda c: c.symbol, coins)))
+    columns = list(symbols).append('date')
 
     if queryset is None:
         excluded = {}
@@ -14,7 +16,8 @@ def prices_to_dataframe(queryset=None, columns=None):
         for symbol in symbols:
             excluded[symbol + '__isnull'] = False
 
-        queryset = Price.objects.filter(**excluded, date__gte='2017-10-01') \
+        date__gte = date.today() - timedelta(days=365)
+        queryset = Price.objects.filter(**excluded, date__gte=date__gte) \
                                 .order_by('-date') \
                                 .values('date', *symbols)
 
