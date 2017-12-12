@@ -178,7 +178,7 @@ Then reload the app
 
 ```
 (venv) ❯ pkill gunicorn
-(venv) ❯ gunicorn polyledger.wsgi --bind 127.0.0.1:8001 --reload &
+(venv) ❯ gunicorn polyledger.wsgi --bind 127.0.0.1:8000 &
 (venv) ❯ bg
 
 ```
