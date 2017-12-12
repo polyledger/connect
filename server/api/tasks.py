@@ -41,7 +41,7 @@ def allocate_for_user(pk, coins, risk_score):
     user = get_user_model().objects.get(pk=pk)
     symbols = sorted(list(map(lambda c: c.symbol, coins)))
 
-    df = queryset_to_dataframe(queryset)
+    df = prices_to_dataframe()
     manager = Manager(coins=symbols, df=df)
 
     allocator = Allocator(coins=symbols, manager=manager)
