@@ -223,6 +223,9 @@ export default {
         this.buttonValue = 'Deselect All'
       } else {
         this.selectedCount = 0
+        this.coins.forEach(coin => {
+          coin.selected = false
+        })
         this.buttonValue = 'Select All'
       }
     }
