@@ -12,7 +12,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from api.tokens import account_activation_token
+from api.utils import prices_to_dataframe
 from lattice import backtest
+from lattice.data import Manager
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
 
@@ -101,7 +103,14 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         elif period == '1Y':
             start = end - timedelta(days=364)
 
-        backtested = backtest.Portfolio({'USD': portfolio.usd}, start)
+        df = prices_to_dataframe()
+        manager = Manager(df=df)
+
+        backtested = backtest.Portfolio(
+            assets={'USD': portfolio.usd},
+            created_at=start,
+            manager=manager
+        )
 
         for position in portfolio.positions.all():
             backtested.trade_asset(
@@ -112,9 +121,18 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             )
         data = backtested.get_historical_value(start, end, freq, date_format)
 
-        bitcoin = backtest.Portfolio({'USD': portfolio.usd}, start)
+        bitcoin = backtest.Portfolio(
+            assets={'USD': portfolio.usd},
+            created_at=start,
+            manager=manager
+        )
         bitcoin.trade_asset(portfolio.usd, 'USD', 'BTC', start)
-        bitcoin_data = bitcoin.get_historical_value(start, end, freq, date_format)
+        bitcoin_data = bitcoin.get_historical_value(
+            start,
+            end=end,
+            freq=freq,
+            date_format=date_format
+        )
         dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
 
         dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}

@@ -25,7 +25,7 @@ import requests
 import pandas as pd
 from datetime import datetime
 from api.models import Price, Position
-from api.utils import queryset_to_dataframe
+from api.utils import prices_to_dataframe
 from lattice.optimize import Allocator
 from lattice.data import Manager
 
@@ -40,17 +40,8 @@ def allocate_for_user(pk, coins, risk_score):
     """
     user = get_user_model().objects.get(pk=pk)
     symbols = sorted(list(map(lambda c: c.symbol, coins)))
-    excluded = {}
 
-    for symbol in symbols:
-        excluded[symbol + '__isnull'] = False
-
-    queryset = Price.objects.filter(**excluded, date__gte='2017-10-01') \
-                            .order_by('-date') \
-                            .values('date', *symbols)
-    columns = list(symbols).append('date')
-
-    df = queryset_to_dataframe(queryset, columns)
+    df = queryset_to_dataframe(queryset)
     manager = Manager(coins=symbols, df=df)
 
     allocator = Allocator(coins=symbols, manager=manager)
@@ -156,5 +147,4 @@ def get_current_prices():
             price.save()
         except Exception as e:
             # TODO: Log the exception
-            print('Price for ' + date + 'already exists.')
             continue
