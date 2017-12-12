@@ -28,7 +28,7 @@
             </div>
             <span class="dashhead-toolbar-divider hidden-xs"></span>
             <div class="dashhead-toolbar-item">
-              <span class="lead">Risk: {{portfolio.risk_score}}/5</span>
+              <h5>Risk: {{portfolio.risk_score}}/5</h5>
             </div>
           </div>
         </div>
@@ -272,6 +272,9 @@ export default {
 <style scoped>
 .dashhead-toolbar-item > a[role="button"] {
   cursor: pointer;
+}
+.dashhead-toolbar-item > h5 {
+  line-height: 1.8;
 }
 .spinner {
   height: 270px;
