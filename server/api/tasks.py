@@ -25,6 +25,7 @@ import requests
 import pandas as pd
 from datetime import datetime
 from api.models import Price, Position
+from api.utils import queryset_to_dataframe
 from lattice.optimize import Allocator
 
 SUPPORTED_COINS = [
@@ -43,14 +44,15 @@ def allocate_for_user(pk, coins, risk_score):
     for symbol in symbols:
         excluded[symbol + '__isnull'] = False
 
-    queryset = Price.objects.filter(**excluded, date__gte='2017-10-01').order_by('-date').values('date', *symbols)
+    queryset = Price.objects.filter(**excluded, date__gte='2017-10-01') \
+                            .order_by('-date') \
+                            .values('date', *symbols)
     columns = list(symbols).append('date')
-    df = pd.DataFrame(data=list(queryset), columns=columns)
-    df['date'] = df['date'].dt.date
-    df.set_index('date', inplace=True)
-    df.index = pd.to_datetime(df.index)
+
+    dataframe = queryset_to_dataframe(queryset, columns)
+
     allocator = Allocator(coins=symbols)
-    allocations = allocator.allocate(dataframe=df)
+    allocations = allocator.allocate(dataframe=dataframe)
     allocation = allocations.loc[risk_score-1]
 
     user.portfolio.positions.clear()
