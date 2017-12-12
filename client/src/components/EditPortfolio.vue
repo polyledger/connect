@@ -212,6 +212,7 @@ export default {
       }
     },
     handleSelectAll () {
+      this.portfolio.coins = []
       this.allSelected = !this.allSelected
       if (this.allSelected) {
         this.selectedCount = this.coins.length
@@ -222,11 +223,6 @@ export default {
         this.buttonValue = 'Deselect All'
       } else {
         this.selectedCount = 0
-        this.coins.forEach(coin => {
-          coin.selected = false
-          let index = this.portfolio.coins.indexOf(coin.symbol)
-          this.portfolio.coins.splice(index, 1)
-        })
         this.buttonValue = 'Select All'
       }
     }
