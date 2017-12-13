@@ -8,6 +8,7 @@
     - [Prerequisites](#prerequisites)
     - [API App](#api-app)
       - [Task Queue](#task-queue)
+      - [Process for Adding New Coins](#process-for-adding-new-coins)
     - [Admin App](#admin-app)
 2. [Database](#database)
     - [Development](#development)
@@ -106,6 +107,15 @@ Or alternatively, start redis with `redis-server` and run this command:
 ```
 (venv) ❯ celery -E -A polyledger worker --loglevel=info -B
 ```
+
+#### Process for Adding New Coins
+
+1. Create a field for the coin in the `Price` model in `./api/models.py`
+2. Add the coin symbol to `SUPPORTED_COINS` in `./api/tasks.py` and run the migration
+3. Ensure a 300x300 PNG image with a transparent background exists in `polyledger/client/src/assets/img/coins` (don't forget to run the build in production)
+4. Create the new coin in the admin app (symbol, name, and slug)
+5. Add the new coin fields to `PriceAdmin` `./api/admin.py` to make them viewable in the admin app
+6. Run the `fill_daily_historical_prices` task in `./api/tasks.py`
 
 ### Admin app
 
