@@ -11,13 +11,8 @@ def prices_to_dataframe(queryset=None, coins=None):
     columns = list(symbols).append('date')
 
     if queryset is None:
-        excluded = {}
-
-        for symbol in symbols:
-            excluded[symbol + '__isnull'] = False
-
         date__gte = date.today() - timedelta(days=365)
-        queryset = Price.objects.filter(**excluded, date__gte=date__gte) \
+        queryset = Price.objects.filter(date__gte=date__gte) \
                                 .order_by('-date') \
                                 .values('date', *symbols)
 
