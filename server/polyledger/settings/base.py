@@ -138,6 +138,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'US/Pacific'
+CELERY_ENABLE_UTC = False
 CELERY_BEAT_SCHEDULE = {
     'get-new-day-prices': {
         'task': 'api.tasks.get_current_prices',
