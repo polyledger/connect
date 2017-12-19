@@ -30,7 +30,9 @@ from lattice.optimize import Allocator
 from lattice.data import Manager
 
 SUPPORTED_COINS = [
-    'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH', 'ZEC', 'XMR', 'ETC', 'NEO'
+    'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH', 'ZEC', 'XMR', 'ETC', 'NEO',
+    'XLM', 'ADA', 'EOS', 'NXT', 'QTUM', 'OMG', 'XEM', 'MCO', 'KNC', 'BTS',
+    'SC', 'VTC', 'SNT', 'STORJ'
 ]
 
 @shared_task
@@ -101,22 +103,25 @@ def fill_daily_historical_prices():
     }
 
     for coin in SUPPORTED_COINS:
-        params['fsym'] = coin
-        response = requests.get(url, params=params)
-        data = response.json()['Data']
+        if not Price.objects.values_list(coin) \
+                            .exclude(**{coin + '__isnull': True}).exists():
 
-        for element in data:
-            try:
-                date = datetime.fromtimestamp(
-                    int(element['time']), tz=pytz.utc
-                )
-                date = date.strftime('%Y-%m-%d')
-                price, created = Price.objects.update_or_create(date=date)
-                setattr(price, coin, element['close'])
-                price.save()
-            except Exception as e:
-                # TODO: Log the exception
-                continue
+            params['fsym'] = coin
+            response = requests.get(url, params=params)
+            data = response.json()['Data']
+
+            for element in data:
+                try:
+                    date = datetime.fromtimestamp(
+                        int(element['time']), tz=pytz.utc
+                    )
+                    date = date.strftime('%Y-%m-%d')
+                    price, created = Price.objects.update_or_create(date=date)
+                    setattr(price, coin, element['close'])
+                    price.save()
+                except Exception as e:
+                    # TODO: Log the exception
+                    continue
 
 
 @shared_task

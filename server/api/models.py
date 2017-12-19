@@ -124,7 +124,7 @@ class Coin(models.Model):
     """
     All coins supported on Polyledger.
     """
-    symbol = models.CharField(primary_key=True, max_length=4)
+    symbol = models.CharField(primary_key=True, max_length=5)
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, null=True)
     portfolio = models.ManyToManyField('Portfolio', blank=True, through='Position', related_name='coins')
@@ -180,3 +180,17 @@ class Price(models.Model):
     XMR = models.FloatField(null=True)
     ETC = models.FloatField(null=True)
     NEO = models.FloatField(null=True)
+    XLM = models.FloatField(null=True)
+    ADA = models.FloatField(null=True)
+    EOS = models.FloatField(null=True)
+    NXT = models.FloatField(null=True)
+    QTUM = models.FloatField(null=True)
+    OMG = models.FloatField(null=True)
+    XEM = models.FloatField(null=True)
+    MCO = models.FloatField(null=True)
+    KNC = models.FloatField(null=True)
+    BTS = models.FloatField(null=True)
+    SC = models.FloatField(null=True)
+    VTC = models.FloatField(null=True)
+    SNT = models.FloatField(null=True)
+    STORJ = models.FloatField(null=True)
