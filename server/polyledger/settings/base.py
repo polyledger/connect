@@ -142,6 +142,6 @@ CELERY_ENABLE_UTC = False
 CELERY_BEAT_SCHEDULE = {
     'get-new-day-prices': {
         'task': 'api.tasks.get_current_prices',
-        'schedule': crontab(hour=0, minute=0)
+        'schedule': crontab(hour=8, minute=0)
     }
 }
