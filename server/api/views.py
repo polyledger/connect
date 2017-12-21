@@ -121,6 +121,9 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             )
         data = backtested.get_historical_value(start, end, freq, date_format)
 
+        df = prices_to_dataframe(coins=[Coin.objects.get(symbol='BTC')])
+        manager = Manager(df=df)
+
         bitcoin = backtest.Portfolio(
             assets={'USD': portfolio.usd},
             created_at=start,
