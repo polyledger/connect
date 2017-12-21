@@ -123,6 +123,35 @@ def fill_daily_historical_prices():
                     # TODO: Log the exception
                     continue
 
+@shared_task
+def get_price_on_date(
+    timestamp=datetime.now().timestamp(),
+    coins=SUPPORTED_COINS
+):
+    """
+    Gets the prices for a given date
+    """
+
+    for coin in coins:
+        url = 'https://min-api.cryptocompare.com/data/pricehistorical'
+        params = {
+            'fsym': coin,
+            'tsyms': 'USD',
+            'ts': timestamp
+        }
+
+        response = requests.get(url, params=params)
+        data = response.json()
+
+        date = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d')
+        price, created = Price.objects.update_or_create(date=date)
+
+        try:
+            setattr(price, coin, data[coin]['USD'])
+            price.save()
+        except Exception as e:
+            # TODO: Log the exception
+            continue
 
 @shared_task
 def get_current_prices():
