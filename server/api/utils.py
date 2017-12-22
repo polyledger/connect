@@ -8,16 +8,16 @@ def prices_to_dataframe(queryset=None, coins=None):
         coins = Coin.objects.all()
 
     symbols = sorted(list(map(lambda c: c.symbol, coins)))
-    columns = list(symbols).append('date')
+    columns = list(symbols).append('timestamp')
 
     if queryset is None:
-        date__gte = date.today() - timedelta(days=365)
-        queryset = Price.objects.filter(date__gte=date__gte) \
-                                .order_by('-date') \
-                                .values('date', *symbols)
+        timestamp__gte = date.today() - timedelta(days=365)
+        queryset = Price.objects.filter(timestamp__gte=timestamp__gte) \
+                                .order_by('-timestamp') \
+                                .values('timestamp', *symbols)
 
     df = pd.DataFrame(data=list(queryset), columns=columns)
-    df['date'] = df['date'].dt.date
-    df.set_index('date', inplace=True)
+    df['timestamp'] = df['timestamp'].dt.date
+    df.set_index('timestamp', inplace=True)
     df.index = pd.to_datetime(df.index)
     return df
