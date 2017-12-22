@@ -50,7 +50,7 @@ def allocate_for_user(pk, coins, risk_score):
     allocations = allocator.allocate()
     allocation = allocations.loc[risk_score-1]
 
-    user.portfolio.positions.clear()
+    user.portfolio.positions.all().delete()
 
     for coin in coins:
         position = Position(
