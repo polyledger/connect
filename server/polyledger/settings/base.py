@@ -106,7 +106,7 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'US/Pacific'
+TIME_ZONE = 'Etc/UTC'
 
 USE_I18N = True
 
@@ -137,11 +137,10 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'US/Pacific'
-CELERY_ENABLE_UTC = False
+CELERY_ENABLE_UTC = True
 CELERY_BEAT_SCHEDULE = {
     'get-new-day-prices': {
         'task': 'api.tasks.get_current_prices',
-        'schedule': crontab(hour=8, minute=0)
+        'schedule': crontab(hour=0, minute=0)
     }
 }

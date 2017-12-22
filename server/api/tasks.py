@@ -22,6 +22,7 @@ from django.utils import timezone
 
 import os
 import pytz
+import time
 import requests
 import pandas as pd
 from datetime import datetime
@@ -98,7 +99,12 @@ def fill_daily_historical_prices():
     url = 'https://min-api.cryptocompare.com/data/histoday'
     params = {
         'tsym': 'USD',
-        'allData': 'true'
+        'allData': 'true',
+        'toTs': time.mktime(
+            datetime.utcnow().replace(
+                hour=0, minute=0, second=0, microsecond=0
+            ).timetuple()
+        )
     }
 
     for coin in SUPPORTED_COINS:
@@ -107,13 +113,10 @@ def fill_daily_historical_prices():
         prices = response.json()['Data']
 
         for price in prices:
-            date = timezone.localtime(
-                value=timezone.datetime.fromtimestamp(
-                    timestamp=int(price['time']),
-                    tz=timezone.get_current_timezone()
-                )
+            timestamp = datetime.fromtimestamp(
+                timestamp=int(price['time']), tz=pytz.UTC
             )
-            instance, created = Price.objects.update_or_create(date=date)
+            instance, created = Price.objects.update_or_create(timestamp=timestamp)
             setattr(instance, coin, price['close'])
             instance.save()
 
@@ -133,8 +136,8 @@ def get_current_prices():
     response = requests.get(url, params=params)
     data = response.json()
 
-    date = datetime.now().date().strftime('%Y-%m-%d')
-    price, created = Price.objects.update_or_create(date=date)
+    timestamp = timezone.now()
+    price, created = Price.objects.update_or_create(timestamp=timestamp)
 
     for coin in data:
         setattr(price, coin, data[coin]['USD'])
