@@ -111,9 +111,7 @@ class PositionAdmin(admin.ModelAdmin):
 
 class PriceAdmin(admin.ModelAdmin):
     list_display = ('date', 'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH', 'ZEC',
-                    'XMR', 'ETC', 'NEO', 'XLM', 'ADA', 'EOS', 'NXT', 'QTUM',
-                    'OMG', 'XEM', 'MCO', 'KNC', 'BTS', 'SC', 'VTC', 'SNT',
-                    'STORJ')
+                    'XMR', 'ETC', 'NEO')
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
