@@ -18,6 +18,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils.encoding import force_bytes
 from api.tokens import account_activation_token
 from django.conf import settings
+from django.utils import timezone
 
 import os
 import pytz
@@ -30,9 +31,7 @@ from lattice.optimize import Allocator
 from lattice.data import Manager
 
 SUPPORTED_COINS = [
-    'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH', 'ZEC', 'XMR', 'ETC', 'NEO',
-    'XLM', 'ADA', 'EOS', 'NXT', 'QTUM', 'OMG', 'XEM', 'MCO', 'KNC', 'BTS',
-    'SC', 'VTC', 'SNT', 'STORJ'
+    'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH', 'ZEC', 'XMR', 'ETC', 'NEO'
 ]
 
 @shared_task
@@ -103,64 +102,26 @@ def fill_daily_historical_prices():
     }
 
     for coin in SUPPORTED_COINS:
-        if not Price.objects.values_list(coin) \
-                            .exclude(**{coin + '__isnull': True}).exists():
-
-            params['fsym'] = coin
-            response = requests.get(url, params=params)
-            data = response.json()['Data']
-
-            for element in data:
-                try:
-                    date = datetime.fromtimestamp(
-                        int(element['time']), tz=pytz.utc
-                    )
-                    date = date.strftime('%Y-%m-%d')
-                    price, created = Price.objects.update_or_create(date=date)
-                    setattr(price, coin, element['close'])
-                    price.save()
-                except Exception as e:
-                    # TODO: Log the exception
-                    continue
-
-@shared_task
-def get_price_on_date(
-    timestamp=datetime.now().timestamp(),
-    coins=SUPPORTED_COINS
-):
-    """
-    Gets the prices for a given date
-    """
-
-    for coin in coins:
-        url = 'https://min-api.cryptocompare.com/data/pricehistorical'
-        params = {
-            'fsym': coin,
-            'tsyms': 'USD',
-            'ts': timestamp
-        }
-
+        params['fsym'] = coin
         response = requests.get(url, params=params)
-        data = response.json()
+        prices = response.json()['Data']
 
-        date = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d')
-        price, created = Price.objects.update_or_create(date=date)
-
-        try:
-            setattr(price, coin, data[coin]['USD'])
-            price.save()
-        except Exception as e:
-            # TODO: Log the exception
-            continue
+        for price in prices:
+            date = timezone.localtime(
+                value=timezone.datetime.fromtimestamp(
+                    timestamp=int(price['time']),
+                    tz=timezone.get_current_timezone()
+                )
+            )
+            instance, created = Price.objects.update_or_create(date=date)
+            setattr(instance, coin, price['close'])
+            instance.save()
 
 @shared_task
 def get_current_prices():
     """
-    Gets the current price (runs every 24 hours)
+    Gets the current price
     """
-
-    print('Adding prices for {}...'
-          .format(datetime.now().strftime("%Y-%m-%d %H:%M")))
 
     url = 'https://min-api.cryptocompare.com/data/pricemulti'
     params = {
@@ -176,9 +137,5 @@ def get_current_prices():
     price, created = Price.objects.update_or_create(date=date)
 
     for coin in data:
-        try:
-            setattr(price, coin, data[coin]['USD'])
-            price.save()
-        except Exception as e:
-            # TODO: Log the exception
-            continue
+        setattr(price, coin, data[coin]['USD'])
+        price.save()
