@@ -169,7 +169,7 @@ class Price(models.Model):
     """
     A table for the prices of all supported coins in USD.
     """
-    date = models.DateTimeField(unique=True, auto_now_add=False)
+    timestamp = models.DateTimeField(unique=True, auto_now_add=False)
     BTC = models.FloatField(null=True)
     ETH = models.FloatField(null=True)
     BCH = models.FloatField(null=True)
