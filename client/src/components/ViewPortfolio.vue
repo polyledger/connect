@@ -43,7 +43,7 @@
               <tr>
                 <th scope="row">Coins</th>
                 <td class="text-center" data-toggle="tooltip" data-placement="top" v-for="position in portfolio.positions" :title="position.coin.name">
-                  <img :src="imagePath(position.coin.slug)" width="25">
+                  <img :src="imagePath(position.coin.symbol)" width="25">
                 </td>
               </tr>
               <tr>

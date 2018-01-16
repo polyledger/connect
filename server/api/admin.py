@@ -78,7 +78,7 @@ class UserAdmin(BaseUserAdmin):
             {
                 'classes': ('wide',),
                 'fields': (
-                    'pk',
+                    'id',
                     'email',
                     'first_name',
                     'last_name',
@@ -110,8 +110,10 @@ class PositionAdmin(admin.ModelAdmin):
     list_display = ('coin', 'amount', 'portfolio')
 
 class PriceAdmin(admin.ModelAdmin):
-    list_display = ('timestamp', 'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH',
-                    'ZEC', 'XMR', 'ETC', 'NEO')
+    list_display = ('timestamp', 'ANT', 'AST', 'BAT', 'BNB', 'BNT', 'CVC',
+                    'DGD', 'DNT', 'EOS', 'ETH', 'FUN', 'GNO', 'GNT', 'ICN',
+                    'KNC', 'LUN', 'MCO', 'NMR', 'OMG', 'PAY', 'QTUM', 'REP',
+                    'REQ', 'RDN', 'SNT', 'STORJ', 'TRX', 'ZRX')
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)

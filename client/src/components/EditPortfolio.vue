@@ -129,7 +129,7 @@ export default {
   },
   methods: {
     imagePath (coin) {
-      return require(`@/assets/img/coins/${coin.slug}.png`)
+      return require(`@/assets/img/coins/${coin.symbol}.png`)
     },
     getPortfolio () {
       this.$http({
