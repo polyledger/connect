@@ -17,6 +17,14 @@
 4. [Web Server](#web-server)
 5. [Proxy Server](#proxy-server)
 
+Install the latest version of Lattice:
+
+```
+❯ pip3 download --no-deps --dest ./vendor git+ssh://git@github.com/polyledger/lattice@VERSION
+```
+
+Then run `pip3 install -r requirements.txt`.
+
 ## Development
 
 ### Prerequisites

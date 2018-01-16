@@ -43,7 +43,14 @@ def allocate_for_user(pk, coins, risk_score):
     user = get_user_model().objects.get(pk=pk)
     symbols = sorted(list(map(lambda c: c.symbol, coins)))
 
-    df = prices_to_dataframe(coins=coins)
+    try:
+        df = prices_to_dataframe(coins=coins)
+    except Exception:
+        print(
+            'There was an error in allocate_for_user task. Please check to '
+            'see if price data exists.'
+        )
+        return
     manager = Manager(coins=symbols, df=df)
 
     allocator = Allocator(coins=symbols, manager=manager)
@@ -93,8 +100,10 @@ def send_confirmation_email(pk, recipient, site_url):
 @shared_task
 def fill_daily_historical_prices():
     """
-    Fills the database with historical price data if no data exists yet.
+    Fills the database with historical price data.
     """
+
+    queryset = Price.objects.filter().order_by('-timestamp')
 
     url = 'https://min-api.cryptocompare.com/data/histoday'
     params = {
@@ -106,6 +115,16 @@ def fill_daily_historical_prices():
             ).timetuple()
         )
     }
+
+    if queryset:
+        today = datetime.utcnow().replace(
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=pytz.UTC
+        )
+        latest = queryset[0].timestamp
+
+        if today > latest:
+            days_to_update = (today - latest).days
+            params['limit'] = days_to_update
 
     for coin in SUPPORTED_COINS:
         params['fsym'] = coin
