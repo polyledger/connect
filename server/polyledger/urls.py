@@ -13,7 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+import os
+from django.conf import settings
 from django.conf.urls import include, url
+from django.conf.urls.static import static
 from django.contrib import admin
 
 urlpatterns = [
@@ -21,3 +24,10 @@ urlpatterns = [
     url(r'^api/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', admin.site.urls),
 ]
+
+# https://docs.djangoproject.com/en/2.0/howto/static-files/#serving-static-files-during-development
+if os.environ['DJANGO_SETTINGS_MODULE'] == 'polyledger.settings.local':
+    urlpatterns += static(
+        settings.STATIC_URL,
+        document_root=settings.STATIC_ROOT
+    )

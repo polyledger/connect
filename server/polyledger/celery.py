@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
+from celery.signals import worker_ready
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "polyledger.settings.local")
@@ -15,6 +16,13 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
+
+@worker_ready.connect
+def on_start(sender, **kwargs):
+    with sender.app.connection() as conn:
+        sender.app.send_task(
+            'api.tasks.fill_daily_historical_prices', connection=conn
+        )
 
 @app.task(bind=True)
 def debug_task(self):

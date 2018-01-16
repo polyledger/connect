@@ -26,14 +26,11 @@ import time
 import requests
 import pandas as pd
 from datetime import datetime
-from api.models import Price, Position
+from api.models import Price, Position, Coin
 from api.utils import prices_to_dataframe
 from lattice.optimize import Allocator
 from lattice.data import Manager
 
-SUPPORTED_COINS = [
-    'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH', 'ZEC', 'XMR', 'ETC', 'NEO'
-]
 
 @shared_task
 def allocate_for_user(pk, coins, risk_score):
@@ -43,7 +40,14 @@ def allocate_for_user(pk, coins, risk_score):
     user = get_user_model().objects.get(pk=pk)
     symbols = sorted(list(map(lambda c: c.symbol, coins)))
 
-    df = prices_to_dataframe(coins=coins)
+    try:
+        df = prices_to_dataframe(coins=coins)
+    except Exception:
+        print(
+            'There was an error in allocate_for_user task. Please check to '
+            'see if price data exists.'
+        )
+        return
     manager = Manager(coins=symbols, df=df)
 
     allocator = Allocator(coins=symbols, manager=manager)
@@ -91,10 +95,14 @@ def send_confirmation_email(pk, recipient, site_url):
     email.send()
 
 @shared_task
-def fill_daily_historical_prices():
+def fill_daily_historical_prices(coins=None):
     """
-    Fills the database with historical price data if no data exists yet.
+    Fills the database with historical price data.
     """
+    if coins is None:
+        coins = list(map(lambda coin: coin.symbol, Coin.objects.all()))
+
+    queryset = Price.objects.filter().order_by('-timestamp')
 
     url = 'https://min-api.cryptocompare.com/data/histoday'
     params = {
@@ -107,7 +115,17 @@ def fill_daily_historical_prices():
         )
     }
 
-    for coin in SUPPORTED_COINS:
+    if queryset:
+        today = datetime.utcnow().replace(
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=pytz.UTC
+        )
+        latest = queryset[0].timestamp
+
+        if today > latest:
+            days_to_update = (today - latest).days
+            params['limit'] = days_to_update
+
+    for coin in coins:
         params['fsym'] = coin
         response = requests.get(url, params=params)
         prices = response.json()['Data']
@@ -125,10 +143,10 @@ def get_current_prices():
     """
     Gets the current price
     """
-
+    coins = list(map(lambda coin: coin.symbol, Coin.objects.all()))
     url = 'https://min-api.cryptocompare.com/data/pricemulti'
     params = {
-        'fsyms': ','.join(SUPPORTED_COINS),
+        'fsyms': ','.join(coins),
         'tsyms': 'USD',
         'allData': 'true'
     }

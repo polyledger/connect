@@ -17,6 +17,14 @@
 4. [Web Server](#web-server)
 5. [Proxy Server](#proxy-server)
 
+Install the latest version of Lattice:
+
+```
+❯ pip3 download --no-deps --dest ./vendor git+ssh://git@github.com/polyledger/lattice@VERSION
+```
+
+Then run `pip3 install -r requirements.txt`.
+
 ## Development
 
 ### Prerequisites
@@ -112,10 +120,9 @@ Or alternatively, start redis with `redis-server` and run this command:
 
 1. Create a field for the coin in the `Price` model in `./api/models.py` and run the migration
 2. Add the new coin fields to `PriceAdmin` `./api/admin.py` to make them viewable in the admin app
-3. Add the coin symbol to `SUPPORTED_COINS` in `./api/tasks.py`
-4. Ensure a 300x300 PNG image with a transparent background exists in `polyledger/client/src/assets/img/coins` (don't forget to run the build in production)
-5. Create the new coin in the admin app (symbol, name, and slug)
-6. Run the `fill_daily_historical_prices` task in `./api/tasks.py`
+3. Ensure a 300x300 PNG image with a transparent background exists in `polyledger/client/src/assets/img/coins` (don't forget to run the build in production)
+4. Create the new coin in the admin app (symbol, name, and slug)
+5. Run the `fill_daily_historical_prices` task in `./api/tasks.py`
 
 ### Admin app
 

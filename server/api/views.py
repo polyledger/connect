@@ -120,25 +120,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                 timestamp=start
             )
         data = backtested.get_historical_value(start, end, freq, date_format)
-
-        df = prices_to_dataframe(coins=[Coin.objects.get(symbol='BTC')])
-        manager = Manager(df=df)
-
-        bitcoin = backtest.Portfolio(
-            assets={'USD': portfolio.usd},
-            created_at=start,
-            manager=manager
-        )
-        bitcoin.trade_asset(portfolio.usd, 'USD', 'BTC', start)
-        bitcoin_data = bitcoin.get_historical_value(
-            start,
-            end=end,
-            freq=freq,
-            date_format=date_format
-        )
-        dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
-
-        dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
+        dataset = {'portfolio': data['values']}
         labels = data['dates']
         value = backtested.get_value()
         if portfolio.usd > 0:
