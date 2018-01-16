@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'multiselectfield',
     'rest_framework',
     'rest_framework.authtoken',
 ]
@@ -96,6 +95,22 @@ AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator' },
 ]
 
+# Database
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+
+POSTGRESQL_NAME = os.environ.get('POSTGRESQL_NAME')
+POSTGRESQL_USER = os.environ.get('POSTGRESQL_USER')
+POSTGRESQL_PASSWORD = os.environ.get('POSTGRESQL_PASSWORD')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'HOST': 'postgres',
+        'PORT': 5432,
+    }
+}
 
 # File Storage
 # https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-DEFAULT_FILE_STORAGE
@@ -132,8 +147,8 @@ EMAIL_PORT = 587
 
 # Celery application definition
 # http://docs.celeryproject.org/en/v4.0.2/userguide/configuration.html
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
