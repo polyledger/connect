@@ -78,7 +78,7 @@ class UserAdmin(BaseUserAdmin):
             {
                 'classes': ('wide',),
                 'fields': (
-                    'pk',
+                    'id',
                     'email',
                     'first_name',
                     'last_name',
