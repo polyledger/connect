@@ -134,7 +134,6 @@ class Coin(models.Model):
     """
     symbol = models.CharField(primary_key=True, max_length=5)
     name = models.CharField(max_length=50)
-    slug = models.SlugField(max_length=50, null=True)
     portfolio = models.ManyToManyField(
         to='Portfolio',
         blank=True,

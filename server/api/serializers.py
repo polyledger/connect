@@ -9,7 +9,7 @@ class CoinSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Coin
-        fields = ('symbol', 'name', 'slug')
+        fields = ('symbol', 'name')
 
 
 class PositionSerializer(serializers.ModelSerializer):

@@ -109,7 +109,7 @@ class PortfolioAdmin(admin.ModelAdmin):
 
 
 class CoinAdmin(admin.ModelAdmin):
-    list_display = ('symbol', 'name', 'slug')
+    list_display = ('symbol', 'name')
 
 
 class PositionAdmin(admin.ModelAdmin):
