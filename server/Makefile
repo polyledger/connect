@@ -3,8 +3,7 @@ clean-pyc:
 	find . -name "__pycache__/" -exec rm -rf {} \;
 
 lint:
-	find account api polyledger -name "*.py" | xargs pylint \
-	--rcfile=.pylintrc
+	find api -type f -name "*.py" ! -path "api/migrations/*" | xargs flake8
 
 test: clean-pyc
 	./manage.py test
@@ -15,6 +14,6 @@ help:
 	@echo "clean-pyc"
 	@echo "    Remove python artifacts."
 	@echo "lint"
-	@echo "    Lint project files with Pylint."
+	@echo "    Lint project files with Flake8."
 	@echo "test"
 	@echo "    Run test suite."
