@@ -7,12 +7,14 @@ ALLOWED_HOSTS = ['*']
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
-STATIC_URL = '/staticfiles/'
-STATIC_ROOT = '/static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = '/usr/share/nginx/html/static/'
 
-SECURE_HSTS_SECONDS = True
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+# These settings can be enabled with HTTPS
+# SECURE_HSTS_SECONDS = True
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_SSL_REDIRECT = True

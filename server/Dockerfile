@@ -1,18 +1,19 @@
 FROM python:3.6
 
+# To enable logging
 ENV PYTHONUNBUFFERED 1
 
 # Create server directory
-RUN mkdir -p /usr/src/server
-WORKDIR /usr/src/server
+RUN mkdir -p /srv/polyledger
+WORKDIR /srv/polyledger
 
 # Install the server dependencies
-COPY requirements.txt /usr/src/server/
-ADD ./vendor/lattice-0.5.zip /usr/src/server/vendor/
+COPY requirements.txt /srv/polyledger
+ADD ./vendor/lattice-0.5.zip /srv/polyledger/vendor/
 RUN pip3 install -r requirements.txt
 
 # Bundle the source
-COPY . /usr/src/server/
+COPY . /srv/polyledger
 
+# Expose port 8000 in the container
 EXPOSE 8000
-COPY ./docker-entrypoint.sh /usr/src/server/

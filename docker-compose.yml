@@ -1,64 +1,63 @@
 version: "3"
 services:
+
   nginx:
-    restart: always
+    container_name: nginx
     build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    hostname: nginx
-    ports:
-      - "80:80"
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    image: nginx
+    restart: always
     volumes:
-      - staticfiles:/usr/src/staticfiles
+      - ./client/dist:/usr/share/nginx/html
+      - ./server/static:/usr/share/nginx/html/static
+    ports:
+      - 80:80
     depends_on:
-      - client
       - server
-    command: nginx-debug -g 'daemon off';
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    hostname: client
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./client:/usr/src/client
-    command: npm run dev
+    command: nginx -g 'daemon off';
+
   server:
-    restart: always
+    container_name: server
     build:
       context: ./server
       dockerfile: Dockerfile
     hostname: server
+    ports:
+      - 8000:8000
     volumes:
-      - ./server:/usr/src/server
-      - staticfiles:/usr/src/staticfiles
+      - ./server:/srv/polyledger
     depends_on:
       - postgres
-    ports:
-      - "8000:8000"
     env_file: .env
-    entrypoint: /usr/src/server/docker-entrypoint.sh
+    command: >
+      bash -c '
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      gunicorn polyledger.wsgi -b 0.0.0.0:8000'
+
   postgres:
+    container_name: postgres
     image: postgres:latest
     hostname: postgres
     ports:
-      - "5432:5432"
+      - 5432:5432
+
   redis:
+    container_name: redis
     image: redis:latest
     hostname: redis
     ports:
-      - "6379:6379"
+      - 6379:6379
+
   worker:
+    container_name: worker
     build:
       context: ./server
     env_file: .env
     command: celery -A polyledger worker -l info
     volumes:
-      - ./server:/usr/src/server
+      - ./server:/srv/polyledger
     depends_on:
       - server
       - redis
-
-volumes:
-  staticfiles:
