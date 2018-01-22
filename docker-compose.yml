@@ -9,8 +9,8 @@ services:
     image: nginx
     restart: always
     volumes:
-      - ./client/dist:/usr/share/nginx/html
-      - ./server/static:/usr/share/nginx/html/static
+      - ./server/static/admin:/usr/share/nginx/html/static/admin
+      - ./server/static/rest_framework:/usr/share/nginx/html/static/rest_framework
     ports:
       - 80:80
     depends_on:
