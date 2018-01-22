@@ -2,6 +2,7 @@ import pandas as pd
 from datetime import date, timedelta
 from api.models import Coin, Price
 
+
 def prices_to_dataframe(queryset=None, coins=None):
 
     if coins is None:

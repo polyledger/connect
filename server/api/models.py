@@ -6,7 +6,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
 from rest_framework.authtoken.models import Token
-from decimal import *
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password=None):
@@ -41,6 +41,7 @@ class UserManager(BaseUserManager):
         user.is_admin = True
         user.save(using=self._db)
         return user
+
 
 class User(AbstractBaseUser):
     email = models.EmailField(
@@ -84,9 +85,11 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # TODO: Add demographic information about user, such as age, income, etc.
+
 
 @receiver(models.signals.post_save, sender=User)
 def create_user_profile(sender, instance=None, created=False, **kwargs):
@@ -96,9 +99,11 @@ def create_user_profile(sender, instance=None, created=False, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
+
 @receiver(models.signals.post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
 
 @receiver(models.signals.post_save, sender=User)
 def create_user_portfolio(sender, instance=None, created=False, **kwargs):
@@ -108,9 +113,11 @@ def create_user_portfolio(sender, instance=None, created=False, **kwargs):
     if created:
         Portfolio.objects.create(user=instance)
 
+
 @receiver(models.signals.post_save, sender=User)
 def save_user_portfolio(sender, instance, **kwargs):
     instance.portfolio.save()
+
 
 @receiver(models.signals.post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -120,6 +127,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 
+
 class Coin(models.Model):
     """
     All coins supported on Polyledger.
@@ -127,10 +135,15 @@ class Coin(models.Model):
     symbol = models.CharField(primary_key=True, max_length=5)
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, null=True)
-    portfolio = models.ManyToManyField('Portfolio', blank=True, through='Position', related_name='coins')
+    portfolio = models.ManyToManyField(
+        to='Portfolio',
+        blank=True,
+        through='Position',
+        related_name='coins')
 
     def __str__(self):
         return self.name
+
 
 class Portfolio(models.Model):
     """
@@ -148,22 +161,31 @@ class Portfolio(models.Model):
     def __str__(self):
         return '{0}\'s portfolio'.format(self.user)
 
+
 class Position(models.Model):
     """
     A position of a coin in a portfolio.
     """
     coin = models.ForeignKey('Coin')
-    portfolio = models.ForeignKey('Portfolio', related_name='positions', null=True)
+    portfolio = models.ForeignKey(
+        to='Portfolio',
+        related_name='positions',
+        null=True)
     amount = models.FloatField(default=0.0)
+
 
 class Transaction(models.Model):
     """
     A crypto-crypto transaction in the portfolio
     """
     date = models.DateTimeField(auto_now_add=True)
-    portfolio = models.ForeignKey('Portfolio', on_delete=models.CASCADE, related_name='transactions')
+    portfolio = models.ForeignKey(
+        to='Portfolio',
+        on_delete=models.CASCADE,
+        related_name='transactions')
     base = models.ForeignKey('Coin', related_name='base_transactions')
     quote = models.ForeignKey('Coin', related_name='quote_transactions')
+
 
 class Price(models.Model):
     """

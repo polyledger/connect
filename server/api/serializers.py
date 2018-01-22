@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from api.models import User, Portfolio, Coin, Position
 from api.tasks import send_confirmation_email, allocate_for_user
-from rest_framework import fields, serializers, status
+from rest_framework import serializers
 
 
 class CoinSerializer(serializers.ModelSerializer):
@@ -11,12 +11,14 @@ class CoinSerializer(serializers.ModelSerializer):
         model = Coin
         fields = ('symbol', 'name', 'slug')
 
+
 class PositionSerializer(serializers.ModelSerializer):
     coin = CoinSerializer()
 
     class Meta:
         model = Position
         fields = ('id', 'coin', 'amount')
+
 
 class PortfolioSerializer(serializers.ModelSerializer):
     positions = PositionSerializer(many=True, read_only=True)
@@ -29,7 +31,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Portfolio
         fields = ('id', 'created', 'title', 'risk_score', 'usd', 'coins',
-            'positions')
+                  'positions')
         read_only_fields = ('id', 'created', 'positions',)
 
     def get_queryset(self):
@@ -44,26 +46,30 @@ class PortfolioSerializer(serializers.ModelSerializer):
             position = Position(coin=coin, amount=0, portfolio=portfolio)
             position.save()
             portfolio.positions.add(position)
-        allocate_for_user.apply(args=[user.id, coins, validated_data.get('risk_score')])
+        allocate_for_user.apply(
+            args=[user.id, coins, validated_data.get('risk_score')])
         portfolio.save()
         return portfolio
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
         instance.usd = validated_data.get('usd', instance.usd)
-        instance.risk_score = validated_data.get('risk_score', instance.risk_score)
+        instance.risk_score = validated_data.get(
+            'risk_score', instance.risk_score)
         user = self.context['request'].user
         coins = validated_data.get('coins')
         allocate_for_user.apply(args=[user.id, coins, instance.risk_score])
         instance.save()
         return instance
 
+
 class UserSerializer(serializers.ModelSerializer):
     portfolio = PortfolioSerializer(read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'first_name', 'last_name', 'password', 'portfolio')
+        fields = ('id', 'email', 'first_name', 'last_name', 'password',
+                  'portfolio')
         extra_kwargs = {
             'id': {'read_only': True},
             'password': {'write_only': True}

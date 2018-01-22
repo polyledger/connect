@@ -1,13 +1,11 @@
 from datetime import datetime, timedelta
-from api.models import User, Profile, Coin, Portfolio, Token
+from api.models import User, Coin, Portfolio, Token
 from django.contrib.auth import get_user_model
-from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.conf import settings
-from rest_framework import permissions, authentication, viewsets, status
+from rest_framework import permissions, authentication, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
@@ -15,6 +13,7 @@ from api.tokens import account_activation_token
 from api.utils import prices_to_dataframe
 from lattice import backtest
 from lattice.data import Manager
+
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
 
@@ -26,6 +25,7 @@ class IsCreationOrIsAuthenticated(permissions.BasePermission):
                 return False
         else:
             return True
+
 
 class UserViewSet(viewsets.ModelViewSet):
     model = User
@@ -55,9 +55,11 @@ class UserViewSet(viewsets.ModelViewSet):
             uid = force_text(urlsafe_base64_decode(pk))
             user = get_user_model().objects.get(pk=uid)
             token = request.query_params.get('token', None)
-        except(TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+        except(TypeError, ValueError, OverflowError,
+               get_user_model().DoesNotExist):
             user = None
-        if user is not None and account_activation_token.check_token(user, token):
+        if user is not None and \
+                account_activation_token.check_token(user, token):
             user.is_active = True
             user.save()
             auth_token = Token.objects.get(user=user)
@@ -65,8 +67,8 @@ class UserViewSet(viewsets.ModelViewSet):
         return HttpResponseRedirect(redirect_url)
 
     def destroy(self, request, *args, **kwargs):
-        user = request.user
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
+
 
 class PortfolioViewSet(viewsets.ModelViewSet):
     model = Portfolio
@@ -136,9 +138,15 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             freq=freq,
             date_format=date_format
         )
-        dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
+        dataset = {
+            'portfolio': data['values'],
+            'bitcoin': bitcoin_data['values']
+        }
 
-        dataset = {'portfolio': data['values'], 'bitcoin': bitcoin_data['values']}
+        dataset = {
+            'portfolio': data['values'],
+            'bitcoin': bitcoin_data['values']
+        }
         labels = data['dates']
         value = backtested.get_value()
         if portfolio.usd > 0:
@@ -157,6 +165,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             'value': value
         }
         return Response(content)
+
 
 class CoinViewSet(viewsets.ReadOnlyModelViewSet):
     model = Coin

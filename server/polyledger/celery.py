@@ -17,12 +17,14 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 
+
 @worker_ready.connect
 def on_start(sender, **kwargs):
     with sender.app.connection() as conn:
         sender.app.send_task(
             'api.tasks.fill_daily_historical_prices', connection=conn
         )
+
 
 @app.task(bind=True)
 def debug_task(self):

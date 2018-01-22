@@ -17,14 +17,11 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.utils.encoding import force_bytes
 from api.tokens import account_activation_token
-from django.conf import settings
 from django.utils import timezone
 
-import os
 import pytz
 import time
 import requests
-import pandas as pd
 from datetime import datetime
 from api.models import Price, Position
 from api.utils import prices_to_dataframe
@@ -34,6 +31,7 @@ from lattice.data import Manager
 SUPPORTED_COINS = [
     'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH', 'ZEC', 'XMR', 'ETC', 'NEO'
 ]
+
 
 @shared_task
 def allocate_for_user(pk, coins, risk_score):
@@ -71,6 +69,7 @@ def allocate_for_user(pk, coins, risk_score):
     user.portfolio.save()
     user.save()
 
+
 @shared_task
 def send_confirmation_email(pk, recipient, site_url):
     user = get_user_model().objects.get(pk=pk)
@@ -96,6 +95,7 @@ def send_confirmation_email(pk, recipient, site_url):
     )
     email.attach_alternative(html_content, "text/html")
     email.send()
+
 
 @shared_task
 def fill_daily_historical_prices():
@@ -135,9 +135,11 @@ def fill_daily_historical_prices():
             timestamp = datetime.fromtimestamp(
                 timestamp=int(price['time']), tz=pytz.UTC
             )
-            instance, created = Price.objects.update_or_create(timestamp=timestamp)
+            instance, created = Price.objects.update_or_create(
+                timestamp=timestamp)
             setattr(instance, coin, price['close'])
             instance.save()
+
 
 @shared_task
 def get_current_prices():

@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from api.models import User, Profile, Portfolio, Coin, Position, Transaction, Price
+from api.models import User, Profile, Portfolio, Coin, Position, Price
 
 
 class UserCreationForm(forms.ModelForm):
@@ -38,6 +38,7 @@ class UserCreationForm(forms.ModelForm):
             user.save()
         return user
 
+
 class UserChangeForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's
@@ -56,6 +57,7 @@ class UserChangeForm(forms.ModelForm):
         # field does not have access to the initial value
         return self.initial["password"]
 
+
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
@@ -64,7 +66,8 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('id', 'email', 'first_name', 'last_name', 'is_active', 'is_admin')
+    list_display = ('id', 'email', 'first_name', 'last_name', 'is_active',
+                    'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
@@ -74,44 +77,49 @@ class UserAdmin(BaseUserAdmin):
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
-        (None,
-            {
-                'classes': ('wide',),
-                'fields': (
-                    'id',
-                    'email',
-                    'first_name',
-                    'last_name',
-                    'password1',
-                    'password2'
-                )
-            }
-        ),
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'id',
+                'email',
+                'first_name',
+                'last_name',
+                'password1',
+                'password2'
+            )
+        }),
     )
     search_fields = ('email',)
     ordering = ('email',)
     filter_horizontal = ()
 
+
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user',)
+
 
 class PositionInline(admin.TabularInline):
     extra = 1
     model = Position
 
+
 class PortfolioAdmin(admin.ModelAdmin):
     list_display = ('user', 'title', 'risk_score', 'usd')
     inlines = [PositionInline]
 
+
 class CoinAdmin(admin.ModelAdmin):
     list_display = ('symbol', 'name', 'slug')
+
 
 class PositionAdmin(admin.ModelAdmin):
     list_display = ('coin', 'amount', 'portfolio')
 
+
 class PriceAdmin(admin.ModelAdmin):
     list_display = ('timestamp', 'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH',
                     'ZEC', 'XMR', 'ETC', 'NEO')
+
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
@@ -119,4 +127,4 @@ admin.site.register(Portfolio, PortfolioAdmin)
 admin.site.register(Position, PositionAdmin)
 admin.site.register(Coin, CoinAdmin)
 admin.site.register(Price, PriceAdmin)
-# admin.site.unregister(Group)
+admin.site.unregister(Group)
