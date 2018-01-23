@@ -5,4 +5,6 @@ celery==4.1
 redis==2.10.6
 psycopg2==2.7.3.1
 gunicorn==19.7
-./vendor/lattice-0.5.zip
+scipy==1.0.0
+numpy==1.14.0
+pandas==0.18.1

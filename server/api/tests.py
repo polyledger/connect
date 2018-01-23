@@ -22,12 +22,12 @@ class AllocateForUserTestCase(TestCase):
         self.user = get_user_model().objects.create_user(
             first_name='Ari',
             last_name='Hall',
-            email = 'ari@polyledger.com',
+            email='ari@polyledger.com',
             password='top_secret'
         )
         self.user.profile.risk_score = 3
         self.user.portfolio = Portfolio.objects.create(user=self.user)
-        position = Position.objects.create(
+        Position.objects.create(
             portfolio=self.user.portfolio,
             coin=Coin.objects.get(name='Bitcoin'),
             amount=10
