@@ -38,19 +38,19 @@ class PortfolioSerializer(serializers.ModelSerializer):
         user = self.request.user
         return Portfolio.objects.filter(user=user)
 
-    def create(self, validated_data):
-        user = self.context['request'].user
-        coins = validated_data.pop('coins')
-        symbols = [coin.symbol for coin in coins]
-        portfolio = Portfolio.objects.create(**validated_data, user=user)
-        for coin in coins:
-            position = Position(coin=coin, amount=0, portfolio=portfolio)
-            position.save()
-            portfolio.positions.add(position)
-        allocate_for_user.apply_async(
-            args=[user.id, symbols, validated_data.get('risk_score')])
-        portfolio.save()
-        return portfolio
+    # def create(self, validated_data):
+    #     user = self.context['request'].user
+    #     coins = validated_data.pop('coins')
+    #     symbols = [coin.symbol for coin in coins]
+    #     portfolio = Portfolio.objects.create(**validated_data, user=user)
+    #     for coin in coins:
+    #         position = Position(coin=coin, amount=0, portfolio=portfolio)
+    #         position.save()
+    #         portfolio.positions.add(position)
+    #     allocate_for_user.apply_async(
+    #         args=[user.id, symbols, validated_data.get('risk_score')])
+    #     portfolio.save()
+    #     return portfolio
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
