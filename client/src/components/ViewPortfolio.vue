@@ -186,7 +186,7 @@ export default {
             },
             {
               label: 'Bitcoin',
-              data: this.chart.dataset.bitcoin,
+              data: this.chart.dataset.benchmark,
               backgroundColor: ['rgba(255, 227, 133, 0.5)'],
               borderColor: ['rgba(255, 227, 133, 1)'],
               borderWidth: 1
