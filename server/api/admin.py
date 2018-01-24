@@ -109,6 +109,7 @@ class PortfolioAdmin(admin.ModelAdmin):
 
 
 class CoinAdmin(admin.ModelAdmin):
+    ordering = ('symbol',)
     list_display = ('symbol', 'name')
 
 
@@ -117,8 +118,8 @@ class PositionAdmin(admin.ModelAdmin):
 
 
 class PriceAdmin(admin.ModelAdmin):
-    list_display = ('timestamp', 'BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH',
-                    'ZEC', 'XMR', 'ETC', 'NEO')
+    ordering = ('-date', 'coin',)
+    list_display = ('date', 'coin', 'price')
 
 
 admin.site.register(User, UserAdmin)

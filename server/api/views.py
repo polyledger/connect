@@ -11,8 +11,8 @@ from rest_framework.decorators import detail_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from api.tokens import account_activation_token
 from api.utils import prices_to_dataframe
-from lattice import backtest
-from lattice.data import Manager
+from api import backtest
+from api.data import Manager
 
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
@@ -90,71 +90,70 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         portfolio = self.get_object()
 
         period = request.GET.get('period')
+        days = {'7D': 7, '1M': 30, '3M': 90, '6M': 182, '1Y': 364}
         end = datetime.now()
-        date_format = '%b %-d %Y'
-        freq = 'D'
 
-        if period == '7D':
-            start = end - timedelta(days=7)
-        elif period == '1M':
-            start = end - timedelta(days=30)
-        elif period == '3M':
-            start = end - timedelta(days=90)
-        elif period == '6M':
-            start = end - timedelta(days=182)
-        elif period == '1Y':
-            start = end - timedelta(days=364)
+        created_at = end - timedelta(days=days[period])
+        initial_investment = portfolio.usd
+        assets = {'USD': initial_investment}
 
-        df = prices_to_dataframe(coins=portfolio.coins.all())
-        manager = Manager(df=df)
+        # Create two user portfolios: the user's, and a Bitcoin portfolio
+        user = backtest.Portfolio(assets=assets, created_at=created_at)
+        bitcoin = backtest.Portfolio(assets=assets, created_at=created_at)
 
-        backtested = backtest.Portfolio(
-            assets={'USD': portfolio.usd},
-            created_at=start,
-            manager=manager
-        )
-
+        # Backtest the user's portfolio
         for position in portfolio.positions.all():
-            backtested.trade_asset(
-                amount=(position.amount/100)*portfolio.usd,
-                from_asset='USD',
-                to_asset=position.coin.symbol,
-                timestamp=start
+            position_percentage = position.amount / 100
+            amount = position_percentage * initial_investment
+
+            # Trade USD for the given asset
+            from_asset = 'USD'
+            to_asset = position.coin.symbol
+            date = created_at
+
+            user.trade_asset(
+                amount=amount,
+                from_asset=from_asset,
+                to_asset=to_asset,
+                date=date
             )
-        data = backtested.get_historical_value(start, end, freq, date_format)
 
-        df = prices_to_dataframe(coins=[Coin.objects.get(symbol='BTC')])
-        manager = Manager(df=df)
-
-        bitcoin = backtest.Portfolio(
-            assets={'USD': portfolio.usd},
-            created_at=start,
-            manager=manager
+        # Backtest the Bitcoin portfolio
+        bitcoin.trade_asset(
+            amount=initial_investment,
+            from_asset='USD',
+            to_asset='BTC',
+            date=created_at
         )
-        bitcoin.trade_asset(portfolio.usd, 'USD', 'BTC', start)
+
+        freq = 'D'
+        date_format = '%b %-d %Y'
+        user_data = user.get_historical_value(
+            start=created_at,
+            end=end,
+            freq=freq,
+            date_format=date_format
+        )
+
         bitcoin_data = bitcoin.get_historical_value(
-            start,
+            created_at,
             end=end,
             freq=freq,
             date_format=date_format
         )
         dataset = {
-            'portfolio': data['values'],
+            'portfolio': user_data['values'],
             'bitcoin': bitcoin_data['values']
         }
 
-        dataset = {
-            'portfolio': data['values'],
-            'bitcoin': bitcoin_data['values']
-        }
-        labels = data['dates']
-        value = backtested.get_value()
-        if portfolio.usd > 0:
-            percent = ((value - portfolio.usd)/portfolio.usd)*100
+        labels = user_data['dates']
+        value = user.get_value()
+        if initial_investment > 0:
+            percent = ((value - initial_investment) / initial_investment) * 100
         else:
             percent = 0
         change = {
-            'dollar': value - portfolio.usd,
+            'dollar': value - initial_investment,
             'percent': percent
         }
 

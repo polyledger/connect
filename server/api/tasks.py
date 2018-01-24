@@ -17,46 +17,35 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.utils.encoding import force_bytes
 from api.tokens import account_activation_token
-from django.utils import timezone
 
 import pytz
 import time
 import requests
-from datetime import datetime
+from datetime import datetime, date
 from api.models import Price, Position, Coin
-from api.utils import prices_to_dataframe
-from lattice.optimize import Allocator
-from lattice.data import Manager
+# from api.allocator import CVaR
+from api.allocator import MVO
 
 
 @shared_task
-def allocate_for_user(pk, coins, risk_score):
+def allocate_for_user(pk, symbols, risk_score):
     """
     Rebalances portfolio allocations.
     """
     user = get_user_model().objects.get(pk=pk)
-    symbols = sorted(list(map(lambda c: c.symbol, coins)))
 
-    try:
-        df = prices_to_dataframe(coins=coins)
-    except Exception:
-        print(
-            'There was an error in allocate_for_user task. Please check to '
-            'see if price data exists.'
-        )
-        return
-    manager = Manager(coins=symbols, df=df)
-
-    allocator = Allocator(coins=symbols, manager=manager)
+    start = datetime(year=2017, month=1, day=1)
+    # allocator = CVaR(symbols=symbols, start=start)
+    allocator = MVO(symbols=symbols, start=start)
     allocations = allocator.allocate()
     allocation = allocations.loc[risk_score-1]
 
     user.portfolio.positions.all().delete()
 
-    for coin in coins:
+    for symbol in symbols:
         position = Position(
-            coin=coin,
-            amount=allocation[coin.symbol],
+            coin=Coin.objects.get(symbol=symbol),
+            amount=allocation[symbol],
             portfolio=user.portfolio
         )
         position.save()
@@ -94,60 +83,76 @@ def send_confirmation_email(pk, recipient, site_url):
 
 
 @shared_task
-def fill_daily_historical_prices(coins=None):
+def fill_daily_historical_prices(coins=Coin.objects.all()):
     """
     Fills the database with historical price data.
     """
-    if coins is None:
-        coins = list(map(lambda coin: coin.symbol, Coin.objects.all()))
 
-    queryset = Price.objects.filter().order_by('-timestamp')
+    tzinfo = pytz.UTC
+    today = datetime.utcnow().replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+        tzinfo=tzinfo)
 
-    url = 'https://min-api.cryptocompare.com/data/histoday'
-    params = {
-        'tsym': 'USD',
-        'allData': 'true',
-        'toTs': time.mktime(
-            datetime.utcnow().replace(
-                hour=0, minute=0, second=0, microsecond=0
-            ).timetuple()
-        )
-    }
-
-    if queryset:
-        today = datetime.utcnow().replace(
-            hour=0, minute=0, second=0, microsecond=0, tzinfo=pytz.UTC
-        )
-        latest = queryset[0].timestamp
-
-        if today > latest:
-            days_to_update = (today - latest).days
-            params['limit'] = days_to_update
-
-    for coin in coins:
-        params['fsym'] = coin
+    def get_prices(coin, limit=None):
+        url = 'https://min-api.cryptocompare.com/data/histoday'
+        toTs = time.mktime(today.timetuple())
+        params = {
+            'tsym': 'USD',
+            'toTs': toTs,
+            'fsym': coin.symbol
+        }
+        if limit:
+            params['limit'] = limit
+        else:
+            params['allData'] = True
         response = requests.get(url, params=params)
         prices = response.json()['Data']
+        del prices[0]
 
         for price in prices:
-            timestamp = datetime.fromtimestamp(
-                timestamp=int(price['time']), tz=pytz.UTC
-            )
+            timestamp = int(price['time'])
+            price = price['close']
             instance, created = Price.objects.update_or_create(
-                timestamp=timestamp)
-            setattr(instance, coin, price['close'])
+                date=date.fromtimestamp(timestamp),
+                coin=coin,
+                price=price)
             instance.save()
+        print('Price update for {0} complete.'.format(coin.name))
+
+    for coin in coins:
+        print('Checking prices for {0}'.format(coin.name))
+        queryset = Price.objects.filter(coin=coin).order_by('-date')
+
+        if not queryset:
+            print('Fetching prices for {0}...'.format(coin.name))
+            get_prices(coin)
+        else:
+            last_date_updated = queryset.first().date
+
+            if today.date() > last_date_updated:
+                limit = (today.date() - last_date_updated).days
+                print('Fetching prices of {0} for past {1} day(s)'
+                      .format(coin.name, limit))
+                get_prices(coin, limit=limit)
 
 
 @shared_task
-def get_current_prices():
+def get_current_prices(coins=Coin.objects.all()):
     """
     Gets the current price
     """
-    coins = list(map(lambda coin: coin.symbol, Coin.objects.all()))
+    today = datetime.utcnow().replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+        tzinfo=pytz.UTC)
     url = 'https://min-api.cryptocompare.com/data/pricemulti'
     params = {
-        'fsyms': ','.join(coins),
+        'fsyms': ','.join(coins.values_list('name', flat=True)),
         'tsyms': 'USD',
         'allData': 'true'
     }
@@ -155,9 +160,9 @@ def get_current_prices():
     response = requests.get(url, params=params)
     data = response.json()
 
-    timestamp = timezone.now()
-    price, created = Price.objects.update_or_create(timestamp=timestamp)
-
     for coin in data:
-        setattr(price, coin, data[coin]['USD'])
-        price.save()
+        price = coin['USD']
+        instance, created = Price.objects.update_or_create(
+            date=today,
+            coin=coin,
+            price=price)

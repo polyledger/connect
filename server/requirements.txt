@@ -8,3 +8,4 @@ gunicorn==19.7
 scipy==1.0.0
 numpy==1.14.0
 pandas==0.18.1
+requests==2.18.4

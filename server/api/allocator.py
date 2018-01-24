@@ -4,12 +4,12 @@ This module creates optimal portfolio allocations, given a risk score.
 Usage:
 
 >>> from allocator import CVaR, MVO
->>> coins = ['BTC', 'ETH', 'LTC', 'XRP']
->>> allocator = CVaR(coins, trials=1000000, percentile=5)
+>>> symbols = ['BTC', 'ETH', 'LTC', 'XRP']
+>>> allocator = CVaR(symbols, trials=1000000, percentile=5)
 >>> allocator.allocate()
  (Prints allocation)
 
->>> allocator = MVO(coins)
+>>> allocator = MVO(symbols)
 >>> allocator.allocate()
  (Prints allocation)
 
@@ -20,21 +20,53 @@ import math
 import warnings
 import numpy as np
 import pandas as pd
+from datetime import datetime
+from api.models import Price
 from scipy.optimize import minimize
 from scipy import stats
 
 
 class Allocator(object):
 
-    def __init__(self, coins):
-        self.coins = coins
+    def __init__(
+        self,
+        symbols,
+        start,
+        end=datetime.today()
+    ):
+        self.symbols = symbols
+        self.start = start
+        self.end = end
 
     def retrieve_data(self):
         """
         Retrives data as a DataFrame.
         """
-        filepath = '/Users/matthewrosendin/Desktop/prices.csv'
-        df = pd.read_csv(filepath)
+
+        # Filter Price objects by date and coins
+        date__gte = self.start
+        coin__in = self.symbols
+        queryset = Price.objects.filter(
+            date__gte=date__gte,
+            coin__in=coin__in
+        ).values().order_by('-date', 'coin')
+
+        # Set DataFrame options
+        data = queryset
+        index = 'date'
+        columns = ['date', 'coin_id', 'price']
+
+        # Create DataFrame from queryset
+        df = pd.DataFrame.from_records(data=data, index=index, columns=columns)
+        df.rename(columns={'coin_id': 'coin'}, inplace=True)
+        df = pd.pivot_table(
+            data=df,
+            values='price',
+            index='date',
+            columns='coin',
+            aggfunc='first')
+        df.replace(0, np.nan, inplace=True)
+
         return df
 
     def solve_minimize(
@@ -50,7 +82,7 @@ class Allocator(object):
         Returns the solution to a minimization problem.
         """
 
-        bounds = ((lower_bound, upper_bound), ) * len(self.coins)
+        bounds = ((lower_bound, upper_bound), ) * len(self.symbols)
         return minimize(
             fun=func, x0=weights, jac=func_deriv, bounds=bounds,
             constraints=constraints, method='SLSQP', options={'disp': False}
@@ -60,7 +92,9 @@ class Allocator(object):
         """
         Minimizes the conditional value at risk of a portfolio.
         """
-        weights = [1 / len(self.coins)] * len(self.coins)  # Set sample weights
+
+        # Set sample weights
+        weights = [1 / len(self.symbols)] * len(self.symbols)
         constraints = (
             {'type': 'eq', 'fun': lambda weights: (weights.sum() - 1)}
         )
@@ -75,7 +109,9 @@ class Allocator(object):
         """
         Maximizes the returns of a portfolio.
         """
-        weights = [1/len(self.coins)] * len(self.coins)  # Set sample weights
+
+        # Set sample weights
+        weights = [1/len(self.symbols)] * len(self.symbols)
         constraints = (
             {'type': 'eq', 'fun': lambda weights: (weights.sum() - 1)}
         )
@@ -100,9 +136,9 @@ class Allocator(object):
         Returns a DataFrame of efficient portfolio allocations.
         """
         points = np.linspace(min_return, max_return, points)
-        columns = [coin for coin in self.coins]
+        columns = [symbol for symbol in self.symbols]
         values = pd.DataFrame(columns=columns)
-        weights = [1 / len(self.coins)] * len(self.coins)
+        weights = [1 / len(self.symbols)] * len(self.symbols)
 
         for idx, val in enumerate(points):
             constraints = (
@@ -118,8 +154,8 @@ class Allocator(object):
                 func_deriv=func_deriv)
 
             columns = {}
-            for index, coin in enumerate(self.coins):
-                columns[coin] = math.floor(solution.x[index] * 100 * 100) / 100
+            for index, symbol in enumerate(self.symbols):
+                columns[symbol] = math.floor(solution.x[index] * 100)
 
             values = values.append(columns, ignore_index=True)
         return values
@@ -127,8 +163,15 @@ class Allocator(object):
 
 class CVaR(Allocator):
 
-    def __init__(self, coins, trials=100000, percentile=5):
-        Allocator.__init__(self, coins)
+    def __init__(
+        self,
+        symbols,
+        start,
+        end=datetime.today(),
+        trials=100000,
+        percentile=5
+    ):
+        Allocator.__init__(self, symbols, start, end)
         self.trials = trials
         self.percentile = percentile
 
@@ -156,7 +199,7 @@ class CVaR(Allocator):
 
     def fit_distribution(self, returns):
         """
-        Find the best-fitting distributions for each coin
+        Find the best-fitting distributions for each symbol
         """
         bins = 30
         data = returns.dropna(inplace=False)
@@ -228,35 +271,36 @@ class CVaR(Allocator):
         # Time allocation function for static analysis
         start_time = time.time()
 
-        # Read CSV file
+        # Read data
         prices = self.retrieve_data()
 
-        # Get the list of coin symbols
-        coins = prices.drop('time', axis=1).columns
+        # Get the list of symbol symbols
+        symbols = prices.columns
 
         # Replace NAs with zeros
         prices.replace(0, np.nan, inplace=True)
         prices = prices.reset_index(drop=True)
 
         # Order rows ascending by time (oldest first, newest last)
-        prices.sort_values(['time'], ascending=True, inplace=True)
+        # prices.sort_values(['time'], ascending=True, inplace=True)
 
         # Truncate dataframe to prices on or after 2016-01-01
-        prices = prices[prices['time'] >= '2016-01-01']
-        prices = prices.reset_index(drop=True)
+        # prices = prices[prices['time'] >= '2016-01-01']
+        # prices = prices.reset_index(drop=True)
 
         # Create a dataframe of daily returns
-        objs = [prices.time, prices[coins].apply(lambda x: x / x.shift(1) - 1)]
+        objs = [prices[symbols].apply(lambda x: x / x.shift(1) - 1)]
         daily_returns = pd.concat(objs=objs, axis=1)
         daily_returns = daily_returns.reset_index(drop=True)
 
-        # Fit distributions and generate samples for each coin
-        sample_returns = pd.DataFrame(columns=self.coins)
+        # Fit distributions and generate samples for each symbol
+        sample_returns = pd.DataFrame(columns=self.symbols)
 
-        for coin in self.coins:
-            returns = daily_returns[coin]
+        for symbol in self.symbols:
+            returns = daily_returns[symbol]
             distribution = self.fit_distribution(returns=returns)
-            sample_returns[coin] = self.generate_sample_returns(*distribution)
+            print('{0}: Best dist is {1}'.format(symbol, distribution[0].name))
+            sample_returns[symbol] = self.generate_sample_returns(*distribution)
 
         # Minimum risk CVaR optimization
         def func(weights):
@@ -264,7 +308,7 @@ class CVaR(Allocator):
             portfolio_returns = (sample_returns * weights).sum(1)
             return self.cvar(portfolio_returns) * -1
 
-        allocation = self.minimize_risk(func, sample_returns)
+        allocation = self.minimize_risk(func)
         min_return = np.dot(allocation, sample_returns.mean())
 
         # Maximum return CVaR optimization
@@ -273,7 +317,7 @@ class CVaR(Allocator):
             portfolio_returns = (sample_returns * weights).sum(1)
             return portfolio_returns.mean() * -1
 
-        max_return = self.maximize_returns(func, sample_returns)
+        max_return = self.maximize_returns(func)
 
         # Generate an efficient frontier
         def func(weights):
@@ -297,8 +341,8 @@ class CVaR(Allocator):
 
 class MVO(Allocator):
 
-    def __init__(self, coins):
-        Allocator.__init__(self, coins)
+    def __init__(self, symbols, start, end=datetime.today()):
+        Allocator.__init__(self, symbols, start, end)
 
     def allocate(self):
         """
@@ -312,7 +356,7 @@ class MVO(Allocator):
         # Calculate the daily changes
         change_columns = []
         for column in prices:
-            if column in self.coins:
+            if column in self.symbols:
                 change_column = '{}_change'.format(column)
                 values = pd.Series(
                     (prices[column].shift(-1) - prices[column]) /
@@ -329,7 +373,7 @@ class MVO(Allocator):
         cov_matrix = prices[columns].cov()
 
         # The diagonal variances aren't calculated correctly, so here is a fix.
-        cols = [np.arange(len(self.coins))]
+        cols = [np.arange(len(self.symbols))]
         cov_matrix.values[cols * 2] = prices[columns].apply(np.nanvar, axis=0)
 
         # Calculate portfolio with the minimum risk

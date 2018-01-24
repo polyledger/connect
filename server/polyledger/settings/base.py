@@ -9,8 +9,6 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-from celery.schedules import crontab
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -95,23 +93,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-POSTGRESQL_NAME = os.environ.get('POSTGRESQL_NAME')
-POSTGRESQL_USER = os.environ.get('POSTGRESQL_USER')
-POSTGRESQL_PASSWORD = os.environ.get('POSTGRESQL_PASSWORD')
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'postgres',
-        'PORT': 5432,
-    }
-}
-
 # File Storage
 # https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-DEFAULT_FILE_STORAGE
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
@@ -144,18 +125,3 @@ EMAIL_HOST_USER = 'postmaster@polyledger.com'
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_LOCALTIME = True
 EMAIL_PORT = 587
-
-# Celery application definition
-# http://docs.celeryproject.org/en/v4.0.2/userguide/configuration.html
-CELERY_BROKER_URL = 'redis://redis:6379'
-CELERY_RESULT_BACKEND = 'redis://redis:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_ENABLE_UTC = True
-CELERY_BEAT_SCHEDULE = {
-    'get-new-day-prices': {
-        'task': 'api.tasks.get_current_prices',
-        'schedule': crontab(hour=0, minute=0)
-    }
-}

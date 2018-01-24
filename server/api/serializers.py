@@ -3,6 +3,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from api.models import User, Portfolio, Coin, Position
 from api.tasks import send_confirmation_email, allocate_for_user
 from rest_framework import serializers
+from django.core import serializers as django_serializers
 
 
 class CoinSerializer(serializers.ModelSerializer):
@@ -41,13 +42,14 @@ class PortfolioSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
         coins = validated_data.pop('coins')
+        symbols = [coin.symbol for coin in coins]
         portfolio = Portfolio.objects.create(**validated_data, user=user)
         for coin in coins:
             position = Position(coin=coin, amount=0, portfolio=portfolio)
             position.save()
             portfolio.positions.add(position)
-        allocate_for_user.apply(
-            args=[user.id, coins, validated_data.get('risk_score')])
+        allocate_for_user.apply_async(
+            args=[user.id, symbols, validated_data.get('risk_score')])
         portfolio.save()
         return portfolio
 
@@ -58,7 +60,9 @@ class PortfolioSerializer(serializers.ModelSerializer):
             'risk_score', instance.risk_score)
         user = self.context['request'].user
         coins = validated_data.get('coins')
-        allocate_for_user.apply(args=[user.id, coins, instance.risk_score])
+        symbols = [coin.symbol for coin in coins]
+        allocate_for_user.apply_async(
+            args=(user.id, symbols, instance.risk_score,))
         instance.save()
         return instance
 

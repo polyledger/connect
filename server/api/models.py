@@ -152,8 +152,7 @@ class Portfolio(models.Model):
     title = models.CharField(max_length=100)
     risk_score = models.IntegerField(
         default=1,
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
-    )
+        validators=[MinValueValidator(1), MaxValueValidator(5)])
     user = models.OneToOneField('User', on_delete=models.CASCADE)
     usd = models.FloatField(default=0)
 
@@ -186,32 +185,21 @@ class Transaction(models.Model):
     quote = models.ForeignKey('Coin', related_name='quote_transactions')
 
 
+class Distribution(models.Model):
+    """
+    A distribution for each coin
+    """
+    date = models.DateTimeField(auto_now_add=True)
+    coin = models.OneToOneField(to='Coin', on_delete=models.CASCADE)
+
+
 class Price(models.Model):
     """
     A table for the prices of all supported coins in USD.
     """
-    timestamp = models.DateTimeField(unique=True, auto_now_add=False)
-    BTC = models.FloatField(null=True)
-    ETH = models.FloatField(null=True)
-    BCH = models.FloatField(null=True)
-    XRP = models.FloatField(null=True)
-    LTC = models.FloatField(null=True)
-    DASH = models.FloatField(null=True)
-    ZEC = models.FloatField(null=True)
-    XMR = models.FloatField(null=True)
-    ETC = models.FloatField(null=True)
-    NEO = models.FloatField(null=True)
-    XLM = models.FloatField(null=True)
-    ADA = models.FloatField(null=True)
-    EOS = models.FloatField(null=True)
-    NXT = models.FloatField(null=True)
-    QTUM = models.FloatField(null=True)
-    OMG = models.FloatField(null=True)
-    XEM = models.FloatField(null=True)
-    MCO = models.FloatField(null=True)
-    KNC = models.FloatField(null=True)
-    BTS = models.FloatField(null=True)
-    SC = models.FloatField(null=True)
-    VTC = models.FloatField(null=True)
-    SNT = models.FloatField(null=True)
-    STORJ = models.FloatField(null=True)
+    date = models.DateField(auto_now_add=False, db_index=True)
+    coin = models.ForeignKey(to='Coin', related_name='prices')
+    price = models.FloatField(default=0.0)
+
+    class Meta:
+        unique_together = (('date', 'coin'),)

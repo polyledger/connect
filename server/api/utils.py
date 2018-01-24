@@ -3,12 +3,11 @@ from datetime import date, timedelta
 from api.models import Coin, Price
 
 
-def prices_to_dataframe(queryset=None, coins=None):
+def prices_to_dataframe(queryset=None, symbols=None):
 
-    if coins is None:
-        coins = Coin.objects.all()
+    if symbols is None:
+        symbols = sorted(list(map(lambda c: c.symbol, Coin.objects.all())))
 
-    symbols = sorted(list(map(lambda c: c.symbol, coins)))
     columns = list(symbols).append('timestamp')
 
     if queryset is None:
