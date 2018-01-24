@@ -151,7 +151,8 @@ class Portfolio(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
     risk_score = models.IntegerField(
-        default=1,
+        blank=True,
+        null=True,
         validators=[MinValueValidator(1), MaxValueValidator(5)])
     user = models.OneToOneField('User', on_delete=models.CASCADE)
     usd = models.FloatField(default=0)
