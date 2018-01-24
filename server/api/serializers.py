@@ -3,7 +3,6 @@ from django.contrib.sites.shortcuts import get_current_site
 from api.models import User, Portfolio, Coin, Position
 from api.tasks import send_confirmation_email, allocate_for_user
 from rest_framework import serializers
-from django.core import serializers as django_serializers
 
 
 class CoinSerializer(serializers.ModelSerializer):

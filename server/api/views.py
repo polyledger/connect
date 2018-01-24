@@ -10,9 +10,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from api.tokens import account_activation_token
-from api.utils import prices_to_dataframe
 from api import backtest
-from api.data import Manager
 
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
