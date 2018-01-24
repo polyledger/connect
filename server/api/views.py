@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 from api.models import User, Coin, Portfolio, Token
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from api.tokens import account_activation_token
-from api import backtest
+from api.backtest import backtest
 
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
@@ -87,79 +87,44 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     def chart(self, request, pk=None):
         portfolio = self.get_object()
 
+        # Determine length of backtest
         period = request.GET.get('period')
         days = {'7D': 7, '1M': 30, '3M': 90, '6M': 182, '1Y': 364}
-        end = datetime.now()
+        end = date.today()
+        start = end - timedelta(days=days[period])
 
-        created_at = end - timedelta(days=days[period])
-        initial_investment = portfolio.usd
-        assets = {'USD': initial_investment}
-
-        # Create two user portfolios: the user's, and a Bitcoin portfolio
-        user = backtest.Portfolio(assets=assets, created_at=created_at)
-        bitcoin = backtest.Portfolio(assets=assets, created_at=created_at)
-
-        # Backtest the user's portfolio
-        for position in portfolio.positions.all():
-            position_percentage = position.amount / 100
-            amount = position_percentage * initial_investment
-
-            # Trade USD for the given asset
-            from_asset = 'USD'
-            to_asset = position.coin.symbol
-            date = created_at
-
-            user.trade_asset(
-                amount=amount,
-                from_asset=from_asset,
-                to_asset=to_asset,
-                date=date
-            )
-
-        # Backtest the Bitcoin portfolio
-        bitcoin.trade_asset(
-            amount=initial_investment,
-            from_asset='USD',
-            to_asset='BTC',
-            date=created_at
-        )
-
+        # Run the backtests
+        allocations = portfolio.positions.all().values_list('coin', 'amount')
+        investment = portfolio.usd
         freq = 'D'
-        date_format = '%b %-d %Y'
-        user_data = user.get_historical_value(
-            start=created_at,
+        print(allocations)
+        portfolio = backtest(
+            allocations=allocations,
+            investment=investment,
+            start=start,
             end=end,
-            freq=freq,
-            date_format=date_format
+            freq=freq
         )
 
-        bitcoin_data = bitcoin.get_historical_value(
-            created_at,
+        benchmark = backtest(
+            allocations=[('BTC', 100)],
+            investment=investment,
+            start=start,
             end=end,
-            freq=freq,
-            date_format=date_format
+            freq=freq
         )
-        dataset = {
-            'portfolio': user_data['values'],
-            'bitcoin': bitcoin_data['values']
-        }
-
-        labels = user_data['dates']
-        value = user.get_value()
-        if initial_investment > 0:
-            percent = ((value - initial_investment) / initial_investment) * 100
-        else:
-            percent = 0
-        change = {
-            'dollar': value - initial_investment,
-            'percent': percent
-        }
 
         content = {
-            'dataset': dataset,
-            'labels': labels,
-            'change': change,
-            'value': value
+            'dataset': {
+                'portfolio': portfolio['historic_value']['values'],
+                'benchmark': benchmark['historic_value']['values']
+            },
+            'labels': portfolio['historic_value']['labels'],
+            'change': {
+                'dollar': portfolio['dollar_change'],
+                'percent': portfolio['percent_change']
+            },
+            'value': portfolio['value']
         }
         return Response(content)
 
