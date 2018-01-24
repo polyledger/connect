@@ -138,6 +138,15 @@ export default {
       }).then((response) => {
         this.portfolio = response.data.portfolio
 
+        if (!this.portfolio.risk_score) {
+          this.$router.push('/questionnaire')
+          return
+        }
+        if (!this.portfolio.usd) {
+          this.$router.push('/funding')
+          return
+        }
+
         if (this.portfolio.positions.length > 0) {
           this.getChart('7D', this.portfolio)
         } else {
