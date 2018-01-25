@@ -16,6 +16,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "cleave.js": "^1.0.7",
+    "highcharts": "^6.0.4",
     "numeral": "^2.0.6",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
