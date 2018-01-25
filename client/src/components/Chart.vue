@@ -46,7 +46,7 @@ export default {
   data () {
     return {
       labels: [],
-      dataset: [],
+      series: [],
       change: {
         dollar: '0.00',
         percent: '0.00'
@@ -68,7 +68,7 @@ export default {
         }
       }).then((response) => {
         this.loading = false
-        this.dataset = response.data.dataset
+        this.series = response.data.series
         this.labels = response.data.labels
         this.change = response.data.change
         this.portfolio.value = response.data.value
@@ -96,13 +96,7 @@ export default {
             color: '#eee'
           }
         },
-        series: [{
-          name: 'Portfolio',
-          data: this.dataset.portfolio
-        }, {
-          name: 'Bitcoin',
-          data: this.dataset.benchmark
-        }],
+        series: this.series,
         subtitle: {
           text: `
             ${numeral(this.portfolio.value).format('$0,0.00')}<br>
@@ -125,7 +119,8 @@ export default {
         },
         tooltip: {
           formatter () {
-            let result = `<strong>${this.points[0].key}</strong><br>`
+            let date = Highcharts.dateFormat('%e. %b %Y', new Date(this.x))
+            let result = `<strong>${date}</strong><br>`
             this.points.forEach((value) => {
               result += '<span style="color:' + value.series.color + '">\u25CF</span> '
               result += value.series.name + ': '
@@ -137,12 +132,12 @@ export default {
           shared: true
         },
         xAxis: {
-          categories: this.labels,
           labels: {
             style: {
               color: '#fff'
             }
-          }
+          },
+          type: 'datetime'
         },
         yAxis: {
           gridLineWidth: 0,

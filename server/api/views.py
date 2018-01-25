@@ -97,7 +97,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         allocations = portfolio.positions.all().values_list('coin', 'amount')
         investment = portfolio.usd
         freq = 'D'
-        print(allocations)
+
         portfolio = backtest(
             allocations=allocations,
             investment=investment,
@@ -106,7 +106,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             freq=freq
         )
 
-        benchmark = backtest(
+        bitcoin = backtest(
             allocations=[('BTC', 100)],
             investment=investment,
             start=start,
@@ -115,11 +115,16 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         )
 
         content = {
-            'dataset': {
-                'portfolio': portfolio['historic_value']['values'],
-                'benchmark': benchmark['historic_value']['values']
-            },
-            'labels': portfolio['historic_value']['labels'],
+            'series': [
+                {
+                    'name': 'Portfolio',
+                    'data': portfolio['historic_value']
+                },
+                {
+                    'name': 'Bitcoin',
+                    'data': bitcoin['historic_value']
+                }
+            ],
             'change': {
                 'dollar': portfolio['dollar_change'],
                 'percent': portfolio['percent_change']

@@ -7,6 +7,7 @@ usage.
 
 from __future__ import print_function
 
+import time
 import pandas as pd
 from datetime import date
 from api.models import Price
@@ -106,13 +107,12 @@ class Portfolio(object):
 
         values = []
 
-        for dt in date_range:
-            values.append(self.value(date=dt))
+        for d in date_range:
+            x = time.mktime(d.timetuple()) * 1000
+            y = self.value(date=d)
+            values.append([x, y])
 
-        time_series = pd.DataFrame(index=date_range, data={'value': values})
-
-        labels = time_series.index.strftime('%Y-%m-%d').tolist()
-        return {'labels': labels, 'values': values}
+        return values
 
     def remove(self, asset, amount, date=date.today()):
         """
