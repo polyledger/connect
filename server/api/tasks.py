@@ -152,7 +152,7 @@ def get_current_prices(coins=Coin.objects.all()):
         tzinfo=pytz.UTC)
     url = 'https://min-api.cryptocompare.com/data/pricemulti'
     params = {
-        'fsyms': ','.join(coins.values_list('name', flat=True)),
+        'fsyms': ','.join(coins.values_list('symbol', flat=True)),
         'tsyms': 'USD',
         'allData': 'true'
     }
@@ -160,8 +160,9 @@ def get_current_prices(coins=Coin.objects.all()):
     response = requests.get(url, params=params)
     data = response.json()
 
-    for coin in data:
-        price = coin['USD']
+    for symbol in data:
+        price = data[symbol]['USD']
+        coin = Coin.objects.get(symbol=symbol)
         instance, created = Price.objects.update_or_create(
             date=today,
             coin=coin,
