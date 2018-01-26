@@ -85,7 +85,7 @@ def send_confirmation_email(pk, recipient, site_url):
 @shared_task
 def fill_daily_historical_prices(coins=Coin.objects.all()):
     """
-    Fills the database with historical price data.
+    Fills the database with daily historical price data.
     """
 
     tzinfo = pytz.UTC
