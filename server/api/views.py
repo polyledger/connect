@@ -1,3 +1,5 @@
+import os
+import requests
 from datetime import date, timedelta
 from api.models import User, Coin, Portfolio, Token
 from django.contrib.auth import get_user_model
@@ -63,6 +65,24 @@ class UserViewSet(viewsets.ModelViewSet):
             auth_token = Token.objects.get(user=user)
         redirect_url = settings.CLIENT_URL + '?token=' + str(auth_token)
         return HttpResponseRedirect(redirect_url)
+
+    @detail_route(
+        methods=['POST'],
+        permission_classes=[permissions.IsAuthenticated]
+    )
+    def coinbase_oauth(self, request, pk=None):
+        payload = {
+            'grant_type': 'authorization_code',
+            'code': request.data.get('code'),
+            'client_id': os.environ['COINBASE_CLIENT_ID'],
+            'client_secret': os.environ['COINBASE_CLIENT_SECRET'],
+            'redirect_uri': 'http://localhost:8080/funding'
+        }
+        res = requests.post(
+            url='https://api.coinbase.com/oauth/token',
+            params=payload)
+        content = res.json()
+        return Response(content, status=res.status_code)
 
     def destroy(self, request, *args, **kwargs):
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
