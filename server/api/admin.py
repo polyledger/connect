@@ -8,6 +8,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from api.models import User, Profile, Portfolio, Coin, Position, Price
+from api.models import Distribution, IPAddress, Deposit, Withdrawal
 
 
 class UserCreationForm(forms.ModelForm):
@@ -117,6 +118,25 @@ class PositionAdmin(admin.ModelAdmin):
     list_display = ('coin', 'amount', 'portfolio')
 
 
+class IPAddressAdmin(admin.ModelAdmin):
+    list_display = ('ip', 'user')
+
+
+class DistributionAdmin(admin.ModelAdmin):
+    ordering = ('-date', 'coin',)
+    list_display = ('date', 'coin', 'name')
+
+
+class DepositAdmin(admin.ModelAdmin):
+    list_display = ('status', 'coinbase_user_id', 'coinbase_account_id',
+                    'transaction', 'amount', 'coin')
+
+
+class WithdrawalAdmin(admin.ModelAdmin):
+    list_display = ('status', 'coinbase_user_id', 'coinbase_account_id',
+                    'transaction', 'amount', 'coin')
+
+
 class PriceAdmin(admin.ModelAdmin):
     ordering = ('-date', 'coin',)
     list_display = ('date', 'coin', 'price')
@@ -126,6 +146,10 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Portfolio, PortfolioAdmin)
 admin.site.register(Position, PositionAdmin)
+admin.site.register(IPAddress, IPAddressAdmin)
+admin.site.register(Distribution, DistributionAdmin)
+admin.site.register(Deposit, DepositAdmin)
+admin.site.register(Withdrawal, WithdrawalAdmin)
 admin.site.register(Coin, CoinAdmin)
 admin.site.register(Price, PriceAdmin)
 admin.site.unregister(Group)
