@@ -173,17 +173,101 @@ class Position(models.Model):
     amount = models.FloatField(default=0.0)
 
 
+class Deposit(models.Model):
+    """
+    A deposit of crypto from Coinbase to Polyledger
+    """
+    STATUS_CHOICES = (
+        ('created', 'Created'),
+        ('completed', 'Completed'),
+        ('canceled', 'Canceled'),
+    )
+
+    status = models.CharField(choices=STATUS_CHOICES, max_length=255)
+    coinbase_user_id = models.CharField(
+        null=False,
+        blank=False,
+        max_length=255)
+    coinbase_account_id = models.CharField(
+        null=False,
+        blank=False,
+        max_length=255)
+    transaction = models.OneToOneField(
+        to='Transaction',
+        on_delete=models.CASCADE)
+    amount = models.FloatField(default=0.0)
+    coin = models.CharField(max_length=255)
+
+
+class Withdrawal(models.Model):
+    """
+    A withdrawal of crypto from Polyledger to Coinbase
+    """
+    STATUS_CHOICES = (
+        ('created', 'Created'),
+        ('completed', 'Completed'),
+        ('canceled', 'Canceled'),
+    )
+
+    status = models.CharField(choices=STATUS_CHOICES, max_length=255)
+    coinbase_user_id = models.CharField(
+        null=False,
+        blank=False,
+        max_length=255)
+    coinbase_account_id = models.CharField(
+        null=False,
+        blank=False,
+        max_length=255)
+    transaction = models.OneToOneField(
+        to='Transaction',
+        on_delete=models.CASCADE)
+    amount = models.FloatField(default=0.0)
+    coin = models.CharField(max_length=255)
+
+
 class Transaction(models.Model):
     """
-    A crypto-crypto transaction in the portfolio
+    A crypto-crypto transaction in the user's portfolio
     """
+    CATEGORY_CHOICES = (
+        ('buy', 'Buy'),
+        ('sell', 'Sell'),
+        ('deposit', 'Deposit'),
+        ('withdrawal', 'Withdrawal'),
+    )
+
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+        ('expired', 'Expired'),
+        ('canceled', 'Canceled'),
+    )
+
     date = models.DateTimeField(auto_now_add=True)
     portfolio = models.ForeignKey(
         to='Portfolio',
         on_delete=models.CASCADE,
         related_name='transactions')
-    base = models.ForeignKey('Coin', related_name='base_transactions')
-    quote = models.ForeignKey('Coin', related_name='quote_transactions')
+    category = models.CharField(choices=CATEGORY_CHOICES, max_length=255)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=255)
+    amount = models.FloatField(default=0.0)
+    coin = models.CharField(max_length=255)
+
+
+class IPAddress(models.Model):
+    """
+    A table linking users to their known IP addresses
+    """
+    ip = models.GenericIPAddressField(unique=True, db_index=True)
+    user = models.ForeignKey(to='User', related_name='ip_addresses')
+
+    def __str__(self):
+        return self.ip
+
+    class Meta:
+        verbose_name = 'IP Address'
+        verbose_name_plural = 'IP Addresses'
 
 
 class Distribution(models.Model):
@@ -192,6 +276,7 @@ class Distribution(models.Model):
     """
     date = models.DateTimeField(auto_now_add=True)
     coin = models.OneToOneField(to='Coin', on_delete=models.CASCADE)
+    name = models.CharField(null=True, blank=True, max_length=255)
 
 
 class Price(models.Model):
