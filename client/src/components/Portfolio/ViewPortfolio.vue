@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import Chart from '@/components/Chart'
+import Chart from '@/components/Portfolio/Chart'
 import numeral from 'numeral'
 
 export default {

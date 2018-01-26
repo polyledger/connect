@@ -2,15 +2,16 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store'
 
-import ViewPortfolio from '@/components/ViewPortfolio'
-import SignIn from '@/components/SignIn'
-import SignUp from '@/components/SignUp'
-import ConfirmEmail from '@/components/ConfirmEmail'
-import Activation from '@/components/Activation'
-import EditPortfolio from '@/components/EditPortfolio'
-import Questionnaire from '@/components/Questionnaire'
-import Verification from '@/components/Verification'
-import Funding from '@/components/Funding'
+// import CreatePortfolio from '@/components/Portfolio/CreatePortfolio'
+import ViewPortfolio from '@/components/Portfolio/ViewPortfolio'
+import EditPortfolio from '@/components/Portfolio/EditPortfolio'
+import SignIn from '@/components/Registration/SignIn'
+import SignUp from '@/components/Registration/SignUp'
+import Activate from '@/components/Registration/Activate'
+import ConfirmEmail from '@/components/Registration/ConfirmEmail'
+import Questionnaire from '@/components/Onboarding/Questionnaire'
+import Verification from '@/components/Onboarding/Verification'
+import Funding from '@/components/Onboarding/Funding'
 
 Vue.use(Router)
 
@@ -65,8 +66,8 @@ export default new Router({
     },
     {
       path: '/activate',
-      name: 'Activation',
-      component: Activation,
+      name: 'Activate',
+      component: Activate,
       beforeEnter: requireAnonymous
     },
     {

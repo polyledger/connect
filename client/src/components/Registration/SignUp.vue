@@ -91,7 +91,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import PasswordStrengthMeter from '@/components/PasswordStrengthMeter'
+import PasswordStrengthMeter from '@/components/Registration/PasswordStrengthMeter'
 
 export default {
   name: 'SignUp',

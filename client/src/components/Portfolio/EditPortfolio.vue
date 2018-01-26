@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import CleaveInput from '@/components/CleaveInput'
+import CleaveInput from '@/components/Shared/CleaveInput'
 import vueSlider from 'vue-slider-component'
 
 export default {

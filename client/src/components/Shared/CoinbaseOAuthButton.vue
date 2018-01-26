@@ -1,14 +1,28 @@
 <template>
-  <a class="btn btn-block btn-oauth btn-lg btn-coinbase">
+  <a class="btn btn-lg" :href="href">
     <span>c</span> Sign in with Coinbase
   </a>
 </template>
 
 <script>
+// See Coinbase Connect documentation for reference
+// https://developers.coinbase.com/docs/wallet/coinbase-connect/integrating
+
 export default {
   name: 'coinbase-oauth-button',
-  data () {
-    return {}
+  props: {
+    clientId: String,
+    redirectUri: String
+  },
+  computed: {
+    href () {
+      let href = 'https://www.coinbase.com/oauth/authorize'
+      href += '?response_type=code'
+      href += `&client_id=${this.clientId}`
+      href += `&redirect_uri=${this.redirectUri}`
+      href += `&scope=wallet:accounts:read`
+      return href
+    }
   }
 }
 </script>
