@@ -172,9 +172,13 @@ def backtest(allocations, investment, start, end, freq):
 
     historic_value = portfolio.historic_value(start=start, end=end, freq=freq)
     current_value = portfolio.value()
-    percent_change = ((current_value - investment) / investment) * 100
     dollar_change = current_value - investment
     value = portfolio.value()
+
+    try:
+        percent_change = ((current_value - investment) / investment) * 100
+    except ZeroDivisionError:
+        percent_change = 0
 
     return {
         'historic_value': historic_value,
