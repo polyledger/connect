@@ -20,7 +20,7 @@ export default {
       href += '?response_type=code'
       href += `&client_id=${this.clientId}`
       href += `&redirect_uri=${this.redirectUri}`
-      href += `&scope=wallet:accounts:read`
+      href += `&scope=wallet:accounts:read,wallet:transactions:send`
       return href
     }
   }
