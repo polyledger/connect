@@ -1,5 +1,6 @@
 import os
 import requests
+from binance.client import Client
 from datetime import date, timedelta
 from api.models import User, Coin, Portfolio, Token
 from django.contrib.auth import get_user_model
@@ -10,6 +11,7 @@ from django.conf import settings
 from rest_framework import permissions, authentication, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+from rest_framework.views import APIView
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
@@ -108,7 +110,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         portfolio = self.get_object()
 
         # Determine length of backtest
-        period = request.GET.get('period')
+        period = request.query_params.get('period')
         days = {'7D': 7, '1M': 30, '3M': 90, '6M': 182, '1Y': 364}
         end = date.today()
         start = end - timedelta(days=days[period])
@@ -163,3 +165,22 @@ class CoinViewSet(viewsets.ReadOnlyModelViewSet):
     )
     serializer_class = CoinSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class RetrieveDepositAddress(APIView):
+    authentication_classes = (
+        authentication.BasicAuthentication,
+        authentication.TokenAuthentication
+    )
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, asset, format=None):
+        client = Client(
+            os.environ['BINANCE_API_KEY'],
+            os.environ['BINANCE_SECRET_KEY']
+        )
+        result = client.get_deposit_address(asset=asset)
+        content = {
+            'address': result['address']
+        }
+        return Response(content)

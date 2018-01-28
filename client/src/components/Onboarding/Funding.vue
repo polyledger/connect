@@ -130,17 +130,15 @@ export default {
       })
     },
     getDepositAddress () {
+      let coin = this.account.balance.currency
       return this.$http({
-        url: '/api/deposit_address/',
+        url: `/api/deposit_address/${coin}`,
         method: 'get',
-        data: {
-          coin: this.account.balance.currency
-        },
         headers: {
           'Authorization': `Token ${localStorage.token}`
         }
       }).then(response => {
-        return response.data.depositAddress
+        return response.data.address
       }).catch(error => {
         let errorMessage = error.response.data.error_description
         this.errors.push(errorMessage)
