@@ -12,7 +12,10 @@ export default {
   name: 'coinbase-oauth-button',
   props: {
     clientId: String,
-    redirectUri: String
+    redirectUri: String,
+    sendLimitAmount: String,
+    sendLimitCurrency: String,
+    sendLimitPeriod: String
   },
   computed: {
     href () {
@@ -21,6 +24,10 @@ export default {
       href += `&client_id=${this.clientId}`
       href += `&redirect_uri=${this.redirectUri}`
       href += `&scope=wallet:accounts:read,wallet:transactions:send`
+      href += '&account_currency=BTC,ETH'
+      href += `&meta[send_limit_amount]=${this.sendLimitAmount}`
+      href += `&meta[send_limit_currency]=${this.sendLimitCurrency}`
+      href += `&meta[send_limit_period]=${this.sendLimitPeriod}`
       return href
     }
   }
