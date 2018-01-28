@@ -132,7 +132,7 @@ export default {
     getDepositAddress () {
       let coin = this.account.balance.currency
       return this.$http({
-        url: `/api/deposit_address/${coin}`,
+        url: `/api/deposit_addresses/${coin}`,
         method: 'get',
         headers: {
           'Authorization': `Token ${localStorage.token}`
