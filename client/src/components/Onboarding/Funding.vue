@@ -15,7 +15,21 @@
         <hr>
       </div>
     </div>
-    <div class="row justify-content-center py-5" v-if="Object.keys(account).length === 0">
+    <div class="row" v-for="error in errors" v-if="errors.length">
+      <div class="col-4 offset-4">
+        <div class="alert alert-danger" role="alert">
+          <div class="row">
+            <div class="col-1 d-flex align-items-center justify-content-center">
+              <i class="icon icon-warning"></i>&nbsp;
+            </div>
+            <div class="col-11">
+              <span>{{error}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-center py-5" v-if="!account">
       <coinbase-oauth-button
         :clientId="clientId"
         :redirectUri="redirectUri"
@@ -23,11 +37,11 @@
         :sendLimitCurrency="sendLimitCurrency"
         :sendLimitPeriod="sendLimitPeriod"/>
     </div>
-    <div class="row" v-if="Object.keys(this.account).length !== 0">
+    <div class="row" v-if="account">
       <div class="col-4 offset-4">
         <div class="card">
           <div class="card-body">
-            <form>
+            <form :class="{'was-validated': validated}" novalidate>
               <h4 class="text-center">{{account.name}}</h4>
               <h6 class="text-center">{{account.balance.amount}} {{account.balance.currency}}</h6>
               <div class="form-group">
@@ -64,7 +78,7 @@ export default {
   },
   data () {
     return {
-      account: {},
+      account: null,
       accessToken: '',
       clientId: '7af1f354fd24387efb4eeedab0e712695b56379a520ff617c75de30978263ad1',
       investment: 0,
@@ -72,7 +86,10 @@ export default {
       sendLimitAmount: '1',
       sendLimitCurrency: 'USD',
       sendLimitPeriod: 'day',
-      price: 0
+      price: 0,
+      validated: false,
+      depositAddress: '',
+      errors: []
     }
   },
   methods: {
@@ -82,7 +99,7 @@ export default {
         method: 'post',
         data: {
           type: 'send',
-          to: 'BTC_OR_ETH_ADDRESS_FROM_COINBASE_OAUTH_STEP',
+          to: this.depositAddress,
           amount: this.investment,
           currency: this.account.balance.currency
         },
@@ -93,8 +110,10 @@ export default {
       }).then(response => {
         console.log(response)
       }).catch(error => {
-        console.log(error.response)
+        let errorMessage = error.response.data.errors[0].message
+        this.errors.push(errorMessage)
       })
+      this.validated = true
     },
     getPrice (currency) {
       return this.$http({
@@ -104,10 +123,27 @@ export default {
           'CB-VERSION': '2018-01-25'
         }
       }).then(response => {
-        console.log(response)
         return response.data.data.amount
       }).catch(error => {
-        console.error(error.response)
+        let errorMessage = error.response.data.errors[0].message
+        this.errors.push(errorMessage)
+      })
+    },
+    getDepositAddress () {
+      return this.$http({
+        url: '/api/deposit_address/',
+        method: 'get',
+        data: {
+          coin: this.account.balance.currency
+        },
+        headers: {
+          'Authorization': `Token ${localStorage.token}`
+        }
+      }).then(response => {
+        return response.data.depositAddress
+      }).catch(error => {
+        let errorMessage = error.response.data.error_description
+        this.errors.push(errorMessage)
       })
     },
     hasUrlCodeParam () {
@@ -127,8 +163,8 @@ export default {
       }).then(response => {
         return response.data.access_token
       }).catch(error => {
-        // TODO: Create error alert
-        console.error(error.response.data.error_description)
+        let errorMessage = error.response.data.error_description
+        this.errors.push(errorMessage)
       })
     },
     getAccount () {
@@ -142,8 +178,8 @@ export default {
       }).then(response => {
         return response.data.data[0]
       }).catch(error => {
-        // TODO: Create error alert
-        console.log(error.response)
+        let errorMessage = error.response.data.errors[0].message
+        this.errors.push(errorMessage)
       })
     }
   },
@@ -152,6 +188,7 @@ export default {
       this.accessToken = await this.getAccessToken()
       this.account = await this.getAccount()
       this.price = await this.getPrice()
+      this.depositAddress = await this.getDepositAddress()
     }
   }
 }
