@@ -51,7 +51,7 @@
                   <div class="input-group-addon">{{account.balance.currency}}</div>
                 </div>
                 <small class="form-text text-muted">
-                  The initial investment for your digital asset portfolio. Estimated USD value: ${{investment * price}}
+                  The initial investment for your digital asset portfolio. Estimated USD value: ${{(investment * price).toFixed(2)}}
                 </small>
               </div>
               <button class="btn btn-block btn-primary" @click.prevent="onSend">Send</button>
