@@ -184,6 +184,8 @@ export default {
   async mounted () {
     if (this.hasUrlCodeParam()) {
       this.accessToken = await this.getAccessToken()
+      if (!this.accessToken) return
+
       this.account = await this.getAccount()
       this.price = await this.getPrice()
       this.depositAddress = await this.getDepositAddress()
