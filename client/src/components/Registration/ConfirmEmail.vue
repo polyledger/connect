@@ -6,7 +6,7 @@
         <div class="card">
           <div class="card-body text-center">
             <p class="lead">Check your inbox</p>
-            <img src="@/assets/img/icons/email.png">
+            <img :src="require('@/assets/img/icons/email.png')">
             <p class="pt-4">We've sent you an email to help verify your account.</p>
           </div>
         </div>
