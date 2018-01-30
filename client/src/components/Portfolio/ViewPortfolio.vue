@@ -95,13 +95,6 @@ export default {
         }
       }).then((response) => {
         this.portfolio = response.data.portfolio
-
-        if (!this.portfolio.risk_score) {
-          this.$router.push('/questionnaire')
-        }
-        if (!this.portfolio.usd) {
-          this.$router.push('/funding')
-        }
       }).catch((error) => {
         console.error(error)
         this.errors.push('Unable to get your portfolio. Please try again later.')
@@ -117,7 +110,13 @@ export default {
     }
   },
   async mounted () {
-    this.getPortfolio()
+    if (!this.portfolio.risk_score) {
+      this.$router.push('/questionnaire')
+    } else if (!this.portfolio.usd) {
+      this.$router.push('/funding')
+    } else {
+      this.getPortfolio()
+    }
   },
   async updated () {
     await this.$nextTick
