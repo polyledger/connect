@@ -149,7 +149,7 @@ class Portfolio(models.Model):
     A user's portfolio containing coins.
     """
     created = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(max_length=100)
+    title = models.CharField(default='My Portfolio', max_length=100)
     risk_score = models.IntegerField(
         blank=True,
         null=True,
