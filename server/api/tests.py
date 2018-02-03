@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from api.models import Portfolio, Coin, Position
 from api.tasks import fill_daily_historical_prices, allocate_for_user
+from api.trading import test_order
 
 
 class FillDailyHistoricalPricesTestCase(TestCase):
@@ -18,7 +19,7 @@ class AllocateForUserTestCase(TestCase):
     # TODO: Write more unit tests
 
     def setUp(self):
-        Coin.objects.create(symbol='BTC', name='Bitcoin', slug='bitcoin')
+        Coin.objects.create(symbol='BTC', name='Bitcoin')
         self.user = get_user_model().objects.create_user(
             first_name='Ari',
             last_name='Hall',
@@ -26,7 +27,6 @@ class AllocateForUserTestCase(TestCase):
             password='top_secret'
         )
         self.user.profile.risk_score = 3
-        self.user.portfolio = Portfolio.objects.create(user=self.user)
         Position.objects.create(
             portfolio=self.user.portfolio,
             coin=Coin.objects.get(name='Bitcoin'),
@@ -36,4 +36,13 @@ class AllocateForUserTestCase(TestCase):
         self.user.save()
 
     def test_no_error(self):
-        allocate_for_user(self.user.id)
+        # symbols = ['BTC', 'ETH']
+        # risk_score = 1
+        # allocate_for_user(self.user.id, symbols, risk_score)
+        pass
+
+
+class TradingTestCase(TestCase):
+
+    def test_no_error(self):
+        test_order()
