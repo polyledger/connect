@@ -9,6 +9,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from api.models import User, Profile, Portfolio, Coin, Position, Price
 from api.models import Distribution, IPAddress, Deposit, Withdrawal
+from api.models import Transaction
 
 
 class UserCreationForm(forms.ModelForm):
@@ -132,6 +133,11 @@ class DepositAdmin(admin.ModelAdmin):
                     'transaction', 'amount', 'coin')
 
 
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ('date', 'portfolio', 'category', 'status', 'amount',
+                    'coin')
+
+
 class WithdrawalAdmin(admin.ModelAdmin):
     list_display = ('status', 'coinbase_user_id', 'coinbase_account_id',
                     'transaction', 'amount', 'coin')
@@ -148,6 +154,7 @@ admin.site.register(Portfolio, PortfolioAdmin)
 admin.site.register(Position, PositionAdmin)
 admin.site.register(IPAddress, IPAddressAdmin)
 admin.site.register(Distribution, DistributionAdmin)
+admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Deposit, DepositAdmin)
 admin.site.register(Withdrawal, WithdrawalAdmin)
 admin.site.register(Coin, CoinAdmin)
