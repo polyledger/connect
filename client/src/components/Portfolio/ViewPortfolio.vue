@@ -87,14 +87,14 @@ export default {
       return require(`@/assets/img/coins/${coin}.png`)
     },
     getPortfolio () {
-      this.$http({
+      return this.$http({
         url: '/api/users/current/',
         method: 'get',
         headers: {
           'Authorization': `Token ${localStorage.token}`
         }
       }).then((response) => {
-        this.portfolio = response.data.portfolio
+        return response.data.portfolio
       }).catch((error) => {
         console.error(error)
         this.errors.push('Unable to get your portfolio. Please try again later.')
@@ -110,12 +110,12 @@ export default {
     }
   },
   async mounted () {
+    this.portfolio = await this.getPortfolio()
+
     if (!this.portfolio.risk_score) {
       this.$router.push('/questionnaire')
     } else if (!this.portfolio.usd) {
       this.$router.push('/funding')
-    } else {
-      this.getPortfolio()
     }
   },
   async updated () {
