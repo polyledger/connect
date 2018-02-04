@@ -45,4 +45,5 @@ class AllocateForUserTestCase(TestCase):
 class TradingTestCase(TestCase):
 
     def test_no_error(self):
-        test_order()
+        result = test_order()
+        assert type(result) is dict
