@@ -20,9 +20,6 @@
               <a class="nav-link" role="button" href="" data-toggle="tab" @click.prevent="getData('1Y')">1Y</a>
             </li>
           </ul>
-          <h5 class="mb-4">
-
-          </h5>
           <div id="chart">
             <div class="d-flex align-items-center justify-content-center spinner" v-if="loading">
               <i class="fa fa-spinner fa-spin fa-3x"></i>
@@ -160,8 +157,10 @@ export default {
       })
     }
   },
-  mounted () {
-    this.getData('7D')
+  watch: {
+    portfolio () {
+      this.getData('7D')
+    }
   }
 }
 </script>
