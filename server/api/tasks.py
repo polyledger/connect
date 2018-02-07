@@ -34,7 +34,7 @@ def allocate_for_user(pk, symbols, risk_score):
     """
     user = get_user_model().objects.get(pk=pk)
 
-    start = datetime(year=2017, month=1, day=1)
+    start = date(year=2017, month=1, day=1)
     # allocator = CVaR(symbols=symbols, start=start)
     allocator = MVO(symbols=symbols, start=start)
     allocations = allocator.allocate()

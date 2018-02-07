@@ -9,7 +9,6 @@ WORKDIR /srv/polyledger
 
 # Install the server dependencies
 COPY requirements.txt /srv/polyledger
-ADD ./vendor/lattice-0.5.zip /srv/polyledger/vendor/
 RUN pip3 install -r requirements.txt
 
 # Bundle the source

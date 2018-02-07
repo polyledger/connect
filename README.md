@@ -4,10 +4,22 @@
 
 > Automated cryptocurrency portfolio platform
 
-The Polyledger platform has a client-server architecture.
+---
 
-#### [`/client`](/client)
-All client-related files (HTML, CSS, JavaScript) can be found here. The client uses [Vue.js](https://vuejs.org).
+## Development
 
-#### [`/server`](/server)
-The backend server is written in Python. All files (including the REST API) can be found here. The backend uses [Django](https://www.djangoproject.com/) and [Django REST Framework](http://www.django-rest-framework.org/).
+Start the development services:
+
+```
+❯ docker-compose up
+```
+
+---
+
+## Production
+
+Start the production services:
+
+```
+❯ docker-compose -f production.yml up
+```

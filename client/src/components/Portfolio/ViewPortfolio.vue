@@ -61,7 +61,7 @@
     </div>
     <div class="row text-center">
       <div class="col">
-        <chart :portfolio="this.portfolio" />
+        <chart :portfolio="portfolio" />
       </div>
     </div>
   </div>

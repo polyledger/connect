@@ -1,19 +1,21 @@
 version: "3"
 services:
 
-  client:
-    container_name: client
+  nginx:
+    container_name: nginx
     build:
-      context: ./client
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    image: nginx
     restart: always
     volumes:
-      - ./client:/usr/src/client
+      - ./server/static/admin:/usr/share/nginx/html/static/admin
+      - ./server/static/rest_framework:/usr/share/nginx/html/static/rest_framework
     ports:
-      - 8080:8080
+      - 80:80
     depends_on:
       - server
-    command: npm run dev
+    command: nginx -g 'daemon off';
 
   server:
     container_name: server
@@ -32,7 +34,7 @@ services:
       bash -c '
       python manage.py makemigrations &&
       python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8000'
+      gunicorn polyledger.wsgi -b 0.0.0.0:8000'
 
   postgres:
     container_name: postgres

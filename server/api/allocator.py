@@ -59,6 +59,7 @@ class Allocator(object):
         # Create DataFrame from queryset
         df = pd.DataFrame.from_records(data=data, index=index, columns=columns)
         df.rename(columns={'coin_id': 'coin'}, inplace=True)
+        df.reset_index(inplace=True)
         df = pd.pivot_table(
             data=df,
             values='price',
