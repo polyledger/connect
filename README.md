@@ -4,6 +4,8 @@
 
 > Automated cryptocurrency portfolio platform
 
+![Screenshot](/demo.png?raw=true)
+
 ---
 
 ## Development
