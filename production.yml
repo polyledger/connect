@@ -32,10 +32,14 @@ services:
     depends_on:
       - postgres
     env_file: .env.production
+    volumes:
+      - static:/usr/share/nginx/html/static/admin
+      - static:/usr/share/nginx/html/static/rest_framework
     command: >
       bash -c '
       python manage.py makemigrations &&
       python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
       gunicorn polyledger.wsgi -b 0.0.0.0:8000'
 
   postgres:
