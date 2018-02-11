@@ -11,7 +11,7 @@ import Activate from '@/components/Registration/Activate'
 import ConfirmEmail from '@/components/Registration/ConfirmEmail'
 import Questionnaire from '@/components/Onboarding/Questionnaire'
 import Verification from '@/components/Onboarding/Verification'
-import Funding from '@/components/Onboarding/Funding'
+// import Funding from '@/components/Onboarding/Funding'
 
 Vue.use(Router)
 
@@ -93,12 +93,12 @@ export default new Router({
       name: 'Verification',
       component: Verification,
       beforeEnter: requireAuth
-    },
-    {
-      path: '/funding',
-      name: 'Funding',
-      component: Funding,
-      beforeEnter: requireAuth
     }
+    // {
+    //   path: '/funding',
+    //   name: 'Funding',
+    //   component: Funding,
+    //   beforeEnter: requireAuth
+    // }
   ]
 })

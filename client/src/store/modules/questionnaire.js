@@ -57,7 +57,7 @@ let actions = {
         }
       }).then((response) => {
         commit(VERIFY, portfolio)
-        router.push('/funding')
+        router.push('/portfolio')
         resolve()
       }).catch((error) => {
         let response = error.response

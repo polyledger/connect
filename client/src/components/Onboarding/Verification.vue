@@ -5,7 +5,6 @@
         <div class="container">
           <li class="breadcrumb-item text-muted">1. Assess</li>
           <li class="breadcrumb-item">2. Verify</li>
-          <li class="breadcrumb-item text-muted">3. Fund</li>
         </div>
       </ol>
     </div>

@@ -114,8 +114,6 @@ export default {
 
     if (!this.portfolio.risk_score) {
       this.$router.push('/questionnaire')
-    } else if (!this.portfolio.usd) {
-      this.$router.push('/funding')
     }
   },
   async updated () {
