@@ -1,6 +1,8 @@
 version: "3"
 
 volumes:
+  pgdata:
+    driver: local
   static:
 
 services:
@@ -46,6 +48,8 @@ services:
     container_name: postgres
     image: postgres:latest
     hostname: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
 
