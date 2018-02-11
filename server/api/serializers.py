@@ -46,8 +46,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         coins = validated_data.get('coins')
         symbols = [coin.symbol for coin in coins]
-        allocate_for_user.apply_async(
-             args=(user.id, symbols, instance.risk_score,))
+        allocate_for_user.apply(args=(user.id, symbols, instance.risk_score,))
         instance.save()
         return instance
 

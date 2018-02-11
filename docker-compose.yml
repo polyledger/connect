@@ -27,7 +27,7 @@ services:
       - ./server:/srv/polyledger
     depends_on:
       - postgres
-    env_file: .env
+    env_file: .env.development
     command: >
       bash -c '
       python manage.py makemigrations &&
@@ -52,7 +52,7 @@ services:
     container_name: worker
     build:
       context: ./server
-    env_file: .env
+    env_file: .env.development
     command: celery -A polyledger worker -l info
     volumes:
       - ./server:/srv/polyledger

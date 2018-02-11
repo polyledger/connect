@@ -4,9 +4,9 @@ from celery import Celery
 from celery.signals import worker_ready
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "polyledger.settings.local")
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'polyledger.settings.local')
 
-app = Celery('polyledger', broker='redis://localhost')
+app = Celery('polyledger', broker='redis://redis')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
