@@ -1,7 +1,7 @@
 from .base import *
 from celery.schedules import crontab
 
-CLIENT_URL = 'http://localhost/activate/'
+CLIENT_URL = 'http://app.polyledger.com/activate/'
 
 DEBUG = False
 

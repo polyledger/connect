@@ -17,6 +17,7 @@ services:
     volumes:
       - static:/usr/share/nginx/html/static/admin
       - static:/usr/share/nginx/html/static/rest_framework
+      - static:/usr/share/nginx/html/static/polyledger
     ports:
       - 80:80
     depends_on:
@@ -37,6 +38,7 @@ services:
     volumes:
       - static:/usr/share/nginx/html/static/admin
       - static:/usr/share/nginx/html/static/rest_framework
+      - static:/usr/share/nginx/html/static/polyledger
     command: >
       bash -c '
       python manage.py makemigrations &&
