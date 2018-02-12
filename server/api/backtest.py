@@ -176,9 +176,8 @@ def backtest(allocations, investment, start, end, freq):
         )
 
     historic_value = portfolio.historic_value(start=start, end=end, freq=freq)
-    current_value = portfolio.value()
+    current_value = historic_value[-1][1]
     dollar_change = current_value - investment
-    value = portfolio.value()
 
     try:
         percent_change = ((current_value - investment) / investment) * 100
@@ -187,8 +186,7 @@ def backtest(allocations, investment, start, end, freq):
 
     return {
         'historic_value': historic_value,
-        'current_value': current_value,
         'percent_change': percent_change,
         'dollar_change': dollar_change,
-        'value': value
+        'value': current_value
     }
