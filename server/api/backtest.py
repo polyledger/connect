@@ -11,6 +11,7 @@ import time
 import pandas as pd
 from datetime import date
 from api.models import Price
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Portfolio(object):
@@ -76,7 +77,7 @@ class Portfolio(object):
                                  .format(asset))
             if asset != 'USD':
                 amount = backdated_assets[asset]
-                price = Price.objects.get(date=date, coin=asset).price
+                price = self.get_price(asset, date)
                 value = price * amount
             else:
                 return backdated_assets['USD']
@@ -84,10 +85,7 @@ class Portfolio(object):
             for backdated_asset in backdated_assets:
                 amount = backdated_assets[backdated_asset]
                 if backdated_asset != 'USD':
-                    price = Price.objects.get(
-                        date=date,
-                        coin=backdated_asset
-                    ).price
+                    price = self.get_price(backdated_asset, date)
                     value += price * amount
                 else:
                     value += amount
@@ -147,12 +145,19 @@ class Portfolio(object):
         """
 
         if buy == 'USD':
-            price = Price.objects.get(date=date, coin=sell).price
-            price = 1/price
+            price = 1/self.get_price(coin=sell, date=date)
         else:
-            price = Price.objects.get(date=date, coin=buy).price
+            price = self.get_price(coin=buy, date=date)
         self.remove(sell, amount, date)
         self.add(buy, amount * 1/price, date)
+
+    @staticmethod
+    def get_price(coin, date=date.today()):
+        try:
+            price = Price.objects.get(date=date, coin=coin).price
+        except ObjectDoesNotExist:
+            price = Price.objects.filter(coin=coin).earliest('date').price
+        return price
 
 
 def backtest(allocations, investment, start, end, freq):
