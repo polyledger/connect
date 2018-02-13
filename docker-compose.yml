@@ -6,7 +6,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    restart: always
     volumes:
       - ./client:/usr/src/client
     ports:
@@ -15,7 +14,7 @@ services:
       - server
     command: npm run dev
 
-  server:
+  server: &server
     container_name: server
     build:
       context: ./server
@@ -48,14 +47,20 @@ services:
     ports:
       - 6379:6379
 
-  worker:
-    container_name: worker
-    build:
-      context: ./server
-    env_file: .env.development
+  celery_worker:
+    <<: *server
+    container_name: celery_worker
     command: celery -A polyledger worker -l info
-    volumes:
-      - ./server:/srv/polyledger
     depends_on:
-      - server
       - redis
+      - postgres
+    ports: []
+
+  celery_beat:
+    <<: *server
+    container_name: celery_beat
+    command: celery -A polyledger beat -l info -s celerybeat-schedule.db
+    depends_on:
+      - redis
+      - postgres
+    ports: []
