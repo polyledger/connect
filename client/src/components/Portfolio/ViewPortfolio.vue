@@ -52,7 +52,7 @@
               </tr>
               <tr>
                 <th scope="row">Amount</th>
-                <td class="text-center" v-for="position in portfolio.positions">{{((position.amount/100)*portfolio.value) | currency}}</td>
+                <td class="text-center" v-for="position in portfolio.positions">{{((position.amount/100)*portfolio.usd) | currency}}</td>
               </tr>
             </tbody>
           </table>

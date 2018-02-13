@@ -50,6 +50,7 @@ export default {
       },
       loading: true,
       period: '7D',
+      value: '0.00',
       errors: []
     }
   },
@@ -68,7 +69,7 @@ export default {
         this.series = response.data.series
         this.labels = response.data.labels
         this.change = response.data.change
-        this.portfolio.value = response.data.value
+        this.value = response.data.value
         this.createChart()
       }).catch((error) => {
         console.error(error)
@@ -96,7 +97,7 @@ export default {
         series: this.series,
         subtitle: {
           text: `
-            ${numeral(this.portfolio.value).format('$0,0.00')}<br>
+            ${numeral(this.value).format('$0,0.00')}<br>
             <span class="badge badge-success">${numeral(this.change.dollar).format('$0,0.00')}</span>
             <span class="badge badge-success">${numeral(Number(this.change.percent / 100)).format('0,0.00%')}</span>
           `,
