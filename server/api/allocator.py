@@ -156,7 +156,7 @@ class Allocator(object):
 
             columns = {}
             for index, symbol in enumerate(self.symbols):
-                columns[symbol] = math.floor(solution.x[index] * 100)
+                columns[symbol] = math.floor(solution.x[index] * 10000)/100
 
             values = values.append(columns, ignore_index=True)
         return values
