@@ -34,7 +34,7 @@ class Allocator(object):
         start,
         end=datetime.today()
     ):
-        self.symbols = symbols
+        self.symbols = sorted(symbols)
         self.start = start
         self.end = end
 
@@ -301,7 +301,8 @@ class CVaR(Allocator):
             returns = daily_returns[symbol]
             distribution = self.fit_distribution(returns=returns)
             print('{0}: Best dist is {1}'.format(symbol, distribution[0].name))
-            sample_returns[symbol] = self.generate_sample_returns(*distribution)
+            sample_returns[symbol] = self.generate_sample_returns(
+                *distribution)
 
         # Minimum risk CVaR optimization
         def func(weights):
