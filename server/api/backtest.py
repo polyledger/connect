@@ -8,6 +8,7 @@ usage.
 from __future__ import print_function
 
 import time
+import numpy as np
 import pandas as pd
 from datetime import date
 from api.models import Price
@@ -101,13 +102,28 @@ class Portfolio(object):
         :returns: a dict of historical value data
         """
 
-        date_range = pd.date_range(start=start, end=end, freq=freq)
-
         values = []
+        assets = self.assets.copy()
+        usd = assets.pop('USD')
 
-        for d in date_range:
-            x = time.mktime(d.timetuple()) * 1000
-            y = self.value(date=d)
+        coins = [coin for coin in assets]
+        queryset = self.get_prices(coins, start, end)
+        df = pd.DataFrame(data=list(queryset.values()))
+        df.set_index('date', inplace=True)
+        df.rename(columns={'coin_id': 'coin'}, inplace=True)
+        df.reset_index(inplace=True)
+        df = pd.pivot_table(
+            data=df,
+            values='price',
+            index='date',
+            columns='coin',
+            aggfunc='first')
+        df.fillna(value=0, inplace=True)
+
+        for index, row in df.iterrows():
+            x = time.mktime(index.timetuple()) * 1000
+            amounts = [assets[coin] for coin in sorted(assets)]
+            y = row.dot(amounts) + usd
             values.append([x, y])
 
         return values
@@ -158,6 +174,10 @@ class Portfolio(object):
         except ObjectDoesNotExist:
             price = Price.objects.filter(coin=coin).earliest('date').price
         return price
+
+    @staticmethod
+    def get_prices(coins, start, end=date.today()):
+        return Price.objects.filter(coin__in=coins, date__range=(start, end))
 
 
 def backtest(allocations, investment, start, end, freq):
