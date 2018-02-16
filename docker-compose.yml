@@ -59,7 +59,10 @@ services:
   celery_beat:
     <<: *server
     container_name: celery_beat
-    command: celery -A polyledger beat -l info -s celerybeat-schedule.db
+    command: >
+      bash -c '
+      rm -f celerybeat.pid &&
+      celery -A polyledger beat -l info -s celerybeat-schedule.db'
     depends_on:
       - redis
       - postgres
