@@ -12,7 +12,7 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
             <router-link to="/portfolio" tag="a" class="nav-link" active-class="active" v-if="isLoggedIn">
-              <i class="icon icon-home"></i> Home
+              <i class="icon icon-pie-chart"></i> Portfolio
             </router-link>
           </li>
           <li class="nav-item">
