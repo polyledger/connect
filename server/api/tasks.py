@@ -38,7 +38,7 @@ def allocate_for_user(self, pk, symbols, risk_score):
     task_id = self.request.id
     self.update_state(state='PROGRESS')
     start = date(year=2017, month=1, day=1)
-    allocator = CVaR(task_id=task_id, symbols=symbols, start=start)
+    allocator = CVaR(symbols=symbols, start=start, task_id=task_id)
     allocations = allocator.allocate()
     allocation = allocations.loc[risk_score-1]
 

@@ -32,10 +32,10 @@ class Allocator(object):
 
     def __init__(
         self,
-        task_id,
         symbols,
         start,
-        end=datetime.today()
+        end=datetime.today(),
+        task_id=None
     ):
         self.task_id = task_id
         self.symbols = sorted(symbols)
@@ -170,14 +170,14 @@ class CVaR(Allocator):
 
     def __init__(
         self,
-        task_id,
         symbols,
         start,
         end=datetime.today(),
         trials=100000,
-        percentile=5
+        percentile=5,
+        task_id=None
     ):
-        Allocator.__init__(self, task_id, symbols, start, end)
+        Allocator.__init__(self, symbols, start, end, task_id)
         self.trials = trials
         self.percentile = percentile
 
