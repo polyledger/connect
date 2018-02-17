@@ -7,11 +7,11 @@ router = routers.DefaultRouter()
 router.register(r'portfolios', views.PortfolioViewSet, base_name='portfolio')
 router.register(r'coins', views.CoinViewSet, base_name='coin')
 router.register(r'users', views.UserViewSet, base_name='user')
+router.register(r'task_results', views.TaskResultViewSet,
+                base_name='task_results')
 
 app_name = 'api'
 urlpatterns = [
     url(r'^authenticate/', authtoken_views.obtain_auth_token),
-    url(r'^deposit_addresses/(BTC|ETH)/$',
-        views.RetrieveDepositAddress.as_view()),
     url(r'^', include(router.urls, namespace='api'))
 ]

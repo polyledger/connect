@@ -1,20 +1,19 @@
-import os
-import requests
-from binance.client import Client
 from datetime import date, timedelta
 from api.models import User, Coin, Portfolio, Token
+from django_celery_results.models import TaskResult
 from django.contrib.auth import get_user_model
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.conf import settings
 from rest_framework import permissions, authentication, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
-from rest_framework.views import APIView
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
+from api.serializers import TaskResultSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
+from api.tasks import allocate_for_user
 
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
@@ -27,6 +26,25 @@ class IsCreationOrIsAuthenticated(permissions.BasePermission):
                 return False
         else:
             return True
+
+
+class TaskResultViewSet(viewsets.ModelViewSet):
+    model = TaskResult
+    authentication_classes = (
+        authentication.BasicAuthentication,
+        authentication.TokenAuthentication,
+    )
+    serializer_class = TaskResultSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = TaskResult.objects.all()
+
+    def get_object(self):
+        pk = self.kwargs.get('pk')
+
+        try:
+            return TaskResult.objects.get(task_id=pk)
+        except TaskResult.DoesNotExist:
+            raise Http404
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -68,24 +86,6 @@ class UserViewSet(viewsets.ModelViewSet):
         redirect_url = settings.CLIENT_URL + '?token=' + str(auth_token)
         return HttpResponseRedirect(redirect_url)
 
-    @detail_route(
-        methods=['POST'],
-        permission_classes=[permissions.IsAuthenticated]
-    )
-    def coinbase_oauth(self, request, pk=None):
-        payload = {
-            'grant_type': 'authorization_code',
-            'code': request.data.get('code'),
-            'client_id': os.environ['COINBASE_CLIENT_ID'],
-            'client_secret': os.environ['COINBASE_CLIENT_SECRET'],
-            'redirect_uri': 'http://localhost:8080/funding'
-        }
-        res = requests.post(
-            url='https://api.coinbase.com/oauth/token',
-            params=payload)
-        content = res.json()
-        return Response(content, status=res.status_code)
-
     def destroy(self, request, *args, **kwargs):
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
 
@@ -104,6 +104,22 @@ class PortfolioViewSet(viewsets.ModelViewSet):
 
     def get_object(self):
         return self.request.user.portfolio
+
+    def update(self, request, pk=None):
+        user = self.request.user
+        portfolio = Portfolio.objects.get(user=user)
+        serializer = PortfolioSerializer(portfolio)
+        coins = serializer.data['coins']
+        risk_score = serializer.data['risk_score']
+        task_result = allocate_for_user.delay(user.id, coins, risk_score)
+        content = {
+            'portfolio': serializer.data,
+            'task_result': {
+                'id': task_result.id,
+                'status': task_result.status
+            }
+        }
+        return Response(content)
 
     @detail_route(methods=['GET'])
     def chart(self, request, pk=None):
@@ -165,22 +181,3 @@ class CoinViewSet(viewsets.ReadOnlyModelViewSet):
     )
     serializer_class = CoinSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-
-class RetrieveDepositAddress(APIView):
-    authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication
-    )
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, asset, format=None):
-        client = Client(
-            os.environ['BINANCE_API_KEY'],
-            os.environ['BINANCE_SECRET_KEY']
-        )
-        result = client.get_deposit_address(asset=asset)
-        content = {
-            'address': result['address']
-        }
-        return Response(content)

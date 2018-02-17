@@ -274,9 +274,10 @@ class Distribution(models.Model):
     """
     A distribution for each coin
     """
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=False)
     coin = models.OneToOneField(to='Coin', on_delete=models.CASCADE)
     name = models.CharField(null=True, blank=True, max_length=255)
+    params = models.CharField(null=True, blank=True, max_length=255)
 
 
 class Price(models.Model):

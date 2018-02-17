@@ -125,7 +125,7 @@ class IPAddressAdmin(admin.ModelAdmin):
 
 class DistributionAdmin(admin.ModelAdmin):
     ordering = ('-date', 'coin',)
-    list_display = ('date', 'coin', 'name')
+    list_display = ('date', 'coin', 'name', 'params')
 
 
 class DepositAdmin(admin.ModelAdmin):

@@ -1,8 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from api.models import User, Portfolio, Coin, Position
-from api.tasks import send_confirmation_email, allocate_for_user
+from django_celery_results.models import TaskResult
+from api.tasks import send_confirmation_email
 from rest_framework import serializers
+
+
+class TaskResultSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TaskResult
+        fields = ('task_id', 'status', 'meta')
 
 
 class CoinSerializer(serializers.ModelSerializer):
@@ -43,10 +51,6 @@ class PortfolioSerializer(serializers.ModelSerializer):
         instance.usd = validated_data.get('usd', instance.usd)
         instance.risk_score = validated_data.get(
             'risk_score', instance.risk_score)
-        user = self.context['request'].user
-        coins = validated_data.get('coins')
-        symbols = [coin.symbol for coin in coins]
-        allocate_for_user.apply(args=(user.id, symbols, instance.risk_score,))
         instance.save()
         return instance
 
