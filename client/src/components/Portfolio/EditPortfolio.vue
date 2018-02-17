@@ -67,7 +67,17 @@
                   <div class="form-group">
                     <div class="form-group">
                       <label for="risk_score">Risk Score: {{portfolio.risk_score}}</label>
-                      <vue-slider ref="slider" name="risk_score" v-model="portfolio.risk_score" :min="1" :max="5" :tooltip="false" required></vue-slider>
+                      <vue-slider
+                        ref="slider"
+                        name="risk_score"
+                        v-model="portfolio.risk_score"
+                        :min="1"
+                        :max="5"
+                        :tooltip="false"
+                        :piecewise="true"
+                        :dot-size="20"
+                        :slider-style="{'boxShadow': '2px 2px 1px 1px rgba(0, 0, 0, 0.35)'}"
+                        required></vue-slider>
                       <div class="invalid-feedback" v-if="errors.risk_score">
                         <span v-for="error in errors.risk_score">
                           {{error}}
@@ -107,6 +117,7 @@
 <script>
 import CleaveInput from '@/components/Shared/CleaveInput'
 import vueSlider from 'vue-slider-component'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'edit-portfolio',
@@ -128,6 +139,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['addTaskResult']),
     imagePath (coin) {
       return require(`@/assets/img/coins/${coin.symbol}.png`)
     },
@@ -181,6 +193,8 @@ export default {
           'Authorization': `Token ${localStorage.token}`
         }
       }).then((response) => {
+        let taskResult = response.data.task_result
+        this.addTaskResult(taskResult)
         this.$router.push('/portfolio')
       }).catch((error) => {
         console.error(error)

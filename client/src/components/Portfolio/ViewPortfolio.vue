@@ -37,7 +37,15 @@
     <div class="row text-center">
       <div class="col">
         <h5>{{portfolio.title}}</h5>
-        <div class="table-responsive">
+        <div v-if="getTaskResult.status === 'PROGRESS'">
+          <p class="lead text-center">{{getTaskResult.message}}</p>
+          <div class="progress position-relative">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" :style="`width: ${getTaskResult.percent}%`" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+              <small class="justify-content-center d-flex position-absolute w-100">{{getTaskResult.percent}}% complete</small>
+          </div>
+          <p class="text-center py-2">Your portfolio allocation is in progress. Please wait while we finish crunching numbers.</p>
+        </div>
+        <div class="table-responsive" v-else>
           <table class="table">
             <tbody>
               <tr>
@@ -70,6 +78,8 @@
 <script>
 import Chart from '@/components/Portfolio/Chart'
 import numeral from 'numeral'
+import store from '../../store'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'view-portfolio',
@@ -82,7 +92,11 @@ export default {
       errors: []
     }
   },
+  computed: {
+    ...mapGetters(['getTaskResult'])
+  },
   methods: {
+    ...mapActions(['pollTaskResult']),
     imagePath (coin) {
       return require(`@/assets/img/coins/${coin}.png`)
     },
@@ -110,10 +124,23 @@ export default {
     }
   },
   async mounted () {
-    this.portfolio = await this.getPortfolio()
+    let taskResult = store.getters.getTaskResult
 
-    if (!this.portfolio.risk_score) {
-      this.$router.push('/questionnaire')
+    if (taskResult.status) {
+      let interval = setInterval(async () => {
+        let task = await this.pollTaskResult()
+
+        if (task.status === 'SUCCESS') {
+          clearInterval(interval)
+          this.portfolio = await this.getPortfolio()
+        }
+      }, 1000)
+    } else {
+      this.portfolio = await this.getPortfolio()
+
+      if (!this.portfolio.risk_score) {
+        this.$router.push('/questionnaire')
+      }
     }
   },
   async updated () {
