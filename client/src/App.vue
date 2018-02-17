@@ -17,6 +17,9 @@ export default {
 </script>
 
 <style>
+[v-cloak] {
+  display: none;
+}
 h2 {
   text-align: center;
   margin-bottom: 3.5rem;
