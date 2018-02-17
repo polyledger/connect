@@ -124,11 +124,11 @@ def fit_distributions(coins=Coin.objects.all()):
         name = distribution[0].name
         params = str(list(distribution[1])).strip('[]')
         coin = Coin.objects.get(symbol=symbol)
-        distribution = Distribution.objects.update_or_create(
-            date=today,
-            coin=coin,
-            name=name,
-            params=params)
+        distribution = Distribution.objects.get(coin=coin)
+        distribution.date = today
+        distribution.name = name
+        distribution.params = params
+        distribution.save()
 
 
 @shared_task
