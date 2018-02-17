@@ -1,5 +1,4 @@
 from .base import *
-from celery.schedules import crontab
 
 CLIENT_URL = 'http://app.polyledger.com/activate/'
 
@@ -40,18 +39,3 @@ DATABASES = {
 # CSRF_COOKIE_SECURE = True
 # X_FRAME_OPTIONS = 'DENY'
 # CSRF_TRUSTED_ORIGINS = ['app.polyledger.com']
-
-# Celery application definition
-# http://docs.celeryproject.org/en/v4.0.2/userguide/configuration.html
-CELERY_BROKER_URL = 'redis://redis:6379'
-CELERY_RESULT_BACKEND = 'redis://redis:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_ENABLE_UTC = True
-CELERY_BEAT_SCHEDULE = {
-    'get-new-day-prices': {
-        'task': 'api.tasks.get_current_prices',
-        'schedule': crontab(hour=0, minute=0)
-    }
-}
