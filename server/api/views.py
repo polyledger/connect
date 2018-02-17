@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.conf import settings
-from rest_framework import permissions, authentication, viewsets
+from rest_framework import permissions, authentication, viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
@@ -107,19 +107,26 @@ class PortfolioViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         user = self.request.user
-        portfolio = Portfolio.objects.get(user=user)
-        serializer = PortfolioSerializer(portfolio)
-        coins = serializer.data['coins']
-        risk_score = serializer.data['risk_score']
-        task_result = allocate_for_user.delay(user.id, coins, risk_score)
-        content = {
-            'portfolio': serializer.data,
-            'task_result': {
-                'id': task_result.id,
-                'status': task_result.status
+        portfolio = self.get_object()
+        serializer = self.get_serializer(portfolio, data=request.data)
+
+        if serializer.is_valid():
+            self.perform_update(serializer)
+            coins = serializer.data['coins']
+            risk_score = serializer.data['risk_score']
+            coins = request.data['coins']
+            task_result = allocate_for_user.delay(user.id, coins, risk_score)
+            content = {
+                'portfolio': serializer.data,
+                'task_result': {
+                    'id': task_result.id,
+                    'status': task_result.status
+                }
             }
-        }
-        return Response(content)
+            return Response(content)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['GET'])
     def chart(self, request, pk=None):
