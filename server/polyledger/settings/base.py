@@ -162,5 +162,9 @@ CELERY_BEAT_SCHEDULE = {
     'get-new-day-prices': {
         'task': 'api.tasks.get_current_prices',
         'schedule': crontab(hour=0, minute=0)
+    },
+    'get-new-day-distributions': {
+        'task': 'api.tasks.fit_distributions',
+        'schedule': crontab(hour=0, minute=10)
     }
 }
