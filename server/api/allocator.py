@@ -37,10 +37,10 @@ class Allocator(object):
         end=datetime.today(),
         task_id=None
     ):
-        self.task_id = task_id
         self.symbols = sorted(symbols)
         self.start = start
         self.end = end
+        self.task_id = task_id
 
     def retrieve_data(self):
         """
