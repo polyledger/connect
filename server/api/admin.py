@@ -9,7 +9,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from api.models import User, Profile, Portfolio, Coin, Position, Price
 from api.models import Distribution, IPAddress, Deposit, Withdrawal
-from api.models import Transaction
+from api.models import Transaction, WhitelistedEmail
 
 
 class UserCreationForm(forms.ModelForm):
@@ -148,6 +148,10 @@ class PriceAdmin(admin.ModelAdmin):
     list_display = ('date', 'coin', 'price')
 
 
+class WhitelistedEmailAdmin(admin.ModelAdmin):
+    list_display = ('date', 'email')
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Portfolio, PortfolioAdmin)
@@ -159,4 +163,5 @@ admin.site.register(Deposit, DepositAdmin)
 admin.site.register(Withdrawal, WithdrawalAdmin)
 admin.site.register(Coin, CoinAdmin)
 admin.site.register(Price, PriceAdmin)
+admin.site.register(WhitelistedEmail, WhitelistedEmailAdmin)
 admin.site.unregister(Group)
