@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
 ]
 
 # Enable the sites framework
@@ -43,6 +44,7 @@ SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -101,6 +103,11 @@ CACHES = {
 
 WSGI_APPLICATION = 'polyledger.wsgi.application'
 
+# CORS
+# https://pypi.python.org/pypi/django-cors-headers/2.0.0
+CORS_ORIGIN_WHITELIST = (
+    'polyledger.com'
+)
 
 # https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#specifying-a-custom-user-model
 AUTH_USER_MODEL = 'api.User'
