@@ -8,7 +8,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.conf import settings
 from rest_framework import permissions, authentication, viewsets, status
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from api.serializers import TaskResultSerializer
 from api.tokens import account_activation_token
@@ -127,6 +127,48 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route(permission_classes=[permissions.AllowAny], methods=['GET'])
+    def public_charts(self, request):
+        # Perform a 1 year backtest on Polyledger portfolio and Bitcoin
+        portfolio = User.objects.get(email='admin@polyledger.com').portfolio
+        allocations = portfolio.positions.all().values_list('coin', 'amount')
+        freq = 'D'
+        end = date.today()
+        start = end - timedelta(days=364)
+
+        portfolio = backtest(
+            allocations=allocations,
+            investment=1,
+            start=start,
+            end=end,
+            freq=freq
+        )
+
+        bitcoin = backtest(
+            allocations=[('BTC', 100)],
+            investment=1,
+            start=start,
+            end=end,
+            freq=freq
+        )
+
+        content = {
+            'series': [
+                {
+                    'name': 'Polyledger',
+                    'data': portfolio['historic_value']
+                },
+                {
+                    'name': 'Bitcoin',
+                    'data': bitcoin['historic_value']
+                }
+            ],
+            'change': {
+                'percent': portfolio['percent_change']
+            }
+        }
+        return Response(content)
 
     @detail_route(methods=['GET'])
     def chart(self, request, pk=None):
