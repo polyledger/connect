@@ -38,7 +38,7 @@ let mutations = {
 }
 
 let actions = {
-  activate ({state, commit, rootState}, token) {
+  activate ({ state, commit, rootState }, token) {
     return new Promise((resolve, reject) => {
       if (token) {
         localStorage.token = token
@@ -50,7 +50,7 @@ let actions = {
       }
     })
   },
-  signup ({state, commit, rootState}, credentials) {
+  signup ({ state, commit, rootState }, credentials) {
     commit(SIGNUP)
 
     return new Promise((resolve, reject) => {
@@ -58,22 +58,30 @@ let actions = {
         url: '/api/users/',
         method: 'POST',
         data: credentials
-      }).then((response) => {
-        commit(SIGNUP_SUCCESS)
-        router.push('/confirm-email')
-        resolve()
-      }).catch((error) => {
-        let response = error.response
-
-        if (response.status === 400) {
-          reject(response.data)
-        } else if (response.status === 500) {
-          reject(Error('Unable to signup. Please try again later.'))
-        }
       })
+        .then(response => {
+          commit(SIGNUP_SUCCESS)
+          router.push('/confirm-email')
+          resolve()
+        })
+        .catch(error => {
+          let response = error.response
+
+          if (response.status === 400) {
+            reject(response.data)
+          } else if (response.status === 403) {
+            let errors = {}
+            errors.non_field_errors = [response.data.detail]
+            reject(errors)
+          } else if (response.status === 500) {
+            let errors = {}
+            errors.non_field_errors = [response.data.detail]
+            reject(errors)
+          }
+        })
     })
   },
-  login ({state, commit, rootState}, credentials) {
+  login ({ state, commit, rootState }, credentials) {
     commit(LOGIN)
 
     return new Promise((resolve, reject) => {
@@ -91,23 +99,25 @@ let actions = {
           password: credentials.password,
           remember: credentials.remember
         }
-      }).then((response) => {
-        localStorage.token = response.data.token
-        commit(LOGIN_SUCCESS)
-        router.push('/portfolio')
-        resolve()
-      }).catch((error) => {
-        let response = error.response
-
-        if (response.status === 400) {
-          reject(response.data)
-        } else if (response.status === 500) {
-          reject(Error('Unable to login. Please try again later.'))
-        }
       })
+        .then(response => {
+          localStorage.token = response.data.token
+          commit(LOGIN_SUCCESS)
+          router.push('/portfolio')
+          resolve()
+        })
+        .catch(error => {
+          let response = error.response
+
+          if (response.status === 400) {
+            reject(response.data)
+          } else if (response.status === 500) {
+            reject(Error('Unable to login. Please try again later.'))
+          }
+        })
     })
   },
-  logout ({commit}) {
+  logout ({ commit }) {
     delete localStorage.token
     commit(LOGOUT)
     router.push('/signin')
