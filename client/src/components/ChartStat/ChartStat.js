@@ -1,21 +1,21 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import '../ChartStat/ChartStat.css';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import "../ChartStat/ChartStat.css";
 
 class ChartStat extends Component {
   getDirection() {
-    return this.props.sign === '+' ? 'positive' : 'negative';
+    return this.props.sign === "+" ? "positive" : "negative";
   }
 
   render() {
     return (
       <div className="ChartStat">
-        <div className="statcard p-3">
+        <div className="statcard p-1">
           <h3 className="statcard-number">
             {this.props.sign}${this.props.number}
             <small
               className={
-                'delta-indicator delta-' + this.getDirection(this.props.sign)
+                "delta-indicator delta-" + this.getDirection(this.props.sign)
               }
             >
               {this.props.delta}%
