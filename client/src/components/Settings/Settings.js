@@ -76,7 +76,7 @@ class Settings extends Component {
               >
                 <div className="container">
                   <div className="row">
-                    <div className="col-sm-8 offset-2">
+                    <div className="col-sm-8 offset-sm-2">
                       <UserProfileSettings />
                     </div>
                   </div>
@@ -90,7 +90,7 @@ class Settings extends Component {
               >
                 <div className="container">
                   <div className="row">
-                    <div className="col-sm-8 offset-2">
+                    <div className="col-sm-8 offset-sm-2">
                       <PreferencesSettings />
                     </div>
                   </div>
@@ -104,7 +104,7 @@ class Settings extends Component {
               >
                 <div className="container">
                   <div className="row">
-                    <div className="col-sm-8 offset-2">
+                    <div className="col-sm-8 offset-sm-2">
                       <SecuritySettings />
                     </div>
                   </div>
@@ -118,7 +118,7 @@ class Settings extends Component {
               >
                 <div className="container">
                   <div className="row">
-                    <div className="col-sm-8 offset-2">
+                    <div className="col-sm-8 offset-sm-2">
                       <APISettings />
                     </div>
                   </div>
