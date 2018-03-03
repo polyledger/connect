@@ -16,28 +16,30 @@ class SecuritySettings extends Component {
           </div>
         </form>
         <h5 className="pt-4">Confirmed Devices</h5>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Confirmed</th>
-              <th scope="col">Browser</th>
-              <th scope="col">IP Address</th>
-              <th scope="col">Location</th>
-              <th scope="col">Current</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>2 months ago</td>
-              <td>Chrome (Mac)</td>
-              <td>129.210.115.7</td>
-              <td>Palo Alto, USA</td>
-              <td>
-                <i className="icon icon-check" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">Confirmed</th>
+                <th scope="col">Browser</th>
+                <th scope="col">IP Address</th>
+                <th scope="col">Location</th>
+                <th scope="col">Current</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2 months ago</td>
+                <td>Chrome (Mac)</td>
+                <td>129.210.115.7</td>
+                <td>Palo Alto, USA</td>
+                <td>
+                  <i className="icon icon-check" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
