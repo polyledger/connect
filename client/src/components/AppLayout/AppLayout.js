@@ -1,33 +1,30 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import Header from "../Header/Header";
+import { Route, Switch } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
-import Layout from "../Layout/Layout";
 import Portfolio from "../Portfolio/Portfolio";
+import Analytics from "../Analytics/Analytics";
 import Accounts from "../Accounts/Accounts";
 import Markets from "../Markets/Markets";
 import Settings from "../Settings/Settings";
-import Footer from "../Footer/Footer";
-import "./LayoutContainer.css";
+import "./AppLayout.css";
 
-class LayoutContainer extends Component {
+class AppLayout extends Component {
   render() {
     return (
-      <Router>
-        <div className="LayoutContainer">
-          <Header />
-          <Navbar />
-          <Layout>
+      <div className="AppLayout">
+        <Navbar />
+        <div className="container p-3">
+          <Switch>
             <Route path="/portfolio" component={Portfolio} />
+            <Route path="/analytics" component={Analytics} />
             <Route path="/accounts" component={Accounts} />
             <Route path="/markets" component={Markets} />
             <Route path="/settings" component={Settings} />
-          </Layout>
-          <Footer />
+          </Switch>
         </div>
-      </Router>
+      </div>
     );
   }
 }
 
-export default LayoutContainer;
+export default AppLayout;
