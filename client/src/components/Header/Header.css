@@ -5,3 +5,8 @@
 .Header .nav-item {
   color: #fff;
 }
+
+.Header .dropdown .nav-link:hover {
+  cursor: pointer;
+  color: #eee;
+}

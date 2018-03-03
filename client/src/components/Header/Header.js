@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import logo from "../../assets/logo-light.png";
+import HeaderDropdown from "../HeaderDropdown/HeaderDropdown";
 import "./Header.css";
 
 class Header extends Component {
@@ -13,10 +14,7 @@ class Header extends Component {
             </a>
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
-                <a className="nav-link">
-                  Matthew Rosendin
-                  <i className="icon icon-chevron-small-down" />
-                </a>
+                <HeaderDropdown />
               </li>
             </ul>
           </div>
