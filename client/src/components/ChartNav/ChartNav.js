@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import '../ChartNav/ChartNav.css';
+import React, { Component } from "react";
+import "../ChartNav/ChartNav.css";
 
 class ChartNav extends Component {
   render() {
     return (
-      <ul className="nav nav-pills justify-content-center my-4">
+      <ul className="nav nav-pills justify-content-center mt-2">
         <li className="nav-item">
           <a className="nav-link active" role="button" data-toggle="tab">
             1D
