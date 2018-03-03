@@ -9,10 +9,10 @@ services:
     volumes:
       - ./client:/usr/src/client
     ports:
-      - 8080:8080
+      - 3000:3000
     depends_on:
       - server
-    command: npm run dev
+    command: yarn start
 
   server: &server
     container_name: server

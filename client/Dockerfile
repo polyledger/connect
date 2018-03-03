@@ -12,4 +12,4 @@ RUN npm install
 COPY . /usr/src/client/
 
 EXPOSE 8080
-CMD ["npm", "run", "dev"]
+CMD ["yarn", "start"]

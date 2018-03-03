@@ -1,7 +1,0 @@
-/build/
-/config/
-/dist/
-/*.js
-/test/unit/coverage/
-/src/assets/js/toolkit.min.js
-/src/assets/css/toolkit-inverse.min.css

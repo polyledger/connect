@@ -1,0 +1,15 @@
+.PriceRow {
+}
+
+.PriceRow__Rank {
+  margin-right: 5px;
+}
+
+.PriceRow__Logo {
+  margin-right: 10px;
+}
+
+.PriceRow__Coin {
+  font-size: 16px;
+  vertical-align: bottom;
+}

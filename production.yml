@@ -62,7 +62,7 @@ services:
     <<: *server
     container_name: celery_worker
     hostname: celery_worker
-    command: celery -A polyledger worker -l info
+    command: celery -A polyledger worker -l info -u matt
     depends_on:
       - redis
       - postgres
