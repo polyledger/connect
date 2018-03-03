@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/client/src/assets/img/logo.png?raw=true" height="100">
+  <img src="/client/src/assets/logo.png?raw=true" height="100">
 </p>
 
 > Automated cryptocurrency portfolio platform
