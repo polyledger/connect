@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import logo from '../../assets/logo-light.png';
-import './Header.css';
+import React, { Component } from "react";
+import logo from "../../assets/logo-light.png";
+import "./Header.css";
 
 class Header extends Component {
   render() {
@@ -14,7 +14,7 @@ class Header extends Component {
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
                 <a className="nav-link">
-                  Account
+                  Matthew Rosendin
                   <i className="icon icon-chevron-small-down" />
                 </a>
               </li>
