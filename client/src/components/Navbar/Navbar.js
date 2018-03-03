@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { NavLink } from 'react-router-dom';
-import './Navbar.css';
+import React, { Component } from "react";
+import { NavLink } from "react-router-dom";
+import "./Navbar.css";
 
 class Navbar extends Component {
   render() {
@@ -9,6 +9,7 @@ class Navbar extends Component {
         <ul className="nav nav-bordered navbar-padded justify-content-center">
           <li className="nav-item">
             <NavLink
+              exact
               className="nav-link"
               activeClassName="active"
               to="/portfolio"
@@ -20,7 +21,7 @@ class Navbar extends Component {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/analytics"
+              to="/portfolio/analytics"
             >
               <i className="icon icon-gauge" /> Analytics
             </NavLink>
@@ -29,7 +30,7 @@ class Navbar extends Component {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/accounts"
+              to="/portfolio/accounts"
             >
               <i className="icon icon-wallet" /> Accounts
             </NavLink>
@@ -38,7 +39,7 @@ class Navbar extends Component {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/markets"
+              to="/portfolio/markets"
             >
               <i className="icon icon-line-graph" /> Markets
             </NavLink>
@@ -47,7 +48,7 @@ class Navbar extends Component {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/settings"
+              to="/portfolio/settings"
             >
               <i className="icon icon-cog" /> Settings
             </NavLink>

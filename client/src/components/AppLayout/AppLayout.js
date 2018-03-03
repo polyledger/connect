@@ -15,11 +15,11 @@ class AppLayout extends Component {
         <Navbar />
         <div className="container p-3">
           <Switch>
-            <Route path="/portfolio" component={Portfolio} />
-            <Route path="/analytics" component={Analytics} />
-            <Route path="/accounts" component={Accounts} />
-            <Route path="/markets" component={Markets} />
-            <Route path="/settings" component={Settings} />
+            <Route exact path="/portfolio" component={Portfolio} />
+            <Route path="/portfolio/analytics" component={Analytics} />
+            <Route path="/portfolio/accounts" component={Accounts} />
+            <Route path="/portfolio/markets" component={Markets} />
+            <Route path="/portfolio/settings" component={Settings} />
           </Switch>
         </div>
       </div>

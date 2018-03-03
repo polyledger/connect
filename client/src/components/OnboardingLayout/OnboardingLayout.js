@@ -8,7 +8,10 @@ class OnboardingLayout extends Component {
       <div className="OnboardingLayout">
         <div className="container p-3">
           <Switch>
-            <Route path="/risk-assessment" component={RiskAssessment} />
+            <Route
+              path="/onboarding/risk-assessment"
+              component={RiskAssessment}
+            />
           </Switch>
         </div>
       </div>

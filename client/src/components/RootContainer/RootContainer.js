@@ -13,8 +13,8 @@ class RootContainer extends Component {
         <Switch>
           <div className="RootContainer">
             <Header />
-            <Route component={AppLayout} />
-            <Route component={OnboardingLayout} />
+            <Route path="/portfolio" component={AppLayout} />
+            <Route path="/onboarding" component={OnboardingLayout} />
             <Footer />
           </div>
         </Switch>
