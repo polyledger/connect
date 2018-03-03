@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 class ExchangeListItem extends Component {
   render() {
@@ -7,6 +7,7 @@ class ExchangeListItem extends Component {
       <li className="list-group-item d-flex justify-content-between align-items-center">
         <img
           height="50"
+          alt={this.props.name}
           src={require(`../../assets/exchanges/${this.props.name}.png`)}
         />
         <button className="btn btn-danger">

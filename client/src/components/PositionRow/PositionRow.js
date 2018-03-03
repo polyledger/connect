@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import './PositionRow.css';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import "./PositionRow.css";
 
 class PositionRow extends Component {
   render() {
@@ -9,6 +9,7 @@ class PositionRow extends Component {
         <th scope="row">
           <img
             height="35"
+            alt={`${this.props.coin} Logo`}
             src={require(`../../assets/coins/${this.props.symbol}.png`)}
           />
         </th>

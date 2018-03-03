@@ -1,9 +1,24 @@
-import React, { Component } from 'react';
-import PriceRow from '../PriceRow/PriceRow';
-import './PriceTable.css';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import PriceRow from "../PriceRow/PriceRow";
+import "./PriceTable.css";
 
 class PriceTable extends Component {
   render() {
+    let priceRows = [];
+    this.props.tickers.forEach(ticker => {
+      priceRows.push(
+        <PriceRow
+          key={ticker.id}
+          rank={ticker.rank}
+          name={ticker.name}
+          symbol={ticker.symbol}
+          price={ticker.price_usd}
+          marketCap={ticker.market_cap_usd}
+          change24h={ticker.percent_change_24h}
+        />
+      );
+    });
     return (
       <div className="PriceTable">
         <div className="card table-responsive">
@@ -16,29 +31,16 @@ class PriceTable extends Component {
                 <th scope="col">24h Change</th>
               </tr>
             </thead>
-            <tbody>
-              <PriceRow
-                rank="1"
-                symbol="BTC"
-                name="Bitcoin"
-                price="$10,560"
-                marketCap="$250,000,000"
-                change24h="+10.00%"
-              />
-              <PriceRow
-                rank="2"
-                symbol="ETH"
-                name="Ethereum"
-                price="$1,560"
-                marketCap="$150,000,000"
-                change24h="+5.00%"
-              />
-            </tbody>
+            <tbody>{priceRows}</tbody>
           </table>
         </div>
       </div>
     );
   }
 }
+
+PriceTable.propTypes = {
+  tickers: PropTypes.array
+};
 
 export default PriceTable;

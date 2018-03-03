@@ -1,8 +1,21 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import './PriceRow.css';
+import React, { Component } from "react";
+import numeral from "numeral";
+import PropTypes from "prop-types";
+import "./PriceRow.css";
 
 class PriceRow extends Component {
+  getImageSource() {
+    try {
+      return require(`../../assets/coins/${this.props.symbol}.png`);
+    } catch (error) {
+      return require(`../../assets/default.png`);
+    }
+  }
+
+  getDeltaIndicator() {
+    return this.props.change24h.charAt(0) === "-" ? "negative" : "positive";
+  }
+
   render() {
     return (
       <tr className="PriceRow">
@@ -11,14 +24,17 @@ class PriceRow extends Component {
           <span className="PriceRow__Logo">
             <img
               height="25"
-              src={require(`../../assets/coins/${this.props.symbol}.png`)}
+              alt={`${this.props.name} Logo`}
+              src={this.getImageSource()}
             />
           </span>
           <span className="PriceRow__Coin">{this.props.name}</span>
         </td>
-        <td>{this.props.price}</td>
-        <td>{this.props.marketCap}</td>
-        <td>{this.props.change24h}</td>
+        <td>{numeral(this.props.price).format("$0,0.00")}</td>
+        <td>{numeral(this.props.marketCap).format("$0,0")}</td>
+        <td className={`delta-indicator delta-${this.getDeltaIndicator()}`}>
+          {numeral(this.props.change24h).format("0,0.00") + "%"}
+        </td>
       </tr>
     );
   }
@@ -26,8 +42,8 @@ class PriceRow extends Component {
 
 PriceRow.propTypes = {
   rank: PropTypes.string,
-  symbol: PropTypes.string,
   name: PropTypes.string,
+  symbol: PropTypes.string,
   price: PropTypes.string,
   marketCap: PropTypes.string,
   change24h: PropTypes.string
