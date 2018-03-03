@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import Chart from '../Chart/Chart';
-import ChartNav from '../ChartNav/ChartNav';
-import ChartStat from '../ChartStat/ChartStat';
-import './ChartContainer.css';
+import React, { Component } from "react";
+import Chart from "../Chart/Chart";
+import ChartNav from "../ChartNav/ChartNav";
+import ChartStat from "../ChartStat/ChartStat";
+import "./ChartContainer.css";
 
 class ChartContainer extends Component {
   render() {
@@ -11,7 +11,7 @@ class ChartContainer extends Component {
         <div className="card">
           <div className="card-body">
             <div className="row py-2 text-center">
-              <div className="col-md-4">
+              <div className="col-sm-4">
                 <ChartStat
                   number={1000}
                   sign="+"
@@ -19,7 +19,7 @@ class ChartContainer extends Component {
                   description="Market Value"
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-sm-4">
                 <ChartStat
                   number={758}
                   delta={1.3}
@@ -27,7 +27,7 @@ class ChartContainer extends Component {
                   description="All Time Return"
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-sm-4">
                 <ChartStat
                   number={758}
                   sign="-"
