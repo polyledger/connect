@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import '../Layout/Layout.css';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import "../Layout/Layout.css";
 
 class Layout extends Component {
   render() {
@@ -10,5 +11,9 @@ class Layout extends Component {
     );
   }
 }
+
+Layout.propTypes = {
+  children: PropTypes.object
+};
 
 export default Layout;
