@@ -14,7 +14,8 @@ class Navbar extends Component {
               activeClassName="active"
               to="/portfolio"
             >
-              <i className="icon icon-pie-chart" /> Portfolio
+              <i className="icon icon-pie-chart" />{" "}
+              <span className="d-none d-sm-inline">Portfolio</span>
             </NavLink>
           </li>
           <li className="nav-item">
@@ -23,7 +24,8 @@ class Navbar extends Component {
               activeClassName="active"
               to="/portfolio/analytics"
             >
-              <i className="icon icon-gauge" /> Analytics
+              <i className="icon icon-gauge" />{" "}
+              <span className="d-none d-sm-inline">Analytics</span>
             </NavLink>
           </li>
           <li className="nav-item">
@@ -32,7 +34,8 @@ class Navbar extends Component {
               activeClassName="active"
               to="/portfolio/accounts"
             >
-              <i className="icon icon-wallet" /> Accounts
+              <i className="icon icon-wallet" />{" "}
+              <span className="d-none d-sm-inline">Accounts</span>
             </NavLink>
           </li>
           <li className="nav-item">
@@ -41,7 +44,8 @@ class Navbar extends Component {
               activeClassName="active"
               to="/portfolio/markets"
             >
-              <i className="icon icon-line-graph" /> Markets
+              <i className="icon icon-line-graph" />{" "}
+              <span className="d-none d-sm-inline">Markets</span>
             </NavLink>
           </li>
           <li className="nav-item">
@@ -50,7 +54,8 @@ class Navbar extends Component {
               activeClassName="active"
               to="/portfolio/settings"
             >
-              <i className="icon icon-cog" /> Settings
+              <i className="icon icon-cog" />{" "}
+              <span className="d-none d-sm-inline">Settings</span>
             </NavLink>
           </li>
         </ul>
