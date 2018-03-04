@@ -5,7 +5,7 @@ class SecuritySettings extends Component {
   render() {
     return (
       <div className="SecuritySettings">
-        <form className="pt-4">
+        <form>
           <h5>Two-Factor Authentication</h5>
           <div className="form-group row">
             <div className="col-sm-12">
