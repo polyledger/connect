@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import RiskAssessment from "../RiskAssessment/RiskAssessment";
 import Login from "../Login/Login";
 import Signup from "../Signup/Signup";
+import NoMatch from "../NoMatch/NoMatch";
 
 class EmptyLayout extends Component {
   render() {
@@ -13,6 +14,7 @@ class EmptyLayout extends Component {
             <Route path="/risk-assessment" component={RiskAssessment} />
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
+            <Route component={NoMatch} />
           </Switch>
         </div>
       </div>
