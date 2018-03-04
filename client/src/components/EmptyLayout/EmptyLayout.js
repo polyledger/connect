@@ -14,7 +14,7 @@ class EmptyLayout extends Component {
             <Route path="/risk-assessment" component={RiskAssessment} />
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
-            <Route component={NoMatch} />
+            <Route path="*" component={NoMatch} />
           </Switch>
         </div>
       </div>

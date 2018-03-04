@@ -10,14 +10,14 @@ class RootContainer extends Component {
   render() {
     return (
       <Router>
-        <Switch>
-          <div className="RootContainer">
-            <Header />
+        <div className="RootContainer">
+          <Header />
+          <Switch>
             <Route path="/portfolio" component={AppLayout} />
             <Route component={EmptyLayout} />
-            <Footer />
-          </div>
-        </Switch>
+          </Switch>
+          <Footer />
+        </div>
       </Router>
     );
   }
