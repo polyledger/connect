@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Header from "../Header/Header";
 import AppLayout from "../AppLayout/AppLayout";
-import OnboardingLayout from "../OnboardingLayout/OnboardingLayout";
+import EmptyLayout from "../EmptyLayout/EmptyLayout";
 import Footer from "../Footer/Footer";
 import "./RootContainer.css";
 
@@ -14,7 +14,7 @@ class RootContainer extends Component {
           <div className="RootContainer">
             <Header />
             <Route path="/portfolio" component={AppLayout} />
-            <Route path="/onboarding" component={OnboardingLayout} />
+            <Route component={EmptyLayout} />
             <Footer />
           </div>
         </Switch>

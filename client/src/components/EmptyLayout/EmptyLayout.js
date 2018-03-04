@@ -1,17 +1,16 @@
 import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
 import RiskAssessment from "../RiskAssessment/RiskAssessment";
+import Signup from "../Signup/Signup";
 
-class OnboardingLayout extends Component {
+class EmptyLayout extends Component {
   render() {
     return (
-      <div className="OnboardingLayout">
+      <div className="EmptyLayout">
         <div className="container p-3">
           <Switch>
-            <Route
-              path="/onboarding/risk-assessment"
-              component={RiskAssessment}
-            />
+            <Route path="/risk-assessment" component={RiskAssessment} />
+            <Route path="/signup" component={Signup} />
           </Switch>
         </div>
       </div>
@@ -19,4 +18,4 @@ class OnboardingLayout extends Component {
   }
 }
 
-export default OnboardingLayout;
+export default EmptyLayout;

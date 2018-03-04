@@ -1,0 +1,8 @@
+.Signup {
+  height: 75vh;
+}
+
+.custom-control-label::before {
+  background-color: #eee;
+  border: 1px solid #ced4da;
+}
