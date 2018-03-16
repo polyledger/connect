@@ -4,9 +4,9 @@ import * as types from "../constants/actionTypes";
  * Action creators
  */
 
-export function loadTickers(coins) {
+export function fetchMarkets(coins) {
   return {
-    type: types.LOAD_TICKERS,
+    type: types.FETCH_MARKETS,
     coins
   };
 }
