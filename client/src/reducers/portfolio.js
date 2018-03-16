@@ -2,11 +2,11 @@ import * as types from "../constants/actionTypes";
 
 const initialState = {};
 
-export default function analytics(state = initialState, action) {
+export default function portfolio(state = initialState, action) {
   switch (action.type) {
-    case types.FETCH_PORTFOLIO_BENCHMARKS:
+    case types.FETCH_PORTFOLIO:
       return {};
-    case types.FETCH_PORTFOLIO_METRICS:
+    case types.FETCH_PORTFOLIO_CHART:
       return {};
 
     default:
