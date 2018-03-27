@@ -150,6 +150,7 @@ class Portfolio(models.Model):
     """
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(default='My Portfolio', max_length=100)
+    purchased = models.BooleanField(default=False)
     risk_score = models.IntegerField(
         blank=True,
         null=True,

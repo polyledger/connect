@@ -24,7 +24,8 @@
           </div>
           <div class="dashhead-toolbar">
             <div class="dashhead-toolbar-item">
-              <router-link :to="`/portfolios/${portfolio.id}`" tag="a" role="button" class="btn btn-dark"><i class="icon icon-pencil"></i> Edit</router-link>
+              <a role="button" class="btn btn-success" @click="checkout" v-if="!portfolio.purchased"><i class="icon icon-eye"></i> Reveal</a>
+              <router-link :to="`/portfolios/${portfolio.id}`" tag="a" role="button" class="btn btn-primary"><i class="icon icon-pencil"></i> Edit</router-link>
             </div>
             <span class="dashhead-toolbar-divider hidden-xs"></span>
             <div class="dashhead-toolbar-item">
@@ -54,11 +55,11 @@
                   <img :src="imagePath(position.coin.symbol)" width="25">
                 </td>
               </tr>
-              <tr>
+              <tr v-if="portfolio.purchased">
                 <th scope="row">Percent</th>
                 <td class="text-center" v-for="position in portfolio.positions">{{position.amount | percent}}</td>
               </tr>
-              <tr>
+              <tr v-if="portfolio.purchased">
                 <th scope="row">Amount</th>
                 <td class="text-center" v-for="position in portfolio.positions">{{((position.amount/100)*portfolio.usd) | currency}}</td>
               </tr>
@@ -112,6 +113,29 @@ export default {
       }).catch((error) => {
         console.error(error)
         this.errors.push('Unable to get your portfolio. Please try again later.')
+      })
+    },
+    checkout () {
+      let that = this
+      this.$checkout.open({
+        name: 'Polyledger',
+        currency: 'USD',
+        amount: 1999,
+        token (token) {
+          that.$http({
+            url: '/api/users/current/charge/',
+            method: 'post',
+            data: token,
+            headers: {
+              'Authorization': `Token ${localStorage.token}`
+            }
+          }).then((response) => {
+            that.portfolio = response.data.portfolio
+          }).catch((error) => {
+            console.error(error)
+            that.errors.push('Unable to get your portfolio. Please contact support at support@polyledger.com.')
+          })
+        }
       })
     }
   },

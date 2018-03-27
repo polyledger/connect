@@ -40,7 +40,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Portfolio
         fields = ('id', 'created', 'title', 'risk_score', 'usd', 'coins',
-                  'positions')
+                  'positions', 'purchased')
         read_only_fields = ('id', 'created', 'positions',)
 
     def get_queryset(self):
@@ -67,6 +67,15 @@ class UserSerializer(serializers.ModelSerializer):
             'id': {'read_only': True},
             'password': {'write_only': True}
         }
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+
+        if not ret['portfolio']['purchased']:
+            for position in ret['portfolio']['positions']:
+                position['amount'] = '0'
+
+        return ret
 
     def get_queryset(self):
         return self.request.user

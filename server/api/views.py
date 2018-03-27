@@ -1,3 +1,5 @@
+import os
+import stripe
 from datetime import date, timedelta
 from api.models import User, Coin, Portfolio, Token
 from django_celery_results.models import TaskResult
@@ -14,6 +16,8 @@ from api.serializers import TaskResultSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
 from api.tasks import allocate_for_user
+
+stripe.api_key = os.environ['STRIPE_SECRET_KEY']
 
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
@@ -85,6 +89,32 @@ class UserViewSet(viewsets.ModelViewSet):
             auth_token = Token.objects.get(user=user)
         redirect_url = settings.CLIENT_URL + '?token=' + str(auth_token)
         return HttpResponseRedirect(redirect_url)
+
+    @detail_route(methods=['POST'])
+    def charge(self, request, pk=None):
+        source = request.data
+
+        # Amount in cents
+        amount = 1999
+
+        customer = stripe.Customer.create(
+            email=request.user.email,
+            source=source['id']
+        )
+
+        stripe.Charge.create(
+            customer=customer.id,
+            amount=amount,
+            currency='usd',
+            description='Polyledger'
+        )
+
+        user = self.get_object()
+        user.portfolio.purchased = True
+        user.portfolio.save()
+        serializer = UserSerializer(user)
+
+        return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
