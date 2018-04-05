@@ -1,3 +1,5 @@
+/* global require */
+
 import React, { Component } from "react";
 import numeral from "numeral";
 import PropTypes from "prop-types";
@@ -13,7 +15,11 @@ class PriceRow extends Component {
   }
 
   getDeltaIndicator() {
-    return this.props.change24h.charAt(0) === "-" ? "negative" : "positive";
+    try {
+      return this.props.change24h.charAt(0) === "-" ? "negative" : "positive";
+    } catch (error) {
+      return "";
+    }
   }
 
   render() {
