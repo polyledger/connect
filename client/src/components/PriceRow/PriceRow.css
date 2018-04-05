@@ -17,3 +17,25 @@
 .PriceRow .delta-indicator {
   display: table-cell;
 }
+
+/* Column widths */
+
+.PriceRow__Rank--column {
+  width: 10%;
+}
+
+.PriceRow__Coin--column {
+  width: 25%;
+}
+
+.PriceRow__Price--column {
+  width: 27.5%;
+}
+
+.PriceRow__Market_Cap--column {
+  width: 27.5%;
+}
+
+.PriceRow__Delta--column {
+  width: 10%;
+}

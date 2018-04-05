@@ -25,6 +25,7 @@ class PriceTable extends Component {
           <table className="table table-hover mb-0">
             <thead>
               <tr>
+                <th scope="col">#</th>
                 <th scope="col">Coin</th>
                 <th scope="col">Price</th>
                 <th scope="col">Market Cap</th>

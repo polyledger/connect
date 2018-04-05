@@ -25,20 +25,30 @@ class PriceRow extends Component {
   render() {
     return (
       <tr className="PriceRow">
-        <td>
+        <td className="PriceRow__Rank--column">
           <span className="badge PriceRow__Rank">{this.props.rank}</span>
-          <span className="PriceRow__Logo">
-            <img
-              height="25"
-              alt={`${this.props.name} Logo`}
-              src={this.getImageSource()}
-            />
-          </span>
-          <span className="PriceRow__Coin">{this.props.name}</span>
         </td>
-        <td>{numeral(this.props.price).format("$0,0.00")}</td>
-        <td>{numeral(this.props.marketCap).format("$0,0")}</td>
-        <td className={`delta-indicator delta-${this.getDeltaIndicator()}`}>
+        <td className="PriceRow__Coin--column">
+          <span className="PriceRow__Coin--wrapper">
+            <span className="PriceRow__Logo">
+              <img
+                height="25"
+                alt={`${this.props.name} Logo`}
+                src={this.getImageSource()}
+              />
+            </span>
+            <span className="PriceRow__Coin">{this.props.name}</span>
+          </span>
+        </td>
+        <td className="PriceRow__Price--column">
+          {numeral(this.props.price).format("$0,0.00")}
+        </td>
+        <td className="PriceRow__Market_Cap--column">
+          {numeral(this.props.marketCap).format("$0,0")}
+        </td>
+        <td
+          className={`Pricerow__Delta--column delta-indicator delta-${this.getDeltaIndicator()}`}
+        >
           {numeral(this.props.change24h).format("0,0.00") + "%"}
         </td>
       </tr>
