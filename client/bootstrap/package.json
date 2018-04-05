@@ -1,17 +1,17 @@
 {
   "name": "@polyledger/bootstrap",
   "version": "1.0.0",
-  "description":
-    "A custom Bootstrap 4 theme for the Polyledger client application",
+  "description": "A custom Bootstrap 4 theme for the Polyledger web client",
   "main": "index.js",
   "author": "Matt Rosendin <matthew@polyledger.com>",
   "license": "UNLICENSED",
   "scripts": {
-    "build":
-      "node-sass --include-path ./node_modules ./scss/index.scss -o ./css"
+    "build": "node-sass --include-path ./node_modules ./scss/index.scss -o ./css"
   },
   "dependencies": {
     "bootstrap": "4.0.0",
-    "node-sass": "^4.7.2"
+    "jquery": "^3.3.1",
+    "node-sass": "^4.7.2",
+    "popper.js": "^1.14.3"
   }
 }
