@@ -20,6 +20,10 @@
 
 /* Column widths */
 
+table th {
+  width: auto !important;
+}
+
 .PriceRow__Rank--column {
   width: 10%;
 }
