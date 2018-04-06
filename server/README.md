@@ -124,6 +124,12 @@ Type "help", "copyright", "credits" or "license" for more information.
 (InteractiveConsole)
 >>> from api.tasks import fit_distributions
 >>> fit_distributions.apply()
+<EagerResult: 6b55cdc1-8c5c-4575-9265-98f91b10d5dc>
+>>> from api.tasks import allocate_for_user
+>>> pk = 1
+>>> symbols = ['BTC', 'ETH', 'LTC', 'BCH']
+>>> risk_score = 1
+>>> allocate_for_user(pk=pk, symbols=symbols, risk_score=risk_score)
 ```
 
 #### Process for Adding New Coins
