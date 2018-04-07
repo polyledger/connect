@@ -8,6 +8,20 @@
 
 ---
 
+## Prerequisites
+
+You must have [Docker](https://www.docker.com/community-edition) installed on your system. Then clone this repository:
+
+```
+❯ git clone https://github.com/polyledger/polyledger.git
+```
+
+You must also install client dependencies before running the application in Docker.
+
+```
+❯ cd polyledger/client && npm i && cd ..
+```
+
 ## Development
 
 Start the development services:
