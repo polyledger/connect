@@ -7,12 +7,9 @@ class APISettings extends Component {
       <div className="APISettings">
         <h5>API Keys</h5>
         <div className="alert alert-info" role="alert">
-          <i className="icon icon-info" /> You haven't created any API keys yet.
-          API keys allow you to perform automated actions with your own
-          software.{" "}
-          <a href="#" className="alert-link">
-            Learn More
-          </a>
+          <i className="icon icon-info" /> You haven&apos;t created any API keys
+          yet. API keys allow you to perform automated actions with your own
+          software. <a className="alert-link">Learn More</a>
         </div>
         <div className="form-group row">
           <div className="col-sm-12">
