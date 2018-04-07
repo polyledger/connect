@@ -25,7 +25,7 @@ class HeaderDropdown extends Component {
             <i className="icon icon-lifebuoy" /> Support
           </a>
           <div className="dropdown-divider" />
-          <a className="dropdown-item" href="#">
+          <a className="dropdown-item">
             <i className="icon icon-log-out" /> Log out
           </a>
         </div>

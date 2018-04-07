@@ -1,22 +1,21 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import rootReducer from "../../reducers";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
+import configureStore from "../../store/configureStore";
 import Header from "../Header/Header";
 import AppLayout from "../AppLayout/AppLayout";
 import EmptyLayout from "../EmptyLayout/EmptyLayout";
 import Footer from "../Footer/Footer";
-import "./RootContainer.css";
+import "./Root.css";
 
-let store = createStore(rootReducer);
+let store = configureStore();
 
-class RootContainer extends Component {
+class Root extends Component {
   render() {
     return (
       <Provider store={store}>
         <Router>
-          <div className="RootContainer">
+          <div className="Root">
             <Header />
             <Switch>
               <Route path="/portfolio" component={AppLayout} />
@@ -30,4 +29,4 @@ class RootContainer extends Component {
   }
 }
 
-export default RootContainer;
+export default Root;

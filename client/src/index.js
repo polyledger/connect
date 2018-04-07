@@ -1,9 +1,10 @@
+import "babel-polyfill";
 import "@polyledger/bootstrap";
 import "@polyledger/bootstrap/css/index.css";
 import React from "react";
 import ReactDOM from "react-dom";
-import RootContainer from "./components/RootContainer/RootContainer";
+import Root from "./components/Root/Root";
 import registerServiceWorker from "./registerServiceWorker";
 
-ReactDOM.render(<RootContainer />, document.getElementById("root"));
+ReactDOM.render(<Root />, document.getElementById("root"));
 registerServiceWorker();

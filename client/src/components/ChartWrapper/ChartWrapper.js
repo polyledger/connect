@@ -1,13 +1,20 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import Chart from "../Chart/Chart";
 import ChartNav from "../ChartNav/ChartNav";
 import ChartStat from "../ChartStat/ChartStat";
-import "./ChartContainer.css";
+import { fetchPortfolio, fetchChartData } from "../../actions/portfolioActions";
+import "./ChartWrapper.css";
 
-class ChartContainer extends Component {
+class ChartWrapper extends Component {
+  componentDidMount() {
+    this.props.dispatch(fetchPortfolio());
+    this.props.dispatch(fetchChartData());
+  }
+
   render() {
     return (
-      <div className="ChartContainer">
+      <div className="ChartWrapper">
         <div className="card">
           <div className="card-body">
             <div className="row py-2 text-center">
@@ -53,4 +60,8 @@ class ChartContainer extends Component {
   }
 }
 
-export default ChartContainer;
+ChartWrapper.propTypes = {
+  dispatch: PropTypes.func.isRequired
+};
+
+export default ChartWrapper;
