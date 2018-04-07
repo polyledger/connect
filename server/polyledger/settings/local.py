@@ -1,5 +1,5 @@
 import os
-from .base import *
+from .base import *  # noqa: F403
 
 CLIENT_URL = 'http://localhost:8080/activate/'
 
@@ -13,7 +13,7 @@ ALLOWED_HOSTS = ['*']
 STATIC_URL = '/static/'
 STATIC_ROOT = '../static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'static')  # noqa: F405
 ]
 
 # Database
@@ -22,6 +22,6 @@ STATICFILES_DIRS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),  # noqa: F405
     }
 }
