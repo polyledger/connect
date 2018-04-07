@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from api.models import User, Coin, Portfolio, Token
 from django.contrib.auth import get_user_model
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.conf import settings
