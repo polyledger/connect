@@ -37,9 +37,8 @@ def allocate_for_user(self, pk, symbols, risk_score):
     self.update_state(state='PROGRESS')
 
     user = get_user_model().objects.get(pk=pk)
-    task_id = self.request.id
     start = date(year=2017, month=1, day=1)
-    allocator = CVaR(symbols=symbols, start=start, task_id=task_id)
+    allocator = CVaR(symbols=symbols, start=start)
     allocations = allocator.allocate()
     allocation = allocations.loc[risk_score-1]
 

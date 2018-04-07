@@ -2,16 +2,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from api.models import User, Portfolio, Coin, Position, WhitelistedEmail
-from django_celery_results.models import TaskResult
 from api.tasks import send_confirmation_email
 from rest_framework import serializers
-
-
-class TaskResultSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = TaskResult
-        fields = ('task_id', 'status', 'meta')
 
 
 class CoinSerializer(serializers.ModelSerializer):

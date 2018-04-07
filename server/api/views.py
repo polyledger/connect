@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 from api.models import User, Coin, Portfolio, Token
-from django_celery_results.models import TaskResult
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect, Http404
 from django.utils.encoding import force_text
@@ -10,7 +9,6 @@ from rest_framework import permissions, authentication, viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
-from api.serializers import TaskResultSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
 from api.tasks import allocate_for_user
@@ -26,25 +24,6 @@ class IsCreationOrIsAuthenticated(permissions.BasePermission):
                 return False
         else:
             return True
-
-
-class TaskResultViewSet(viewsets.ModelViewSet):
-    model = TaskResult
-    authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication,
-    )
-    serializer_class = TaskResultSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    queryset = TaskResult.objects.all()
-
-    def get_object(self):
-        pk = self.kwargs.get('pk')
-
-        try:
-            return TaskResult.objects.get(task_id=pk)
-        except TaskResult.DoesNotExist:
-            raise Http404
 
 
 class UserViewSet(viewsets.ModelViewSet):

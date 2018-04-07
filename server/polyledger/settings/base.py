@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'django_celery_beat',
-    'django_celery_results',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
@@ -159,7 +158,7 @@ EMAIL_PORT = 587
 # Celery application definition
 # http://docs.celeryproject.org/en/v4.0.2/userguide/configuration.html
 CELERY_BROKER_URL = 'redis://redis:6379'
-CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
