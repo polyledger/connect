@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import portfolio from "./portfolio";
 import accounts from "./accounts";
 import analytics from "./analytics";
-import auth from "./auth";
+import user from "./user";
 import markets from "./markets";
 import settings from "./settings";
 
@@ -10,7 +10,7 @@ const rootReducer = combineReducers({
   portfolio,
   accounts,
   analytics,
-  auth,
+  user,
   markets,
   settings
 });

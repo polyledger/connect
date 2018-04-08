@@ -1,12 +1,14 @@
-import React, { Component } from 'react';
-import Highcharts from 'highcharts';
-import getChartOptions from '../../utils/ChartUtils';
-import './Chart.css';
+import React, { Component } from "react";
+import Highcharts from "highcharts";
+import getChartOptions from "../../utils/ChartUtils";
+import "./Chart.css";
 
 class Chart extends Component {
-  componentDidMount() {
-    let options = getChartOptions();
-    Highcharts.chart('Chart__Highchart', options);
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.series) {
+      let options = getChartOptions(nextProps.series);
+      Highcharts.chart("Chart__Highchart", options);
+    }
   }
 
   render() {

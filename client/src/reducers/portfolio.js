@@ -2,10 +2,15 @@ import * as types from "../constants/actionTypes";
 
 const initialState = {
   isFetching: false,
-  data: []
+  chart: {
+    isFetching: true,
+    period: "7D"
+  }
 };
 
 export default function portfolio(state = initialState, action) {
+  let chart;
+
   switch (action.type) {
     case types.REQUEST_PORTFOLIO:
       return Object.assign({}, state, {
@@ -14,15 +19,22 @@ export default function portfolio(state = initialState, action) {
     case types.RECEIVE_PORTFOLIO:
       return Object.assign({}, state, {
         isFetching: false,
-        portfolio: action.portfolio
+        ...action.portfolio
       });
     case types.REQUEST_CHART_DATA:
       return Object.assign({}, state, {
-        isFetching: true
+        chart: {
+          isFetching: true,
+          period: action.period
+        }
       });
     case types.RECEIVE_CHART_DATA:
+      chart = Object.assign({}, state.chart, {
+        isFetching: false,
+        ...action.chartData
+      });
       return Object.assign({}, state, {
-        isFetching: false
+        chart: chart
       });
     default:
       return state;

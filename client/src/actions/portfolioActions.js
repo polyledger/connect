@@ -17,10 +17,10 @@ export function requestPortfolio() {
 /**
  * Receive the user's portfolio.
  */
-export function receivePortfolio(json) {
+export function receivePortfolio(portfolio) {
   return {
     type: types.RECEIVE_PORTFOLIO,
-    portfolio: json.data.portfolio
+    portfolio
   };
 }
 
@@ -30,7 +30,7 @@ export function receivePortfolio(json) {
 export function fetchPortfolio() {
   return dispatch => {
     dispatch(requestPortfolio());
-    return fetch(`/api/portfolios`)
+    return fetch(`/api/portfolios/current`)
       .then(
         response => {
           return response.json();
@@ -46,29 +46,31 @@ export function fetchPortfolio() {
 /**
  * Request chart data.
  */
-export function requestChartData() {
+export function requestChartData(period) {
   return {
-    type: types.REQUEST_CHART_DATA
+    type: types.REQUEST_CHART_DATA,
+    period
   };
 }
 
 /**
  * Receive chart data.
  */
-export function receiveChartData(json) {
+export function receiveChartData(chartData) {
   return {
-    type: types.REQUEST_CHART_DATA,
-    data: json.data
+    type: types.RECEIVE_CHART_DATA,
+    chartData
   };
 }
 
 /**
  * Fetch user portfolio's chart data.
  */
-export function fetchChartData() {
-  return function(dispatch) {
-    dispatch(requestChartData());
-    return fetch(`/api/portfolios/1/chart`)
+export function fetchChartData(period) {
+  return (dispatch, getState) => {
+    dispatch(requestChartData(period));
+    const { id } = getState().user;
+    return fetch(`/api/portfolios/${id}/chart?period=${period}`)
       .then(
         response => {
           return response.json();
@@ -77,6 +79,8 @@ export function fetchChartData() {
           return error;
         }
       )
-      .then(json => dispatch(receiveChartData(json)));
+      .then(json => {
+        dispatch(receiveChartData(json));
+      });
   };
 }

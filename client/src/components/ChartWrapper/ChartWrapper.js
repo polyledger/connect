@@ -3,16 +3,21 @@ import PropTypes from "prop-types";
 import Chart from "../Chart/Chart";
 import ChartNav from "../ChartNav/ChartNav";
 import ChartStat from "../ChartStat/ChartStat";
-import { fetchPortfolio, fetchChartData } from "../../actions/portfolioActions";
 import "./ChartWrapper.css";
 
 class ChartWrapper extends Component {
   componentDidMount() {
-    this.props.dispatch(fetchPortfolio());
-    this.props.dispatch(fetchChartData());
+    this.props.fetchPortfolio();
+    this.props.fetchChartData("7D");
+  }
+
+  handlePeriodChange(newPeriod) {
+    this.props.fetchChartData(newPeriod);
   }
 
   render() {
+    let chart = this.props.portfolio.chart;
+
     return (
       <div className="ChartWrapper">
         <div className="card">
@@ -45,12 +50,12 @@ class ChartWrapper extends Component {
             </div>
             <div className="row py-2">
               <div className="col-md-12">
-                <ChartNav />
+                <ChartNav onClick={this.handlePeriodChange.bind(this)} />
               </div>
             </div>
             <div className="row py-2">
               <div className="col-md-12">
-                <Chart />
+                <Chart series={chart.series} />
               </div>
             </div>
           </div>
@@ -61,7 +66,8 @@ class ChartWrapper extends Component {
 }
 
 ChartWrapper.propTypes = {
-  dispatch: PropTypes.func.isRequired
+  fetchPortfolio: PropTypes.func.isRequired,
+  fetchChartData: PropTypes.func.isRequired
 };
 
 export default ChartWrapper;

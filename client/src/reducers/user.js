@@ -6,7 +6,7 @@ const initialState = {
   isLoggedIn: false
 };
 
-export default function auth(state = initialState, action) {
+export default function user(state = initialState, action) {
   switch (action.type) {
     case types.LOGIN:
       return {};
