@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
 import RiskAssessment from "../RiskAssessment/RiskAssessment";
 import Login from "../Login/Login";
-import Signup from "../Signup/Signup";
+import SignupContainer from "../../containers/SignupContainer";
 import NoMatch from "../NoMatch/NoMatch";
 import AlertsOverlay from "../AlertsOverlay/AlertsOverlay";
 
@@ -19,10 +19,7 @@ class EmptyLayout extends Component {
                 path="/login"
                 render={() => <Login addAlert={addAlert} />}
               />
-              <Route
-                path="/signup"
-                render={() => <Signup addAlert={addAlert} />}
-              />
+              <Route path="/signup" component={SignupContainer} />
               <Route path="*" component={NoMatch} />
             </Switch>
           </AlertsOverlay>

@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import { addAlert, removeAlert } from "../actions/alertActions";
 import EmptyLayout from "../components/EmptyLayout/EmptyLayout";
 
-var mapAlertsToProps = state => {
+var mapStateToProps = state => {
   return {
     alerts: state.alerts
   };
@@ -13,7 +13,7 @@ const mapDispatchToProps = dispatch => ({
   removeAlert: id => dispatch(removeAlert(id))
 });
 
-const EmptyContainer = connect(mapAlertsToProps, mapDispatchToProps)(
+const EmptyContainer = connect(mapStateToProps, mapDispatchToProps)(
   EmptyLayout
 );
 

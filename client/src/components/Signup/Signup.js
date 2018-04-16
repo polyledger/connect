@@ -40,7 +40,6 @@ class Signup extends Component {
 
   onChange(value) {
     if (typeof value === "object") {
-      if (!value) return; // The reCAPTCHA returns null on expiration
       let event = value;
       let target = event.target;
       let name = target.name;
@@ -56,6 +55,10 @@ class Signup extends Component {
     }
   }
 
+  onExpired(value) {
+    this.setState({ recaptchaValid: false, recaptcha: "" });
+  }
+
   onSubmit(event) {
     event.preventDefault();
     this.validateForm();
@@ -64,6 +67,16 @@ class Signup extends Component {
       this.props.addAlert("ReCAPTCHA is invalid.", "danger");
     }
     this.setState({ validated: true });
+
+    if (this.state.formValid) {
+      let credentials = {
+        first_name: this.state.first_name,
+        last_name: this.state.last_name,
+        email: this.state.email,
+        password: this.state.password
+      };
+      this.props.login(credentials);
+    }
   }
 
   validateField(fieldName, value) {
@@ -281,6 +294,8 @@ class Signup extends Component {
                     <ReCAPTCHA
                       sitekey="6Ld61DoUAAAAAIaZHZoN_bHaYdHi3nB1Y3sJel9r"
                       onChange={event => this.onChange(event)}
+                      theme="dark"
+                      onExpired={event => this.onExpired(event)}
                     />
                   </div>
                   <div
