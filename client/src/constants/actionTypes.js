@@ -1,8 +1,6 @@
-// Authentication
-export const LOGIN = "LOGIN";
-export const SIGNUP = "SIGNUP";
-export const ACTIVATE = "ACTIVATE";
-export const LOGOUT = "LOGOUT";
+// Alerts
+export const ADD_ALERT = "ADD_ALERT";
+export const REMOVE_ALERT = "REMOVE_ALERT";
 
 // Portfolio
 export const REQUEST_PORTFOLIO = "REQUEST_PORTFOLIO";
@@ -34,3 +32,9 @@ export const ENABLE_TWO_FACTOR_AUTHENTICATION =
 export const CREATE_API_KEY = "CREATE_API_KEY";
 export const DELETE_API_KEY = "DELETE_API_KEY";
 export const CLOSE_ACCOUNT = "CLOSE_ACCOUNT";
+
+// User
+export const LOGIN = "LOGIN";
+export const SIGNUP = "SIGNUP";
+export const ACTIVATE = "ACTIVATE";
+export const LOGOUT = "LOGOUT";

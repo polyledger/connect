@@ -11,7 +11,7 @@ class Settings extends Component {
       <div className="Settings">
         <div className="card">
           <div className="card-body">
-            <ul className="nav nav-pills nav-fill" role="tablist">
+            {/* <ul className="nav nav-pills nav-fill" role="tablist">
               <li className="nav-item">
                 <a
                   className="nav-link active"
@@ -60,7 +60,7 @@ class Settings extends Component {
                   API
                 </a>
               </li>
-            </ul>
+            </ul> */}
 
             <div className="tab-content pt-5">
               <div

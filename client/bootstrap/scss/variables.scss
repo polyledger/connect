@@ -8,33 +8,33 @@ $gray-subtle: #eee;
 
 $theme-colors: (
   primary: #00b894,
-  success: #1bc98e,
-  info: #9f86ff,
-  warning: #e4d836,
-  danger: #e64759,
+  success: #20bf6b,
+  info: #0984e3,
+  warning: #ffb142,
+  danger: #d63031,
   dark: darken(#252830, 5%)
 );
 
-@import "./node_modules/bootstrap/scss/_functions.scss";
-@import "./node_modules/bootstrap/scss/_variables.scss";
+@import './node_modules/bootstrap/scss/_functions.scss';
+@import './node_modules/bootstrap/scss/_variables.scss';
 
 /*
  * Local variables
  */
 
 // Icons
-$icon-font-path: "../fonts/";
-$icon-font-name: "toolkit-entypo";
+$icon-font-path: '../fonts/';
+$icon-font-name: 'toolkit-entypo';
 
 /*
  * States
  * Overrides Bootstrap defaults.
  */
 
-$state-success-text: theme-color("success");
-$state-info-text: theme-color("info");
-$state-warning-text: theme-color("warning");
-$state-danger-text: theme-color("danger");
+$state-success-text: theme-color('success');
+$state-info-text: theme-color('info');
+$state-warning-text: theme-color('warning');
+$state-danger-text: theme-color('danger');
 
 /*
  * Spacing
@@ -51,8 +51,8 @@ $grid-gutter-width: $spacer;
  */
 
 // Fonts
-$font-family-serif: "Lora", "Times New Roman", Times, serif !default;
-$font-family-sans-serif: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-serif: 'Lora', 'Times New Roman', Times, serif !default;
+$font-family-sans-serif: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $font-family-base: $font-family-sans-serif;
 
 // Body
@@ -93,7 +93,7 @@ $card-bg: rgba(255, 255, 255, 0.07);
  */
 
 $input-border: #d5d5d5;
-$input-border-focus: theme-color("primary");
+$input-border-focus: theme-color('primary');
 $input-weight: 300;
 
 /*
@@ -125,20 +125,20 @@ $badge-color: #fff;
  * Overrides Bootstrap defaults.
  */
 
-$alert-success-bg: theme-color("success");
-$alert-success-text: lighten(theme-color("success"), 50%);
+$alert-success-bg: theme-color('success');
+$alert-success-text: lighten(theme-color('success'), 50%);
 $alert-success-border: $alert-success-bg;
 
-$alert-info-bg: theme-color("info");
-$alert-info-text: lighten(theme-color("info"), 50%);
+$alert-info-bg: theme-color('info');
+$alert-info-text: lighten(theme-color('info'), 50%);
 $alert-info-border: $alert-info-bg;
 
-$alert-warning-bg: theme-color("warning");
-$alert-warning-text: lighten(theme-color("warning"), 50%);
+$alert-warning-bg: theme-color('warning');
+$alert-warning-text: lighten(theme-color('warning'), 50%);
 $alert-warning-border: $alert-warning-bg;
 
-$alert-danger-bg: theme-color("danger");
-$alert-danger-text: lighten(theme-color("danger"), 45%);
+$alert-danger-bg: theme-color('danger');
+$alert-danger-text: lighten(theme-color('danger'), 45%);
 $alert-danger-border: $alert-danger-bg;
 
 /*
@@ -174,7 +174,7 @@ $nav-bordered-color-active: #777;
 $nav-bordered-font-weight: 300;
 $nav-bordered-font-weight-active: 500;
 
-$nav-link-hover-bg: lighten(theme-color("primary"), 45%);
+$nav-link-hover-bg: lighten(theme-color('primary'), 45%);
 
 $nav-pills-active-weight: 500;
 $nav-header-color: lighten($gray-700, 35%);
@@ -206,7 +206,7 @@ $iconav-border: #fff;
 $iconav-width: 70px;
 $iconav-brand-color: $gray-subtle;
 $iconav-brand-hover-color: inherit;
-$iconav-brand-bg: theme-color("primary");
+$iconav-brand-bg: theme-color('primary');
 $iconav-brand-border: $iconav-border;
 $iconav-link-color: inherit;
 $iconav-link-border: $iconav-border;
@@ -250,4 +250,4 @@ $container-max-widths: (
   lg: 950px,
   xl: 1100px
 );
-@include _assert-ascending($container-max-widths, "$container-max-widths");
+@include _assert-ascending($container-max-widths, '$container-max-widths');

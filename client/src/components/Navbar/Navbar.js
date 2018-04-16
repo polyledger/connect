@@ -19,7 +19,7 @@ class Navbar extends Component {
               <small className="iconav-nav-label d-sm-none">Portfolio</small>
             </NavLink>
           </li>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <NavLink
               className="nav-link"
               activeClassName="active"
@@ -29,7 +29,7 @@ class Navbar extends Component {
               <span className="d-none d-sm-inline">Analytics</span>
               <small className="iconav-nav-label d-sm-none">Analytics</small>
             </NavLink>
-          </li>
+          </li> */}
           <li className="nav-item">
             <NavLink
               className="nav-link"
