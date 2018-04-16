@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import configureStore from "../../store/configureStore";
 import Header from "../Header/Header";
 import AppLayout from "../AppLayout/AppLayout";
-import EmptyContainer from "../../containers/EmptyContainer";
+import EmptyLayout from "../EmptyLayout/EmptyLayout";
 import Footer from "../Footer/Footer";
 import "./Root.css";
 
@@ -19,7 +19,7 @@ class Root extends Component {
             <Header />
             <Switch>
               <Route path="/portfolio" component={AppLayout} />
-              <Route component={EmptyContainer} />
+              <Route component={EmptyLayout} />
             </Switch>
             <Footer />
           </div>

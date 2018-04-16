@@ -1,9 +1,9 @@
 import { connect } from "react-redux";
 import { addAlert, removeAlert } from "../actions/alertActions";
-import Alert from "../components/Alert/Alert";
+import AlertOverlay from "../components/AlertOverlay/AlertOverlay";
 
 const mapStateToProps = state => {
-  return state.alerts;
+  return state;
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -11,6 +11,8 @@ const mapDispatchToProps = dispatch => ({
   removeAlert: index => dispatch(removeAlert(index))
 });
 
-const AlertContainer = connect(mapStateToProps, mapDispatchToProps)(Alert);
+const AlertContainer = connect(mapStateToProps, mapDispatchToProps)(
+  AlertOverlay
+);
 
 export default AlertContainer;

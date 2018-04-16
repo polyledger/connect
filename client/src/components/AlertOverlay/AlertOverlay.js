@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Alert from "../Alert/Alert";
 
-class AlertsOverlay extends Component {
+class AlertOverlay extends Component {
   render() {
     let { alerts, children } = this.props;
     let renderAlerts = () => {
@@ -13,14 +13,14 @@ class AlertsOverlay extends Component {
             key={alert.id}
             id={alert.id}
             icon={alert.icon}
-            onRemove={this.props.onRemove}
+            onRemove={this.props.removeAlert}
           />
         );
       });
     };
 
     return (
-      <div className="AlertsOverlay">
+      <div className="AlertOverlay">
         {renderAlerts()}
         {children}
       </div>
@@ -28,4 +28,4 @@ class AlertsOverlay extends Component {
   }
 }
 
-export default AlertsOverlay;
+export default AlertOverlay;

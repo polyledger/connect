@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
+import { Redirect } from "react-router";
 import "./Signup.css";
 
 class Signup extends Component {
@@ -75,7 +76,7 @@ class Signup extends Component {
         email: this.state.email,
         password: this.state.password
       };
-      this.props.login(credentials);
+      this.props.signup(credentials);
     }
   }
 
@@ -155,6 +156,10 @@ class Signup extends Component {
   }
 
   render() {
+    if (this.props.user.isSignedUp) {
+      return <Redirect to="/confirm-email" />;
+    }
+
     return (
       <div className="Signup">
         <div className="d-flex justify-content-center">

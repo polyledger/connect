@@ -10,7 +10,9 @@ export default function user(state = initialState, action) {
     case types.LOGIN:
       return {};
     case types.SIGNUP:
-      return {};
+      return Object.assign({}, state, {
+        isSignedUp: true
+      });
     case types.LOGOUT:
       return {};
     case types.ACTIVATE:

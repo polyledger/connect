@@ -1,10 +1,17 @@
 import * as types from "../constants/actionTypes";
+import { addAlert } from "./alertActions";
 
 /*
  * Action creators
  */
 
 export function login(credentials) {
+  return {
+    type: types.LOGIN
+  };
+}
+
+export function signup(credentials) {
   return dispatch => {
     fetch(`/api/users/`, {
       method: "POST",
@@ -20,20 +27,13 @@ export function login(credentials) {
         return response.json();
       })
       .then(json => {
-        // Authentication successful:
-        // Change state isSignedUp to true
-        // Redirect to email confirmation page
-        console.log(json);
+        return {
+          type: types.SIGNUP
+        };
       })
       .catch(error => {
-        console.log(error);
+        dispatch(addAlert(error.toString(), "danger"));
       });
-  };
-}
-
-export function signup() {
-  return {
-    type: types.SIGNUP
   };
 }
 
