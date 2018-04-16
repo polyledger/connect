@@ -40,6 +40,7 @@ class Signup extends Component {
 
   onChange(value) {
     if (typeof value === "object") {
+      if (!value) return; // The reCAPTCHA returns null on expiration
       let event = value;
       let target = event.target;
       let name = target.name;
@@ -58,6 +59,10 @@ class Signup extends Component {
   onSubmit(event) {
     event.preventDefault();
     this.validateForm();
+
+    if (!this.state.recaptchaValid) {
+      this.props.addAlert("ReCAPTCHA is invalid.", "danger");
+    }
     this.setState({ validated: true });
   }
 
@@ -124,10 +129,6 @@ class Signup extends Component {
   }
 
   validateForm() {
-    if (!this.state.recaptchaValid) {
-      this.props.addAlert("ReCAPTCHA is invalid.", "danger");
-    }
-
     this.setState({
       formValid:
         this.state.firstNameValid &&
@@ -143,7 +144,7 @@ class Signup extends Component {
   render() {
     return (
       <div className="Signup">
-        <div className=" d-flex justify-content-center">
+        <div className="d-flex justify-content-center">
           <div>
             <h3 className="text-center pt-5 pb-4">Create your account</h3>
             <div className="card">
