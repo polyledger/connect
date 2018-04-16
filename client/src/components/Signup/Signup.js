@@ -86,7 +86,7 @@ class Signup extends Component {
     let emailValid = this.state.emailValid;
     let passwordValid = this.state.passwordValid;
     let passwordConfirmValid = this.state.passwordConfirmValid;
-    let recaptchaValid = this.state.recatchaValid;
+    let recaptchaValid = this.state.recaptchaValid;
     let termsOfServiceValid = this.state.termsOfServiceValid;
 
     switch (fieldName) {

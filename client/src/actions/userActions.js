@@ -13,16 +13,20 @@ export function login(credentials) {
         "Content-Type": "application/json"
       }
     })
-      .then(
-        response => {
-          return response.json();
-        },
-        error => {
-          return error;
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
         }
-      )
+        return response.json();
+      })
       .then(json => {
+        // Authentication successful:
+        // Change state isSignedUp to true
+        // Redirect to email confirmation page
         console.log(json);
+      })
+      .catch(error => {
+        console.log(error);
       });
   };
 }
