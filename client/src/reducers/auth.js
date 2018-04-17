@@ -1,7 +1,7 @@
 import * as types from "../constants/actionTypes";
 
 const initialState = {
-  isInProgress: false,
+  isFetching: false,
   isSignedUp: false,
   isLoggedIn: false,
   user: {}
@@ -13,11 +13,11 @@ export default function user(state = initialState, action) {
       return {};
     case types.SIGNUP_START:
       return Object.assign({}, state, {
-        isInProgress: true
+        isFetching: true
       });
     case types.SIGNUP_END:
       return Object.assign({}, state, {
-        isInProgress: false,
+        isFetching: false,
         isSignedUp: true,
         user: action.user
       });

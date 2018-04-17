@@ -163,9 +163,9 @@ class Signup extends Component {
       return <Redirect to="/confirm-email" />;
     }
 
-    let submitButtonText = this.props.auth.loading ? (
+    let submitButtonText = this.props.auth.isFetching ? (
       <span>
-        <i className="fa fa-spinner" /> Creating Account
+        <i className="fa fa-spinner fa-spin" /> Creating Account
       </span>
     ) : (
       <span>Create Account</span>
