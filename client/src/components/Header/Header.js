@@ -21,8 +21,8 @@ class Header extends Component {
             <a className="navbar-brand">
               <img src={logo} height="30" alt="logo" />
             </a>
+            {Menu}
           </div>
-          {Menu}
         </nav>
       </div>
     );
