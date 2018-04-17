@@ -8,13 +8,11 @@ import { addAlert } from "./alertActions";
 export function login(credentials) {
   return dispatch => {
     dispatch(loginStart());
-    // TODO: "Remember me" handling
     return fetch(`/api/authenticate/`, {
       method: "POST",
       body: JSON.stringify({
         username: credentials.email,
-        password: credentials.password,
-        remember: credentials.remember
+        password: credentials.password
       }),
       headers: {
         "Content-Type": "application/json"
@@ -34,6 +32,10 @@ export function login(credentials) {
           dispatch(loginFailure());
         } else {
           let token = json.token;
+
+          if (credentials.remember) {
+            localStorage.setItem("token", token);
+          }
           dispatch(loginSuccess(token));
         }
       })
