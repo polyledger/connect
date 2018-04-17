@@ -33,6 +33,7 @@ class HeaderDropdown extends Component {
 
           <NavLink
             className="dropdown-item"
+            activeClassName=""
             to="/login"
             onClick={event => {
               this.onClick(event);
