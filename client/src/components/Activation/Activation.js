@@ -4,7 +4,6 @@ class Activation extends Component {
   componentDidMount() {
     const params = new URLSearchParams(this.props.location.search);
     const token = params.get("token");
-    console.log(token);
     this.props.activate(token);
   }
 
