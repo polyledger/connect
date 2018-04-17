@@ -1,7 +1,12 @@
 import React, { Component } from "react";
+import { NavLink } from "react-router-dom";
 import "./HeaderDropdown.css";
 
 class HeaderDropdown extends Component {
+  onClick(event) {
+    this.props.logout();
+  }
+
   render() {
     return (
       <div className="dropdown show">
@@ -25,9 +30,16 @@ class HeaderDropdown extends Component {
             <i className="icon icon-lifebuoy" /> Support
           </a>
           <div className="dropdown-divider" />
-          <a className="dropdown-item">
+
+          <NavLink
+            className="dropdown-item"
+            to="/login"
+            onClick={event => {
+              this.onClick(event);
+            }}
+          >
             <i className="icon icon-log-out" /> Log out
-          </a>
+          </NavLink>
         </div>
       </div>
     );
