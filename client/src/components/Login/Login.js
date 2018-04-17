@@ -37,15 +37,17 @@ class Login extends Component {
 
   onSubmit(event) {
     event.preventDefault();
-    this.validateForm();
-    this.setState({ validated: true }, () => {
-      if (this.state.formValid) {
-        this.props.addAlert(
-          "Secure login initiated. Sending authentication signature to server...",
-          "info",
-          "lock"
-        );
-      }
+    this.validateForm(() => {
+      this.setState({ validated: true }, () => {
+        if (this.state.formValid) {
+          let credentials = {
+            email: this.state.email,
+            password: this.state.password,
+            remember: this.state.remember
+          };
+          this.props.login(credentials);
+        }
+      });
     });
   }
 
@@ -78,13 +80,24 @@ class Login extends Component {
     );
   }
 
-  validateForm() {
-    this.setState({
-      formValid: this.state.emailValid && this.state.passwordValid
-    });
+  validateForm(callback) {
+    this.setState(
+      {
+        formValid: this.state.emailValid && this.state.passwordValid
+      },
+      callback
+    );
   }
 
   render() {
+    let submitButtonText = this.props.auth.isFetching ? (
+      <span>
+        <i className="fa fa-spinner fa-spin" /> Logging in
+      </span>
+    ) : (
+      <span>Log in</span>
+    );
+
     return (
       <div className="Login">
         <div className="col-sm-4 offset-sm-4">
@@ -157,7 +170,9 @@ class Login extends Component {
                     </label>
                   </div>
                 </div>
-                <button className="btn btn-primary btn-block">Log in</button>
+                <button className="btn btn-primary btn-block">
+                  {submitButtonText}
+                </button>
               </form>
             </div>
           </div>
