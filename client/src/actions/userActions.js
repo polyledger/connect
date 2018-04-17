@@ -11,9 +11,12 @@ export function login(credentials) {
   };
 }
 
+/*
+ * Sign up a user.
+ */
 export function signup(credentials) {
   return dispatch => {
-    fetch(`/api/users/`, {
+    return fetch(`/api/users/`, {
       method: "POST",
       body: JSON.stringify(credentials),
       headers: {
@@ -21,12 +24,24 @@ export function signup(credentials) {
       }
     })
       .then(response => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
+        if (response.ok || response.status === 400) {
+          return response.json();
         }
-        return response.json();
+        throw new Error(response.statusText);
       })
       .then(json => {
+        console.log("initial json");
+        console.log(json);
+        if (json.status_code === 400) {
+          for (let error of json.errors) {
+            dispatch(addAlert(error.message, "danger"));
+          }
+        } else {
+          // success
+          console.log("success");
+          console.log(json);
+        }
+
         return {
           type: types.SIGNUP
         };

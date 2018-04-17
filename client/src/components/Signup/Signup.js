@@ -62,22 +62,22 @@ class Signup extends Component {
 
   onSubmit(event) {
     event.preventDefault();
-    this.validateForm();
+    this.validateForm(() => {
+      if (!this.state.recaptchaValid) {
+        this.props.addAlert("ReCAPTCHA is invalid.", "danger");
+      }
+      this.setState({ validated: true });
 
-    if (!this.state.recaptchaValid) {
-      this.props.addAlert("ReCAPTCHA is invalid.", "danger");
-    }
-    this.setState({ validated: true });
-
-    if (this.state.formValid) {
-      let credentials = {
-        first_name: this.state.first_name,
-        last_name: this.state.last_name,
-        email: this.state.email,
-        password: this.state.password
-      };
-      this.props.signup(credentials);
-    }
+      if (this.state.formValid) {
+        let credentials = {
+          first_name: this.state.first_name,
+          last_name: this.state.last_name,
+          email: this.state.email,
+          password: this.state.password
+        };
+        this.props.signup(credentials);
+      }
+    });
   }
 
   validateField(fieldName, value) {
@@ -142,17 +142,20 @@ class Signup extends Component {
     );
   }
 
-  validateForm() {
-    this.setState({
-      formValid:
-        this.state.firstNameValid &&
-        this.state.lastNameValid &&
-        this.state.emailValid &&
-        this.state.passwordValid &&
-        this.state.passwordConfirmValid &&
-        this.state.recaptchaValid &&
-        this.state.termsOfServiceValid
-    });
+  validateForm(callback) {
+    this.setState(
+      {
+        formValid:
+          this.state.firstNameValid &&
+          this.state.lastNameValid &&
+          this.state.emailValid &&
+          this.state.passwordValid &&
+          this.state.passwordConfirmValid &&
+          this.state.recaptchaValid &&
+          this.state.termsOfServiceValid
+      },
+      callback
+    );
   }
 
   render() {

@@ -10,6 +10,7 @@ export default function user(state = initialState, action) {
     case types.LOGIN:
       return {};
     case types.SIGNUP:
+      console.log(action);
       return Object.assign({}, state, {
         isSignedUp: true
       });
