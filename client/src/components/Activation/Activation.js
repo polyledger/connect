@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 
 class Activation extends Component {
   componentDidMount() {
@@ -8,6 +9,10 @@ class Activation extends Component {
   }
 
   render() {
+    if (this.props.auth.isLoggedIn) {
+      return <Redirect to="/portfolio" />;
+    }
+
     return (
       <div className="Activation">
         <div className="container p-5">
