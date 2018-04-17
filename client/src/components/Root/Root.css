@@ -1,3 +1,13 @@
+html,
+body,
+#root,
+#root > .AppLayout,
+#root > .EmptyLayout,
+.AppLayout > div,
+.EmptyLayout > div {
+  min-height: 100vh !important;
+}
+
 .card {
   border-color: #5a617b;
   background-color: #2a2d35;

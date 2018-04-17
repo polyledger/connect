@@ -159,9 +159,17 @@ class Signup extends Component {
   }
 
   render() {
-    if (this.props.user.isSignedUp) {
+    if (this.props.auth.isSignedUp) {
       return <Redirect to="/confirm-email" />;
     }
+
+    let submitButtonText = this.props.auth.loading ? (
+      <span>
+        <i className="fa fa-spinner" /> Creating Account
+      </span>
+    ) : (
+      <span>Create Account</span>
+    );
 
     return (
       <div className="Signup">
@@ -339,7 +347,7 @@ class Signup extends Component {
                     </div>
                   </div>
                   <button type="submit" className="btn btn-primary btn-block">
-                    Create Account
+                    {submitButtonText}
                   </button>
                 </form>
               </div>

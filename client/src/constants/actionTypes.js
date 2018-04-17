@@ -36,5 +36,7 @@ export const CLOSE_ACCOUNT = "CLOSE_ACCOUNT";
 // User
 export const LOGIN = "LOGIN";
 export const SIGNUP = "SIGNUP";
+export const SIGNUP_START = "SIGNUP_START";
+export const SIGNUP_END = "SIGNUP_END";
 export const ACTIVATE = "ACTIVATE";
 export const LOGOUT = "LOGOUT";
