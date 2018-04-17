@@ -16,7 +16,7 @@ class Chart extends Component {
       <div className="Chart">
         <div id="Chart__Highchart">
           <div className="d-flex align-items-center justify-content-center Chart__Spinner">
-            <i className="fas fa-spinner fa-spin fa-3x" />
+            <i className="fa fa-spinner fa-spin fa-3x" />
           </div>
         </div>
       </div>

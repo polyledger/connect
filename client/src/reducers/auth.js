@@ -18,7 +18,8 @@ export default function user(state = initialState, action) {
       return Object.assign({}, state, {
         isFetching: false,
         isLoggedIn: true,
-        token: action.token
+        token: action.token,
+        user: action.user
       });
     case types.LOGIN_FAILURE:
       return Object.assign({}, state, {

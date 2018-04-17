@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import "./Login.css";
 
 class Login extends Component {
@@ -90,6 +90,10 @@ class Login extends Component {
   }
 
   render() {
+    if (this.props.auth.isLoggedIn) {
+      return <Redirect to="/portfolio" />;
+    }
+
     let submitButtonText = this.props.auth.isFetching ? (
       <span>
         <i className="fa fa-spinner fa-spin" /> Logging in

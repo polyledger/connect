@@ -3,8 +3,8 @@ body,
 #root,
 #root > .AppLayout,
 #root > .EmptyLayout,
-.AppLayout > div,
-.EmptyLayout > div {
+.AppLayout > .container,
+.EmptyLayout > .container {
   min-height: 100vh !important;
 }
 

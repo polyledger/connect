@@ -1,5 +1,6 @@
 import fetch from "cross-fetch";
 import * as types from "../constants/actionTypes";
+import { addAlert } from "./alertActions";
 
 /*
  * Action creators
@@ -69,18 +70,19 @@ export function receiveChartData(chartData) {
 export function fetchChartData(period) {
   return (dispatch, getState) => {
     dispatch(requestChartData(period));
-    const { id } = getState().user;
+    const { id } = getState().auth.user;
     return fetch(`/api/portfolios/${id}/chart?period=${period}`)
-      .then(
-        response => {
+      .then(response => {
+        if (response.ok || response.status === 400) {
           return response.json();
-        },
-        error => {
-          return error;
         }
-      )
+        throw new Error(response.statusText);
+      })
       .then(json => {
         dispatch(receiveChartData(json));
+      })
+      .catch(error => {
+        dispatch(addAlert(error.toString(), "danger"));
       });
   };
 }

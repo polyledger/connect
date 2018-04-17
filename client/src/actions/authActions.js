@@ -32,11 +32,12 @@ export function login(credentials) {
           dispatch(loginFailure());
         } else {
           let token = json.token;
+          let user = json.user;
 
           if (credentials.remember) {
             localStorage.setItem("token", token);
           }
-          dispatch(loginSuccess(token));
+          dispatch(loginSuccess(token, user));
         }
       })
       .catch(error => {
@@ -60,10 +61,11 @@ export function loginStart(credentials) {
   };
 }
 
-export function loginSuccess(token) {
+export function loginSuccess(token, user) {
   return {
     type: types.LOGIN_SUCCESS,
-    token
+    token,
+    user
   };
 }
 
@@ -128,7 +130,6 @@ export function signupFailure() {
 }
 
 export function activate(token) {
-  console.log(token);
   return {
     type: types.ACTIVATE,
     token
