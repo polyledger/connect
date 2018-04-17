@@ -25,17 +25,19 @@ def custom_exception_handler(exc, context):
         if getattr(exc, 'wait', None):
             headers['Retry-After'] = '%d' % exc.wait
 
-        data = {'errors': [], 'status_code': exc.status_code}
+        data = {'errors': []}
         error = {}
 
         if isinstance(exc.detail, dict):
             for field, value in exc.detail.items():
+                error['status_code'] = exc.status_code
                 error['message'] = "{0} : {1}".format(
                     field.capitalize(), " ".join(value))
                 data['errors'].append(error)
         else:
             error = {}
             error['message'] = exc.detail
+            error['status_code'] = exc.status_code
             data['errors'].append(error)
 
         atomic_requests = connection.settings_dict.get('ATOMIC_REQUESTS', False)

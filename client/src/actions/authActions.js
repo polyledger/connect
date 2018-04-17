@@ -37,7 +37,7 @@ export function signup(credentials) {
         throw new Error(response.statusText);
       })
       .then(json => {
-        if (json.status_code === 400) {
+        if (json.hasOwnProperty("errors")) {
           for (let error of json.errors) {
             dispatch(addAlert(error.message, "danger"));
           }
