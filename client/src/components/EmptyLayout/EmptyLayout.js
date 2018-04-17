@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import RiskAssessment from "../RiskAssessment/RiskAssessment";
 import Login from "../Login/Login";
 import SignupContainer from "../../containers/SignupContainer";
+import ActivationContainer from "../../containers/ActivationContainer";
 import ConfirmEmail from "../ConfirmEmail/ConfirmEmail";
 import NoMatch from "../NoMatch/NoMatch";
 import AlertContainer from "../../containers/AlertContainer";
@@ -18,6 +19,7 @@ class EmptyLayout extends Component {
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignupContainer} />
             <Route path="/confirm-email" component={ConfirmEmail} />
+            <Route path="/activate" component={ActivationContainer} />
             <Route path="*" component={NoMatch} />
           </Switch>
         </div>

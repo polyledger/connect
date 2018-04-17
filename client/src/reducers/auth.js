@@ -4,6 +4,7 @@ const initialState = {
   isFetching: false,
   isSignedUp: false,
   isLoggedIn: false,
+  token: "",
   user: {}
 };
 
@@ -22,10 +23,16 @@ export default function user(state = initialState, action) {
         user: action.user
       });
     case types.LOGOUT:
-      return {};
+      return Object.assign({}, state, {
+        isLoggedIn: false,
+        token: ""
+      });
     case types.ACTIVATE:
-      return {};
-
+      return Object.assign({}, state, {
+        isLoggedIn: true,
+        isSignedUp: false,
+        token: action.token
+      });
     default:
       return state;
   }

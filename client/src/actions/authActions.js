@@ -58,9 +58,11 @@ export function signupEnd(user) {
   };
 }
 
-export function activate() {
+export function activate(token) {
+  console.log(token);
   return {
-    type: types.ACTIVATE
+    type: types.ACTIVATE,
+    token
   };
 }
 
