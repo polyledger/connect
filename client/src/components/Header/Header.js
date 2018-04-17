@@ -5,6 +5,15 @@ import "./Header.css";
 
 class Header extends Component {
   render() {
+    let Menu = this.props.auth.isLoggedIn ? (
+      <ul className="navbar-nav ml-auto">
+        <li className="nav-item">
+          <HeaderDropdown />
+        </li>
+      </ul>
+    ) : (
+      ""
+    );
     return (
       <div className="Header">
         <nav className="navbar navbar-padded navbar-expand-lg">
@@ -12,12 +21,8 @@ class Header extends Component {
             <a className="navbar-brand">
               <img src={logo} height="30" alt="logo" />
             </a>
-            <ul className="navbar-nav ml-auto">
-              <li className="nav-item">
-                <HeaderDropdown />
-              </li>
-            </ul>
           </div>
+          {Menu}
         </nav>
       </div>
     );

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Provider } from "react-redux";
 import configureStore from "../../store/configureStore";
-import Header from "../Header/Header";
+import HeaderContainer from "../../containers/HeaderContainer";
 import AppLayout from "../AppLayout/AppLayout";
 import EmptyLayout from "../EmptyLayout/EmptyLayout";
 import Footer from "../Footer/Footer";
@@ -16,7 +16,7 @@ class Root extends Component {
       <Provider store={store}>
         <Router>
           <div className="Root">
-            <Header />
+            <HeaderContainer />
             <Switch>
               <Route path="/portfolio" component={AppLayout} />
               <Route component={EmptyLayout} />
