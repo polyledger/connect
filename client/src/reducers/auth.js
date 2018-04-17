@@ -42,7 +42,8 @@ export default function user(state = initialState, action) {
     case types.LOGOUT:
       return Object.assign({}, state, {
         isLoggedIn: false,
-        token: ""
+        token: "",
+        user: {}
       });
     case types.ACTIVATE:
       return Object.assign({}, state, {
