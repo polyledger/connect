@@ -30,8 +30,10 @@ def custom_exception_handler(exc, context):
 
         if isinstance(exc.detail, dict):
             for field, value in exc.detail.items():
+                if field == 'non_field_errors':
+                    field = 'error'
                 error['status_code'] = exc.status_code
-                error['message'] = "{0} : {1}".format(
+                error['message'] = "{0}: {1}".format(
                     field.capitalize(), " ".join(value))
                 data['errors'].append(error)
         else:
