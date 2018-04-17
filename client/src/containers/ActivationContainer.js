@@ -7,7 +7,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  activate: () => dispatch(activate())
+  activate: token => dispatch(activate(token))
 });
 
 const ActivationContainer = connect(mapStateToProps, mapDispatchToProps)(
