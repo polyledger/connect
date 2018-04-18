@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from api.models import User, Coin, Portfolio, Token
+from api.models import User, Coin, Portfolio, Token, Settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.utils.encoding import force_text
@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from api.serializers import PasswordSerializer, UserDetailSerializer
+from api.serializers import SettingsSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
 from api.tasks import allocate_for_user
@@ -235,4 +236,15 @@ class CoinViewSet(viewsets.ReadOnlyModelViewSet):
         authentication.TokenAuthentication,
     )
     serializer_class = CoinSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class SettingsViewSet(viewsets.ReadOnlyModelViewSet):
+    model = Settings
+    queryset = Settings.objects.all()
+    authentication_classes = (
+        authentication.BasicAuthentication,
+        authentication.TokenAuthentication,
+    )
+    serializer_class = SettingsSerializer
     permission_classes = [permissions.IsAuthenticated]

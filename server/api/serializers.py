@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
-from api.models import User, Portfolio, Coin, Position
+from api.models import User, Portfolio, Coin, Position, Settings
 from api.tasks import send_confirmation_email
 from rest_framework import serializers
 
@@ -87,3 +87,20 @@ class UserDetailSerializer(serializers.Serializer):
     """
     legal_name = serializers.CharField(required=True)
     email = serializers.EmailField(max_length=255)
+
+
+class SettingsSerializer(serializers.Serializer):
+    """
+    Serializer for settings endpoint (read-only).
+    """
+    class Meta:
+        model = Settings
+        fields = ('id', 'local_currency', 'time_zone', 'email_notification',
+                  'two_factor_enabled')
+        extra_kwargs = {
+            'id': {'read_only': True}
+        }
+
+    def get_queryset(self):
+        user = self.request.user
+        return Settings.objects.filter(user=user)
