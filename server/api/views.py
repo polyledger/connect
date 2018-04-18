@@ -9,7 +9,7 @@ from rest_framework import permissions, authentication, viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
-from api.serializers import PasswordSerializer
+from api.serializers import PasswordSerializer, UserDetailSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
 from api.tasks import allocate_for_user
@@ -82,6 +82,18 @@ class UserViewSet(viewsets.ModelViewSet):
             user.save()
             return Response({}, status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['PUT'], serializer_class=UserDetailSerializer)
+    def set_user_details(self, request, pk):
+        serializer = UserDetailSerializer(data=request.data)
+        user = User.objects.get(pk=pk)
+
+        if serializer.is_valid():
+            user.profile.legal_name = serializer.data['legal_name']
+            user.email = serializer.data['email']
+            user.save()
+            return Response({}, status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_RESPONSE)
 
 
 class PortfolioViewSet(viewsets.ModelViewSet):

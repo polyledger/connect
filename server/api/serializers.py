@@ -79,3 +79,11 @@ class PasswordSerializer(serializers.Serializer):
     """
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+
+class UserDetailSerializer(serializers.Serializer):
+    """
+    Serializer for user detail change endpoint.
+    """
+    legal_name = serializers.CharField(required=True)
+    email = serializers.EmailField(max_length=255)

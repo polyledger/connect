@@ -102,6 +102,23 @@ class UserTestCase(TestCase):
         response = client.put(url, data, format='json')
         assert response.status_code is 204
 
+    def test_set_user_details(self):
+        user = get_user_model().objects.create_user(
+            first_name='Ari',
+            last_name='Hall',
+            email='ari@polyledger.com',
+            password='top_secret')
+        token = Token.objects.get(user=user)
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token {0}'.format(token.key))
+        data = {
+            'legal_name': 'Ari K. Hall',
+            'email': 'ari@polyledger.io'
+        }
+        url = '/api/users/{0}/set_user_details/'.format(user.pk)
+        response = client.put(url, data, format='json')
+        assert response.status_code is 204
+
 
 class PortfolioTestCase(TestCase):
 

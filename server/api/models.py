@@ -91,6 +91,7 @@ class User(AbstractBaseUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    legal_name = models.CharField(max_length=255)
     # TODO: Add demographic information about user, such as age, income, etc.
 
 
