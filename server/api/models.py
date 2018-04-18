@@ -264,6 +264,7 @@ class IPAddress(models.Model):
     """
     ip = models.GenericIPAddressField(unique=True, db_index=True)
     user = models.ForeignKey(to='User', related_name='ip_addresses')
+    last_login = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.ip
@@ -293,3 +294,32 @@ class Price(models.Model):
 
     class Meta:
         unique_together = (('date', 'coin'),)
+
+
+class Settings(models.Model):
+    """
+    Settings configuring a user's Polyledger portfolio
+    """
+    LOCAL_CURRENCY_CHOICES = (
+        ('usd', 'USD'),
+    )
+
+    TIME_ZONE_CHOICES = (
+        ('pst', 'PST'),
+    )
+
+    EMAIL_NOTIFICATION_CHOICES = (
+        ('quarterly', 'Quarterly'),
+        ('monthly', 'Monthly'),
+        ('weekly', 'Weekly'),
+        ('daily', 'Daily'),
+        ('off', 'Off'),
+    )
+
+    user = models.ForeignKey(to='User', related_name='settings')
+    local_currency = models.CharField(choices=LOCAL_CURRENCY_CHOICES,
+                                      max_length=255)
+    time_zone = models.CharField(choices=TIME_ZONE_CHOICES, max_length=255)
+    email_notification = models.CharField(choices=EMAIL_NOTIFICATION_CHOICES,
+                                          max_length=255)
+    two_factor_enabled = models.BooleanField(default=False)
