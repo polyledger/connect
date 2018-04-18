@@ -9,6 +9,7 @@ from rest_framework import permissions, authentication, viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
+from api.serializers import PasswordSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
 from api.tasks import allocate_for_user
@@ -67,6 +68,20 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
+
+    @detail_route(methods=['PUT'], serializer_class=PasswordSerializer)
+    def set_password(self, request, pk):
+        serializer = PasswordSerializer(data=request.data)
+        user = User.objects.get(pk=pk)
+
+        if serializer.is_valid():
+            if not user.check_password(serializer.data.get('old_password')):
+                return Response({'old_password': ['Wrong password.']},
+                                status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(serializer.data.get('new_password'))
+            user.save()
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PortfolioViewSet(viewsets.ModelViewSet):
