@@ -9,7 +9,7 @@ class ExchangeListItem extends Component {
         style={{ backgroundColor: this.props.backgroundColor }}
       >
         <div className="row d-flex align-items-center">
-          <div className="col-4">
+          <div className="col-4 text-center">
             <a href={this.props.url} target="blank">
               <img
                 height={this.props.height}
