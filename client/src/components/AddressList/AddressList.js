@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import AddressListItem from '../AddressListItem/AddressListItem';
+import React, { Component } from "react";
+import AddressListItem from "../AddressListItem/AddressListItem";
 
 class AddressList extends Component {
   render() {
@@ -12,12 +12,6 @@ class AddressList extends Component {
         <ul className="list-group mb-3">
           <AddressListItem symbol="BTC" />
         </ul>
-
-        <div className="d-flex flex-row-reverse">
-          <button className="btn btn-primary">
-            <i className="icon icon-squared-plus" /> Link Address
-          </button>
-        </div>
       </div>
     );
   }
