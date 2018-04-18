@@ -91,7 +91,7 @@ class UserDetailSerializer(serializers.Serializer):
 
 class SettingsSerializer(serializers.Serializer):
     """
-    Serializer for settings endpoint (read-only).
+    Serializer for settings endpoint.
     """
     class Meta:
         model = Settings
