@@ -8,7 +8,10 @@ class Header extends Component {
     let Menu = this.props.auth.isLoggedIn ? (
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
-          <HeaderDropdown logout={this.props.logout} />
+          <HeaderDropdown
+            logout={this.props.logout}
+            user={this.props.auth.user}
+          />
         </li>
       </ul>
     ) : (

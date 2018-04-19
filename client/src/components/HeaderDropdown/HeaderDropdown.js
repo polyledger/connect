@@ -18,7 +18,7 @@ class HeaderDropdown extends Component {
           aria-haspopup="true"
           aria-expanded="false"
         >
-          Matthew Rosendin
+          {this.props.user.firstName}
           <i className="icon icon-chevron-small-down" />
         </a>
         <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
