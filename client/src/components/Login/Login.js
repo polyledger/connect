@@ -1,92 +1,69 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
+import FormValidator from "../../utils/formValidator";
 import "./Login.css";
 
 class Login extends Component {
   constructor(props) {
     super(props);
+
+    this.validator = new FormValidator([
+      {
+        field: "email",
+        method: "isEmpty",
+        validWhen: false,
+        message: "Email is required."
+      },
+      {
+        field: "email",
+        method: "isEmail",
+        validWhen: true,
+        message: "That is not a valid email address."
+      },
+      {
+        field: "password",
+        method: "isEmpty",
+        validWhen: false,
+        message: "Password is required."
+      }
+    ]);
+
     this.state = {
       email: "",
-      emailValid: false,
       password: "",
-      passwordValid: false,
       remember: false,
-      formValid: false,
-      formErrors: {
-        email: "",
-        password: ""
-      },
-      validated: false
+      validation: this.validator.valid()
     };
+
+    this.submitted = false;
   }
 
-  errorClass(error) {
-    return error.length === 0 ? "" : "has-error";
-  }
-
-  onChange(value) {
-    let event = value;
-    let target = event.target;
-    let name = target.name;
-    value = target.type === "checkbox" ? target.checked : target.value;
-
-    this.setState({ [name]: value }, () => {
-      this.validateField(name, value);
+  onChange(event) {
+    let name = event.target.name;
+    let value =
+      event.target.type === "checkbox"
+        ? String(event.target.checked)
+        : event.target.value;
+    this.setState({
+      [name]: value
     });
   }
 
   onSubmit(event) {
     event.preventDefault();
-    this.validateForm(() => {
-      this.setState({ validated: true }, () => {
-        if (this.state.formValid) {
-          let credentials = {
-            email: this.state.email,
-            password: this.state.password,
-            remember: this.state.remember
-          };
-          this.props.login(credentials);
-        }
-      });
+
+    const validation = this.validator.validate(this.state);
+    this.setState({ validation }, () => {
+      if (validation.isValid) {
+        let credentials = {
+          email: this.state.email,
+          password: this.state.password,
+          remember: this.state.remember
+        };
+        this.props.login(credentials);
+      }
     });
-  }
-
-  validateField(fieldName, value) {
-    let fieldValidationErrors = this.state.formErrors;
-    let emailValid = this.state.emailValid;
-    let passwordValid = this.state.passwordValid;
-
-    switch (fieldName) {
-      case "email":
-        emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
-        fieldValidationErrors.email = emailValid ? "" : " is invalid.";
-        break;
-      case "password":
-        passwordValid = value.length >= 8;
-        fieldValidationErrors.password = passwordValid
-          ? ""
-          : " must be at least 8 characters.";
-        break;
-      default:
-        break;
-    }
-    this.setState(
-      {
-        formErrors: fieldValidationErrors,
-        emailValid: emailValid,
-        passwordValid: passwordValid
-      },
-      this.validateForm
-    );
-  }
-
-  validateForm(callback) {
-    this.setState(
-      {
-        formValid: this.state.emailValid && this.state.passwordValid
-      },
-      callback
-    );
+    this.submitted = true;
   }
 
   render() {
@@ -102,6 +79,10 @@ class Login extends Component {
       <span>Log in</span>
     );
 
+    let validation = this.submitted
+      ? this.validator.validate(this.state)
+      : this.state.validation;
+
     return (
       <div className="Login">
         <div className="col-sm-4 offset-sm-4">
@@ -110,14 +91,14 @@ class Login extends Component {
             <div className="card-body">
               <form
                 className={
-                  this.state.validated ? "was-validated" : "needs-validation"
+                  this.submitted ? "was-validated" : "needs-validation"
                 }
                 onSubmit={event => this.onSubmit(event)}
                 noValidate
               >
                 <div
-                  className={`form-group
-              ${this.errorClass(this.state.formErrors.email)}`}
+                  className={`form-group ${validation.email.isInvalid &&
+                    "has-error"}`}
                 >
                   <input
                     type="email"
@@ -128,17 +109,17 @@ class Login extends Component {
                     placeholder="Enter email"
                     required
                   />
-                  {this.state.formErrors.email.length > 0 ? (
+                  {validation.email.isInvalid ? (
                     <div className="invalid-feedback">
-                      Email {this.state.formErrors.email}
+                      {validation.email.message}
                     </div>
                   ) : (
                     ""
                   )}
                 </div>
                 <div
-                  className={`form-group
-              ${this.errorClass(this.state.formErrors.password)}`}
+                  className={`form-group ${validation.password.isInvalid &&
+                    "has-error"}`}
                 >
                   <div className="input-group">
                     <input
@@ -151,9 +132,9 @@ class Login extends Component {
                       minLength="8"
                       required
                     />
-                    {this.state.formErrors.password.length > 0 ? (
+                    {validation.password.isInvalid ? (
                       <div className="invalid-feedback">
-                        Password {this.state.formErrors.password}
+                        {validation.password.message}
                       </div>
                     ) : (
                       ""
