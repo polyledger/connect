@@ -25,6 +25,14 @@ class ChartWrapper extends Component {
             <div className="row py-2 text-center">
               <div className="col-sm-4">
                 <ChartStat
+                  number={758}
+                  sign="-"
+                  delta={1.3}
+                  description="Past Day"
+                />
+              </div>
+              <div className="col-sm-4">
+                <ChartStat
                   number={1000}
                   sign="+"
                   delta={5}
@@ -37,14 +45,6 @@ class ChartWrapper extends Component {
                   delta={1.3}
                   sign="-"
                   description="All Time Return"
-                />
-              </div>
-              <div className="col-sm-4">
-                <ChartStat
-                  number={758}
-                  sign="-"
-                  delta={1.3}
-                  description="Past Day"
                 />
               </div>
             </div>
