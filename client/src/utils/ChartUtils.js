@@ -7,7 +7,7 @@ let getChartOptions = series => {
       type: "line",
       backgroundColor: "rgba(255, 255, 255, 0.0)"
     },
-    colors: ["#b4c4fd", "#ead36b"],
+    colors: ["#00ba95", "#ead36b"],
     credits: {
       enabled: false
     },
