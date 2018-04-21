@@ -8,13 +8,8 @@ class ChartNav extends Component {
     return (
       <ul className="nav nav-pills justify-content-center mt-2">
         <li className="nav-item">
-          <a className="nav-link active" role="button" data-toggle="tab">
-            1D
-          </a>
-        </li>
-        <li className="nav-item">
           <a
-            className="nav-link"
+            className="nav-link active"
             role="button"
             data-toggle="tab"
             onClick={() => onClick("7D")}
