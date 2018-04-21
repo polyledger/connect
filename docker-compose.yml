@@ -12,6 +12,7 @@ services:
       - 3000:3000
     depends_on:
       - server
+    env_file: .env.development
     command: yarn start
 
   server: &server
