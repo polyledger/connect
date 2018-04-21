@@ -25,3 +25,12 @@ export function removeAlert(id) {
     id
   };
 }
+
+/*
+ * Clear alerts
+ */
+export function clearAlerts() {
+  return {
+    type: types.CLEAR_ALERTS
+  };
+}

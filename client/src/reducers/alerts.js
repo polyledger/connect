@@ -20,6 +20,9 @@ export default function alerts(state = initialState, action) {
         return alert.id !== action.id;
       });
 
+    case types.CLEAR_ALERTS:
+      return [];
+
     default:
       return state;
   }
