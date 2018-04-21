@@ -16,6 +16,12 @@ class ConfirmEmail extends Component {
                 <p className="pt-4">
                   We've sent you an email to help verify your account.
                 </p>
+                <small className="text-muted">
+                  Having an issue? Contact support:{" "}
+                  <a href="mailto:support@polyledger.com">
+                    support@polyledger.com
+                  </a>
+                </small>
               </div>
             </div>
           </div>
