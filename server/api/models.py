@@ -102,6 +102,7 @@ def create_user_profile(sender, instance=None, created=False, **kwargs):
     """
     if created:
         Profile.objects.create(user=instance)
+        Settings.objects.create(user=instance)
 
 
 @receiver(models.signals.post_save, sender=User)
@@ -302,11 +303,12 @@ class Settings(models.Model):
     Settings configuring a user's Polyledger portfolio
     """
     LOCAL_CURRENCY_CHOICES = (
-        ('usd', 'USD'),
+        ('usd', 'USD (United States dollar)'),
     )
 
     TIME_ZONE_CHOICES = (
-        ('pst', 'PST'),
+        ('pst', 'US/Pacific'),
+        ('utc', 'UTC'),
     )
 
     EMAIL_NOTIFICATION_CHOICES = (
@@ -319,8 +321,12 @@ class Settings(models.Model):
 
     user = models.ForeignKey(to='User', related_name='settings')
     local_currency = models.CharField(choices=LOCAL_CURRENCY_CHOICES,
-                                      max_length=255)
-    time_zone = models.CharField(choices=TIME_ZONE_CHOICES, max_length=255)
+                                      max_length=255, default='usd')
+    time_zone = models.CharField(choices=TIME_ZONE_CHOICES, max_length=255,
+                                 default='pst')
     email_notification = models.CharField(choices=EMAIL_NOTIFICATION_CHOICES,
-                                          max_length=255)
+                                          max_length=255, default='weekly')
     two_factor_enabled = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = "settings"

@@ -6,10 +6,11 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.conf import settings
 from rest_framework import permissions, authentication, viewsets, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
-from api.serializers import PasswordSerializer, UserDetailSerializer
+from api.serializers import PasswordSerializer, PersonalDetailSerializer
 from api.serializers import SettingsSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
@@ -77,24 +78,25 @@ class UserViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             if not user.check_password(serializer.data.get('old_password')):
-                return Response({'old_password': ['Wrong password.']},
+                return Response({'errors': [{'message': 'Wrong password.'}]},
                                 status=status.HTTP_400_BAD_REQUEST)
             user.set_password(serializer.data.get('new_password'))
             user.save()
-            return Response({}, status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @detail_route(methods=['PUT'], serializer_class=UserDetailSerializer)
-    def set_user_details(self, request, pk):
-        serializer = UserDetailSerializer(data=request.data)
+    @detail_route(methods=['PUT'], serializer_class=PersonalDetailSerializer)
+    def set_personal_details(self, request, pk):
+        serializer = PersonalDetailSerializer(data=request.data)
         user = User.objects.get(pk=pk)
 
         if serializer.is_valid():
-            user.profile.legal_name = serializer.data['legal_name']
+            user.first_name = serializer.data['first_name']
+            user.last_name = serializer.data['last_name']
             user.email = serializer.data['email']
             user.save()
-            return Response({}, status.HTTP_204_NO_CONTENT)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_RESPONSE)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PortfolioViewSet(viewsets.ModelViewSet):
@@ -239,12 +241,23 @@ class CoinViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class SettingsViewSet(viewsets.ReadOnlyModelViewSet):
-    model = Settings
-    queryset = Settings.objects.all()
+class RetrieveSettings(APIView):
+    """
+    View to retrieve user settings.
+
+    * Requires basic or token authentication.
+    * Only authenticated user settings can be retrieved.
+    """
     authentication_classes = (
         authentication.BasicAuthentication,
         authentication.TokenAuthentication,
     )
-    serializer_class = SettingsSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        """
+        Return authenticated user's settings.
+        """
+        settings = Settings.objects.get(user=request.user)
+        serializer = SettingsSerializer(settings)
+        return Response(serializer.data)

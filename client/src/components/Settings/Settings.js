@@ -1,11 +1,15 @@
 import React, { Component } from "react";
-import UserProfileSettings from "../UserProfileSettings/UserProfileSettings";
+import UserSettings from "../UserSettings/UserSettings";
 import PreferencesSettings from "../PreferencesSettings/PreferencesSettings";
 import SecuritySettings from "../SecuritySettings/SecuritySettings";
 import APISettings from "../APISettings/APISettings";
 import "./Settings.css";
 
 class Settings extends Component {
+  componentDidMount() {
+    this.props.fetchSettings();
+  }
+
   render() {
     return (
       <div className="Settings">
@@ -72,7 +76,13 @@ class Settings extends Component {
                 <div className="container">
                   <div className="row">
                     <div className="col-sm-8 offset-sm-2">
-                      <UserProfileSettings />
+                      <UserSettings
+                        user={this.props.auth.user}
+                        onUpdatePassword={this.props.updatePassword}
+                        onUpdatePersonalDetails={
+                          this.props.updatePersonalDetails
+                        }
+                      />
                     </div>
                   </div>
                 </div>

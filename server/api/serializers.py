@@ -81,15 +81,16 @@ class PasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True)
 
 
-class UserDetailSerializer(serializers.Serializer):
+class PersonalDetailSerializer(serializers.Serializer):
     """
     Serializer for user detail change endpoint.
     """
-    legal_name = serializers.CharField(required=True)
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
     email = serializers.EmailField(max_length=255)
 
 
-class SettingsSerializer(serializers.Serializer):
+class SettingsSerializer(serializers.ModelSerializer):
     """
     Serializer for settings endpoint.
     """
@@ -100,7 +101,3 @@ class SettingsSerializer(serializers.Serializer):
         extra_kwargs = {
             'id': {'read_only': True}
         }
-
-    def get_queryset(self):
-        user = self.request.user
-        return Settings.objects.filter(user=user)

@@ -5,7 +5,13 @@ const initialState = {
   isSignedUp: false,
   isLoggedIn: false,
   token: "",
-  user: {}
+  user: {
+    id: null,
+    firstName: "",
+    lastName: "",
+    email: "",
+    portfolio: {}
+  }
 };
 
 export default function user(state = initialState, action) {
@@ -19,7 +25,13 @@ export default function user(state = initialState, action) {
         isFetching: false,
         isLoggedIn: true,
         token: action.token,
-        user: action.user
+        user: {
+          id: action.user.id,
+          firstName: action.user.first_name,
+          lastName: action.user.last_name,
+          email: action.user.email,
+          portfolio: action.user.portfolio
+        }
       });
     case types.LOGIN_FAILURE:
       return Object.assign({}, state, {
@@ -33,7 +45,13 @@ export default function user(state = initialState, action) {
       return Object.assign({}, state, {
         isFetching: false,
         isSignedUp: true,
-        user: action.user
+        user: {
+          id: action.user.id,
+          firstName: action.user.first_name,
+          lastName: action.user.last_name,
+          email: action.user.email,
+          portfolio: action.user.portfolio
+        }
       });
     case types.SIGNUP_FAILURE:
       return Object.assign({}, state, {
@@ -43,7 +61,13 @@ export default function user(state = initialState, action) {
       return Object.assign({}, state, {
         isLoggedIn: false,
         token: "",
-        user: {}
+        user: {
+          id: null,
+          firstName: "",
+          lastName: "",
+          email: "",
+          portfolio: {}
+        }
       });
     case types.ACTIVATE:
       return Object.assign({}, state, {

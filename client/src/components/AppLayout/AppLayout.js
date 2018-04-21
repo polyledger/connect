@@ -6,7 +6,7 @@ import Portfolio from "../Portfolio/Portfolio";
 import Analytics from "../Analytics/Analytics";
 import Accounts from "../Accounts/Accounts";
 import Markets from "../Markets/Markets";
-import Settings from "../Settings/Settings";
+import SettingsContainer from "../../containers/SettingsContainer";
 import "./AppLayout.css";
 
 class AppLayout extends Component {
@@ -21,7 +21,7 @@ class AppLayout extends Component {
             <Route path="/portfolio/analytics" component={Analytics} />
             <Route path="/portfolio/accounts" component={Accounts} />
             <Route path="/portfolio/markets" component={Markets} />
-            <Route path="/portfolio/settings" component={Settings} />
+            <Route path="/portfolio/settings" component={SettingsContainer} />
           </Switch>
         </div>
       </div>

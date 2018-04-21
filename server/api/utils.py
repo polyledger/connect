@@ -39,7 +39,6 @@ def custom_exception_handler(exc, context):
         else:
             error = {}
             error['message'] = exc.detail
-            error['status_code'] = exc.status_code
             data['errors'].append(error)
 
         atomic_requests = connection.settings_dict.get('ATOMIC_REQUESTS', False)

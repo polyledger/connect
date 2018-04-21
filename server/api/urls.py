@@ -11,5 +11,6 @@ router.register(r'users', views.UserViewSet, base_name='user')
 app_name = 'api'
 urlpatterns = [
     url(r'^authenticate/', CustomAuthToken.as_view()),
+    url(r'^settings/', views.RetrieveSettings.as_view()),
     url(r'^', include(router.urls, namespace='api'))
 ]
