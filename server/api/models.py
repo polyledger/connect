@@ -264,8 +264,9 @@ class IPAddress(models.Model):
     """
     A table linking users to their known IP addresses
     """
-    ip = models.GenericIPAddressField(unique=True, db_index=True)
-    user = models.ForeignKey(to='User', related_name='ip_addresses')
+    ip = models.GenericIPAddressField(db_index=True)
+    user = models.ForeignKey(to='User', related_name='ip_addresses',
+                             on_delete=models.CASCADE)
     last_login = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -274,6 +275,7 @@ class IPAddress(models.Model):
     class Meta:
         verbose_name = 'IP Address'
         verbose_name_plural = 'IP Addresses'
+        unique_together = (('ip', 'user'),)
 
 
 class Distribution(models.Model):
