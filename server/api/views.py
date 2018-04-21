@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from api.models import User, Coin, Portfolio, Token, Settings
+from api.models import User, Coin, Portfolio, Token, Settings, IPAddress
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.utils.encoding import force_text
@@ -15,6 +15,7 @@ from api.serializers import SettingsSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
 from api.tasks import allocate_for_user
+from api.auth import get_client_ip
 
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
@@ -65,6 +66,10 @@ class UserViewSet(viewsets.ModelViewSet):
             user.is_active = True
             user.save()
             auth_token = Token.objects.get(user=user)
+            ip = get_client_ip(request)
+            ip_address, created = IPAddress.objects.get_or_create(
+                ip=ip, user=user)
+            ip_address.save()
         redirect_url = settings.CLIENT_URL + '?token=' + str(auth_token)
         return HttpResponseRedirect(redirect_url)
 
