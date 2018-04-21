@@ -120,7 +120,7 @@ class PositionAdmin(admin.ModelAdmin):
 
 
 class IPAddressAdmin(admin.ModelAdmin):
-    list_display = ('ip', 'user')
+    list_display = ('ip', 'user', 'last_login')
 
 
 class DistributionAdmin(admin.ModelAdmin):
