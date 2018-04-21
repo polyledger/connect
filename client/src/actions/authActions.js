@@ -48,13 +48,6 @@ export function login(credentials) {
 
 export function loginStart(credentials) {
   return dispatch => {
-    dispatch(
-      addAlert(
-        "Secure login initiated. Sending authentication signature to server...",
-        "info",
-        "lock"
-      )
-    );
     return {
       type: types.LOGIN_START
     };
