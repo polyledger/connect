@@ -25,7 +25,7 @@ You must also install client dependencies before running the application in Dock
 To install the private packages, you have to export an NPM token as an environment variable. That token should look like `NPM_TOKEN=00000000-0000-0000-0000-000000000000`. Export it in your shell. Now you can build the client container with the private packages:
 
 ```
-❯ docker build --build-arg NPM_TOKEN=${NPM_TOKEN} .
+❯ cd .. && docker-compose build --build-arg NPM_TOKEN=${NPM_TOKEN}
 ```
 
 ## Development
