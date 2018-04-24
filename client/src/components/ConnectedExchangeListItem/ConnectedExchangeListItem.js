@@ -1,47 +1,24 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-class ExchangeListItem extends Component {
+class ConnectedExchangeListItem extends Component {
   render() {
     return (
       <li
-        className="ExchangeListItem list-group-item"
+        className="ConnectedExchangeListItem list-group-item"
         style={{ backgroundColor: this.props.backgroundColor }}
       >
         <div className="row d-flex align-items-center">
-          <div className="col-4 text-center">
-            <a href={this.props.url} target="blank">
-              <img
-                height={this.props.height}
-                alt={this.props.name}
-                src={require(`../../assets/exchanges/${
-                  this.props.name
-                }.${this.props.extension.toLowerCase()}`)}
-              />
-            </a>
-          </div>
-          <div className="col-6">
-            <form className="form-inline d-flex justify-content-center">
-              <div className="form-group">
-                <input
-                  type="text"
-                  className="form-control m-1"
-                  placeholder="API Key"
-                />
-              </div>
-              <div className="form-group m-1">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Secret"
-                />
-              </div>
-            </form>
+          <div className="col-2">{this.props.name}</div>
+          <div className="col-8">
+            <small className="text-muted">
+              Connected on April 23rd, 2018 at 11:34 PM PDT
+            </small>
           </div>
 
           <div className="col-2">
-            <button className="btn btn-primary float-right">
-              <i className="icon icon-squared-plus" /> Link
+            <button className="btn btn-primary btn-outline-secondary float-right">
+              Remove
             </button>
           </div>
         </div>
@@ -50,11 +27,11 @@ class ExchangeListItem extends Component {
   }
 }
 
-ExchangeListItem.propTypes = {
+ConnectedExchangeListItem.propTypes = {
   name: PropTypes.string,
   extension: PropTypes.string,
   backgroundColor: PropTypes.string,
   size: PropTypes.string
 };
 
-export default ExchangeListItem;
+export default ConnectedExchangeListItem;

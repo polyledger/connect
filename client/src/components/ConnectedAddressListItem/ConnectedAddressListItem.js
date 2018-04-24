@@ -13,15 +13,10 @@ class ConnectedAddressListItem extends Component {
               src={require(`../../assets/coins/${this.props.symbol}.png`)}
             />
           </div>
-          <div className="col">
-            <input
-              className="form-control m-1"
-              placeholder="Public ConnectedAddress"
-            />
-          </div>
+          <div className="col">1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2</div>
           <div className="col-2">
-            <button className="btn btn-primary float-right">
-              <i className="icon icon-squared-plus" /> Link
+            <button className="btn btn-outline-secondary float-right">
+              Remove
             </button>
           </div>
         </div>

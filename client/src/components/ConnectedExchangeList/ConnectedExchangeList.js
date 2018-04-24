@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ConnectedExchangeListItem from "../ConnectedExchangeListItem/ConnectedExchangeListItem";
+import ExchangeListModal from "../ExchangeListModal/ExchangeListModal";
 
 class ConnectedExchangeList extends Component {
   render() {
@@ -32,49 +33,9 @@ class ConnectedExchangeList extends Component {
         </div>
 
         <ul className="list-group mb-3">
-          <ConnectedExchangeListItem
-            name="binance"
-            extension="svg"
-            backgroundColor="#FFFFFF"
-            height="45"
-            url="https://www.binance.com/"
-          />
-          <ConnectedExchangeListItem
-            name="bittrex"
-            extension="svg"
-            backgroundColor="#0E2E41"
-            height="30"
-            url="https://bittrex.com/"
-          />
-          <ConnectedExchangeListItem
-            name="coinbase"
-            extension="svg"
-            backgroundColor="#F8F8F8"
-            height="35"
-            url="https://www.coinbase.com/"
-          />
-          <ConnectedExchangeListItem
-            name="gdax"
-            extension="svg"
-            backgroundColor="#5A607B"
-            height="45"
-            url="https://www.gdax.com/"
-          />
-          <ConnectedExchangeListItem
-            name="kraken"
-            extension="png"
-            backgroundColor="#FFFFFF"
-            height="50"
-            url="https://www.kraken.com/"
-          />
-          <ConnectedExchangeListItem
-            name="poloniex"
-            extension="png"
-            backgroundColor="#0E0E0E"
-            height="30"
-            url="https://poloniex.com/"
-          />
+          <ConnectedExchangeListItem name="Binance" />
         </ul>
+        <ExchangeListModal />
       </div>
     );
   }
