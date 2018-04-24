@@ -23,7 +23,6 @@ export function fetchConnectedExchanges() {
     dispatch(requestConnectedExchanges());
     const auth = getState().auth;
     const { token } = auth;
-    // const { id } = auth.user;
     return fetch(`/api/connected_exchanges/`, {
       method: "GET",
       headers: {
@@ -59,10 +58,75 @@ export function receiveExchanges(exchanges) {
   };
 }
 
-export function fetchExchanges() {}
+export function fetchExchanges() {
+  return (dispatch, getState) => {
+    dispatch(requestExchanges());
+    const auth = getState().auth;
+    const { token } = auth;
+    return fetch(`/api/exchanges/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(json => {
+        let exchanges = json.exchanges;
+        dispatch(receiveExchanges(exchanges));
+      })
+      .catch(error => {
+        dispatch(addAlert(error.toString(), "danger"));
+      });
+  };
+}
 
-export function connectExchange() {
+export function createConnectedExchange() {
   return {
-    type: types.CONNECT_EXCHANGE
+    type: types.CREATE_CONNECTED_EXCHANGE
+  };
+}
+
+export function receiveConnectedExchange(exchange) {
+  return {
+    type: types.RECEIVE_CONNECTED_EXCHANGE,
+    exchange
+  };
+}
+
+export function connectExchange(id) {
+  return (dispatch, getState) => {
+    dispatch(createConnectedExchange());
+    const auth = getState().auth;
+    const { token } = auth;
+    return fetch(`/api/connected_exchanges/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        exchange_id: id
+      })
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(json => {
+        // let exchange = json.exchange;
+        console.log(json);
+        dispatch(receiveConnectedExchange(json));
+      })
+      .catch(error => {
+        dispatch(addAlert(error.toString(), "danger"));
+      });
   };
 }

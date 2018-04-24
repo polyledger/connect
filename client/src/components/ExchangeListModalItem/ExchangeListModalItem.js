@@ -1,16 +1,29 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import "./ExchangeListModalItem.css";
 
 class ExchangeListModalItem extends Component {
+  constructor() {
+    super(props);
+
+    this.state = {
+      api_key: "",
+      secret: ""
+    };
+  }
+
   render() {
     return (
       <div
         className="card ExchangeListModalItem"
         style={{ backgroundColor: this.props.backgroundColor }}
+        onClick={event => {
+          this.props.connectExchange(this.props.id);
+        }}
       >
         <div className="card-body text-center py-5">
           <img
-            height="30"
+            height={this.props.height}
             alt={this.props.name}
             src={require(`../../assets/exchanges/${
               this.props.name

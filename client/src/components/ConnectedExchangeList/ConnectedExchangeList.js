@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import ConnectedExchangeListItem from "../ConnectedExchangeListItem/ConnectedExchangeListItem";
-import ExchangeListModal from "../ExchangeListModal/ExchangeListModal";
 
 class ConnectedExchangeList extends Component {
   render() {
@@ -35,7 +34,6 @@ class ConnectedExchangeList extends Component {
         <ul className="list-group mb-3">
           <ConnectedExchangeListItem name="Binance" />
         </ul>
-        <ExchangeListModal />
       </div>
     );
   }

@@ -291,14 +291,13 @@ class ListCreateConnectedExchanges(APIView):
         bb_user_client = get_bb_user_client(request.user)
         payload = {
             'credentials': {
-                'api_key': request.user.bitbutter.api_key,
-                'secret': request.user.bitbutter.secret
+                'api_key': request.data['api_key'],
+                'secret': request.data['secret']
             },
             'exchange_id': request.data['exchange_id']
         }
         response = bb_user_client.connect_exchange(payload)
-        print(response)
-        return Response({'message': 'test'})
+        return Response(response.json())
 
 
 class RetrieveExchanges(APIView):
@@ -314,5 +313,4 @@ class RetrieveExchanges(APIView):
         """
         bb_user_client = get_bb_user_client(request.user)
         response = bb_user_client.get_all_exchanges()
-        print(response)
-        return Response({'message': 'test'})
+        return Response(response.json())

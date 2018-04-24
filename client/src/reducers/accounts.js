@@ -23,10 +23,17 @@ export default function accounts(state = initialState, action) {
       });
     case types.RECEIVE_EXCHANGES:
       return Object.assign({}, state, {
+        isFetching: false,
+        exchanges: action.exchanges
+      });
+    case types.CREATE_CONNECTED_EXCHANGE:
+      return Object.assign({}, state, {
+        isFetching: true
+      });
+    case types.RECEIVE_CONNECTED_EXCHANGE:
+      return Object.assign({}, state, {
         isFetching: false
       });
-    case types.CONNECT_EXCHANGE:
-      return {};
 
     default:
       return state;

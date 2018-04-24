@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ConnectedExchangeList from "../ConnectedExchangeList/ConnectedExchangeList";
 import ConnectedAddressList from "../ConnectedAddressList/ConnectedAddressList";
+import ExchangeListModal from "../ExchangeListModal/ExchangeListModal";
 
 class Accounts extends Component {
   componentDidMount() {
@@ -31,6 +32,11 @@ class Accounts extends Component {
         </div>
         <ConnectedExchangeList exchanges={this.props.connectedExchanges} />
         <ConnectedAddressList addresses={this.props.connectedAddresses} />
+        <ExchangeListModal
+          connectExchange={this.props.connectExchange}
+          fetchExchanges={this.props.fetchExchanges}
+          exchanges={this.props.exchanges}
+        />
       </div>
     );
   }
