@@ -6,14 +6,6 @@ class ExchangeListModal extends Component {
     this.props.fetchExchanges();
   }
 
-  onMouseEnter() {
-    console.log("enter");
-  }
-
-  onMouseLeave() {
-    console.log("leave");
-  }
-
   render() {
     let options = {
       Binance: {
@@ -133,6 +125,25 @@ class ExchangeListModal extends Component {
             </div>
             <div className="modal-body">
               <div className="container">
+                <div className="alert alert-info" role="alert">
+                  <div className="row">
+                    <div className="col-1 d-flex justify-content-center align-items-center">
+                      <i className="fa fa-info-circle" />
+                    </div>
+                    <div className="col-10">
+                      Enter your read-only API keys to connect to cryptoasset
+                      exchanges. <em>Never</em> enter API keys that have
+                      writable permissions enabled.{" "}
+                      <a
+                        href="https://polyledger.zendesk.com/hc/en-us/articles/360002808492-What-are-API-keys-"
+                        className="alert-link"
+                        target="blank"
+                      >
+                        Learn more
+                      </a>.
+                    </div>
+                  </div>
+                </div>
                 <div className="row">{exchanges}</div>
               </div>
             </div>

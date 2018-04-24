@@ -1,22 +1,40 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import FormValidator from "../../utils/formValidator";
 import "./ExchangeListModalItem.css";
 
 class ExchangeListModalItem extends Component {
   constructor(props) {
     super(props);
 
+    this.validator = new FormValidator([
+      {
+        field: "apiKey",
+        method: "isEmpty",
+        validWhen: false,
+        message: "API Key is required."
+      },
+      {
+        field: "secret",
+        method: "isEmpty",
+        validWhen: false,
+        message: "Secret is required."
+      }
+    ]);
+
     this.state = {
       exchangeId: this.props.id,
       apiKey: "",
       secret: "",
       selected: false,
-      hovering: false
+      hovering: false,
+      validation: this.validator.valid()
     };
 
     this.cardBody = React.createRef();
     this.image = React.createRef();
     this.hovering = false;
+    this.submitted = false;
   }
 
   targetIsParent(target) {
@@ -29,6 +47,28 @@ class ExchangeListModalItem extends Component {
         selected: !this.state.selected
       });
     }
+  }
+
+  onChange(event) {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  }
+
+  onSubmit(event) {
+    event.preventDefault();
+
+    const validation = this.validator.validate(this.state);
+    this.setState({ validation }, () => {
+      if (validation.isValid) {
+        this.props.connectExchange(
+          this.state.exchangeId,
+          this.state.apiKey,
+          this.state.secret
+        );
+      }
+    });
+    this.submitted = true;
   }
 
   onMouseEnter(event) {
@@ -44,23 +84,51 @@ class ExchangeListModalItem extends Component {
   }
 
   render() {
+    let validation = this.submitted
+      ? this.validator.validate(this.state)
+      : this.state.validation;
+
     let content = this.state.selected ? (
-      <form className="m-3">
+      <form
+        className={
+          "m-3 " + (this.submitted ? "was-validated" : "needs-validation")
+        }
+        onSubmit={event => this.onSubmit(event)}
+        noValidate
+      >
         <div className="form-group">
           <input
             placeholder="API Key"
             name="apiKey"
             value={this.state.apiKey}
+            onChange={event => this.onChange(event)}
             className="form-control"
+            required
           />
+          {validation.apiKey.isInvalid ? (
+            <div className="invalid-feedback text-left">
+              {validation.apiKey.message}
+            </div>
+          ) : (
+            ""
+          )}
         </div>
         <div className="form-group">
           <input
             placeholder="Secret"
             name="secret"
             value={this.state.secret}
+            onChange={event => this.onChange(event)}
             className="form-control"
+            required
           />
+          {validation.secret.isInvalid ? (
+            <div className="invalid-feedback text-left">
+              {validation.secret.message}
+            </div>
+          ) : (
+            ""
+          )}
         </div>
         <p className="text-center">
           <a
@@ -80,7 +148,9 @@ class ExchangeListModalItem extends Component {
           </a>
         </p>
         <button
-          type="button"
+          type="submit"
+          data-toggle="modal"
+          data-target="#exchangeModal"
           className="btn btn-block btn-outline-primary pull-right"
           style={{
             color: this.props.color,

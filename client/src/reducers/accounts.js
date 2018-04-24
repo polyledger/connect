@@ -15,7 +15,8 @@ export default function accounts(state = initialState, action) {
       });
     case types.RECEIVE_CONNECTED_EXCHANGES:
       return Object.assign({}, state, {
-        isFetching: false
+        isFetching: false,
+        connectedExchanges: action.connectedExchanges
       });
     case types.REQUEST_EXCHANGES:
       return Object.assign({}, state, {
@@ -26,14 +27,13 @@ export default function accounts(state = initialState, action) {
         isFetching: false,
         exchanges: action.exchanges
       });
-    case types.CREATE_CONNECTED_EXCHANGE:
-      return Object.assign({}, state, {
-        isFetching: true
+    case types.CONNECT_EXCHANGE_SUCCESS:
+      return Object.assign({}, state, {});
+    case types.DISCONNECT_EXCHANGE_SUCCESS:
+      let connectedExchanges = state.connectedExchanges.filter(exchange => {
+        return exchange.id !== action.exchangeId;
       });
-    case types.RECEIVE_CONNECTED_EXCHANGE:
-      return Object.assign({}, state, {
-        isFetching: false
-      });
+      return Object.assign({}, state, { connectedExchanges });
 
     default:
       return state;

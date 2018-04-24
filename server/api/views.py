@@ -269,7 +269,7 @@ class RetrieveSettings(APIView):
         return Response(serializer.data)
 
 
-class ListCreateConnectedExchanges(APIView):
+class ListCreateDestroyConnectedExchanges(APIView):
     """
     View to retrieve user's connected exchanges via Bitbutter.
     """
@@ -297,6 +297,15 @@ class ListCreateConnectedExchanges(APIView):
             'exchange_id': request.data['exchange_id']
         }
         response = bb_user_client.connect_exchange(payload)
+        return Response(response.json())
+
+    def delete(self, request, format=None):
+        """
+        Disconnect an exchange
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        exchange_id = request.data['exchange_id']
+        response = bb_user_client.disconnect_exchange(exchange_id)
         return Response(response.json())
 
 

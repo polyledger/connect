@@ -2,7 +2,8 @@ import { connect } from "react-redux";
 import {
   fetchConnectedExchanges,
   fetchExchanges,
-  connectExchange
+  connectExchange,
+  disconnectExchange
 } from "../actions/accountActions";
 import Accounts from "../components/Accounts/Accounts";
 
@@ -14,7 +15,8 @@ const mapDispatchToProps = dispatch => ({
   fetchConnectedExchanges: () => dispatch(fetchConnectedExchanges()),
   fetchExchanges: () => dispatch(fetchExchanges()),
   connectExchange: (id, apiKey, secret) =>
-    dispatch(connectExchange(id, apiKey, secret))
+    dispatch(connectExchange(id, apiKey, secret)),
+  disconnectExchange: id => dispatch(disconnectExchange(id))
 });
 
 const AccountsContainer = connect(mapStateToProps, mapDispatchToProps)(

@@ -37,7 +37,8 @@ export function fetchConnectedExchanges() {
         throw new Error(response.statusText);
       })
       .then(json => {
-        dispatch(receiveConnectedExchanges(json));
+        let connectedExchanges = json.connected_exchanges;
+        dispatch(receiveConnectedExchanges(connectedExchanges));
       })
       .catch(error => {
         dispatch(addAlert(error.toString(), "danger"));
@@ -86,22 +87,8 @@ export function fetchExchanges() {
   };
 }
 
-export function createConnectedExchange() {
-  return {
-    type: types.CREATE_CONNECTED_EXCHANGE
-  };
-}
-
-export function receiveConnectedExchange(exchange) {
-  return {
-    type: types.RECEIVE_CONNECTED_EXCHANGE,
-    exchange
-  };
-}
-
 export function connectExchange(exchangeId, apiKey, secret) {
   return (dispatch, getState) => {
-    dispatch(createConnectedExchange());
     const auth = getState().auth;
     const { token } = auth;
     return fetch(`/api/connected_exchanges/`, {
@@ -123,9 +110,54 @@ export function connectExchange(exchangeId, apiKey, secret) {
         throw new Error(response.statusText);
       })
       .then(json => {
-        // let exchange = json.exchange;
-        console.log(json);
-        dispatch(receiveConnectedExchange(json));
+        let connectedExchangeId = json.connected_exchange_id;
+        dispatch(addAlert("Connected exchange successfully.", "success"));
+        dispatch(fetchConnectedExchanges());
+        dispatch(connectExchangeSuccess(connectedExchangeId));
+      })
+      .catch(error => {
+        dispatch(addAlert(error.toString(), "danger"));
+      });
+  };
+}
+
+export function connectExchangeSuccess(exchangeId) {
+  return {
+    type: types.CONNECT_EXCHANGE_SUCCESS,
+    exchangeId
+  };
+}
+
+export function disconnectExchangeSuccess(exchangeId) {
+  return {
+    type: types.DISCONNECT_EXCHANGE_SUCCESS,
+    exchangeId
+  };
+}
+
+export function disconnectExchange(exchangeId) {
+  return (dispatch, getState) => {
+    const auth = getState().auth;
+    const { token } = auth;
+    return fetch(`/api/connected_exchanges/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        exchange_id: exchangeId
+      })
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(json => {
+        dispatch(disconnectExchangeSuccess(exchangeId));
+        dispatch(addAlert("Disconnected exchange successfully.", "success"));
       })
       .catch(error => {
         dispatch(addAlert(error.toString(), "danger"));

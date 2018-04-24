@@ -2,6 +2,11 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 class ConnectedExchangeListItem extends Component {
+  onClick(event) {
+    event.preventDefault();
+    this.props.disconnectExchange(this.props.id);
+  }
+
   render() {
     return (
       <li
@@ -11,13 +16,14 @@ class ConnectedExchangeListItem extends Component {
         <div className="row d-flex align-items-center">
           <div className="col-2">{this.props.name}</div>
           <div className="col-8">
-            <small className="text-muted">
-              Connected on April 23rd, 2018 at 11:34 PM PDT
-            </small>
+            <small className="text-muted">{this.props.syncedAt}</small>
           </div>
 
           <div className="col-2">
-            <button className="btn btn-primary btn-outline-secondary float-right">
+            <button
+              className="btn btn-primary btn-outline-secondary float-right"
+              onClick={event => this.onClick(event)}
+            >
               Remove
             </button>
           </div>
