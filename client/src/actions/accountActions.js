@@ -99,7 +99,7 @@ export function receiveConnectedExchange(exchange) {
   };
 }
 
-export function connectExchange(id) {
+export function connectExchange(exchangeId, apiKey, secret) {
   return (dispatch, getState) => {
     dispatch(createConnectedExchange());
     const auth = getState().auth;
@@ -111,7 +111,9 @@ export function connectExchange(id) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        exchange_id: id
+        exchange_id: exchangeId,
+        api_key: apiKey,
+        secret: secret
       })
     })
       .then(response => {

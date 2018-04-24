@@ -3,6 +3,13 @@ import ConnectedExchangeListItem from "../ConnectedExchangeListItem/ConnectedExc
 
 class ConnectedExchangeList extends Component {
   render() {
+    let connectedExchanges = [];
+    this.props.connectedExchanges.forEach(connectedExchange => {
+      connectedExchanges.push(
+        <ConnectedExchangeListItem name={connectedExchange.name} />
+      );
+    });
+
     return (
       <div className="ConnectedExchangeList">
         <div className="hr-divider my-3">
@@ -31,9 +38,7 @@ class ConnectedExchangeList extends Component {
           </div>
         </div>
 
-        <ul className="list-group mb-3">
-          <ConnectedExchangeListItem name="Binance" />
-        </ul>
+        <ul className="list-group mb-3">{connectedExchanges}</ul>
       </div>
     );
   }

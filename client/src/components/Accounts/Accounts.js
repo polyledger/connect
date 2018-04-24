@@ -30,7 +30,9 @@ class Accounts extends Component {
             </div>
           </div>
         </div>
-        <ConnectedExchangeList exchanges={this.props.connectedExchanges} />
+        <ConnectedExchangeList
+          connectedExchanges={this.props.connectedExchanges}
+        />
         <ConnectedAddressList addresses={this.props.connectedAddresses} />
         <ExchangeListModal
           connectExchange={this.props.connectExchange}

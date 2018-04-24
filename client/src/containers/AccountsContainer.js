@@ -13,7 +13,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   fetchConnectedExchanges: () => dispatch(fetchConnectedExchanges()),
   fetchExchanges: () => dispatch(fetchExchanges()),
-  connectExchange: id => dispatch(connectExchange(id))
+  connectExchange: (id, apiKey, secret) =>
+    dispatch(connectExchange(id, apiKey, secret))
 });
 
 const AccountsContainer = connect(mapStateToProps, mapDispatchToProps)(
