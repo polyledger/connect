@@ -9,19 +9,15 @@ class ConnectedExchangeListItem extends Component {
 
   render() {
     return (
-      <li
-        className="ConnectedExchangeListItem list-group-item"
-        style={{ backgroundColor: this.props.backgroundColor }}
-      >
+      <li className="ConnectedExchangeListItem list-group-item">
         <div className="row d-flex align-items-center">
           <div className="col-2">{this.props.name}</div>
-          <div className="col-8">
+          <div className="col-xs-4 col-md-6">
             <small className="text-muted">{this.props.syncedAt}</small>
           </div>
-
-          <div className="col-2">
+          <div className="col-xs-6 col-md-4 mt-2">
             <button
-              className="btn btn-primary btn-outline-secondary float-right"
+              className="btn btn-primary btn-outline-secondary pull-right"
               onClick={event => this.onClick(event)}
             >
               Remove

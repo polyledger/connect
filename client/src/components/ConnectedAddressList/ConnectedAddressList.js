@@ -12,7 +12,10 @@ class ConnectedAddressList extends Component {
         </div>
 
         <ul className="list-group mb-3">
-          <ConnectedAddressListItem symbol="BTC" />
+          <ConnectedAddressListItem
+            symbol="BTC"
+            address="1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"
+          />
         </ul>
       </div>
     );
