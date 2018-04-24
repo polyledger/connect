@@ -1,3 +1,4 @@
+import dateutil.parser
 from datetime import date, timedelta
 from api.models import User, Coin, Portfolio, Token, Settings, IPAddress
 from django.contrib.auth import get_user_model
@@ -15,7 +16,8 @@ from api.serializers import SettingsSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
 from api.tasks import allocate_for_user
-from api.auth import get_client_ip
+from api.auth import get_client_ip, get_user_agent
+from api.bitbutter import get_bb_partner_client, get_bb_user_client
 
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
@@ -32,10 +34,7 @@ class IsCreationOrIsAuthenticated(permissions.BasePermission):
 
 class UserViewSet(viewsets.ModelViewSet):
     model = User
-    authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication,
-    )
+    authentication_classes = (authentication.TokenAuthentication,)
     serializer_class = UserSerializer
     permission_classes = [IsCreationOrIsAuthenticated]
 
@@ -64,13 +63,24 @@ class UserViewSet(viewsets.ModelViewSet):
         if user is not None and \
                 account_activation_token.check_token(user, token):
             user.is_active = True
-            user.save()
             auth_token = Token.objects.get(user=user)
+
+            # Save IP address and user agent
             ip = get_client_ip(request)
-            ip_address, created = IPAddress.objects.get_or_create(
-                ip=ip, user=user)
+            user_agent = get_user_agent(request)
+            ip_address = IPAddress(ip=ip, user=user, user_agent=user_agent)
             ip_address.save()
-        redirect_url = settings.CLIENT_URL + '?token=' + str(auth_token)
+
+            # Save Bitbutter user
+            response = get_bb_partner_client().create_user()
+            bb_user = response.json()['user']
+            user.bitbutter.uuid = bb_user['id']
+            created_at = dateutil.parser.parse(bb_user['created_at'])
+            user.bitbutter.created_at = created_at
+            user.bitbutter.api_key = bb_user['credentials']['api_key']
+            user.bitbutter.secret = bb_user['credentials']['secret']
+            user.save()
+        redirect_url = settings.CLIENT_URL + '?token=' + str(auth_token.key)
         return HttpResponseRedirect(redirect_url)
 
     def destroy(self, request, *args, **kwargs):
@@ -106,10 +116,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class PortfolioViewSet(viewsets.ModelViewSet):
     model = Portfolio
-    authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication,
-    )
+    authentication_classes = (authentication.TokenAuthentication,)
     serializer_class = PortfolioSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -238,10 +245,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
 class CoinViewSet(viewsets.ReadOnlyModelViewSet):
     model = Coin
     queryset = Coin.objects.all()
-    authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication,
-    )
+    authentication_classes = (authentication.TokenAuthentication,)
     serializer_class = CoinSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -250,13 +254,10 @@ class RetrieveSettings(APIView):
     """
     View to retrieve user settings.
 
-    * Requires basic or token authentication.
+    * Requires token authentication.
     * Only authenticated user settings can be retrieved.
     """
-    authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication,
-    )
+    authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, format=None):
@@ -266,3 +267,52 @@ class RetrieveSettings(APIView):
         settings = Settings.objects.get(user=request.user)
         serializer = SettingsSerializer(settings)
         return Response(serializer.data)
+
+
+class ListCreateConnectedExchanges(APIView):
+    """
+    View to retrieve user's connected exchanges via Bitbutter.
+    """
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        """
+        Return authenticated user's connected exchanges.
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        response = bb_user_client.get_user_connected_exchanges()
+        return Response(response.json())
+
+    def post(self, request, format=None):
+        """
+        Connect an exchange
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        payload = {
+            'credentials': {
+                'api_key': request.user.bitbutter.api_key,
+                'secret': request.user.bitbutter.secret
+            },
+            'exchange_id': request.data['exchange_id']
+        }
+        response = bb_user_client.connect_exchange(payload)
+        print(response)
+        return Response({'message': 'test'})
+
+
+class RetrieveExchanges(APIView):
+    """
+    View exchanges that can be connected with Bitbutter
+    """
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        """
+        Return connectable exchanges
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        response = bb_user_client.get_all_exchanges()
+        print(response)
+        return Response({'message': 'test'})

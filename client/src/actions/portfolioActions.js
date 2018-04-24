@@ -29,9 +29,18 @@ export function receivePortfolio(portfolio) {
  * Fetch user's portfolio.
  */
 export function fetchPortfolio() {
-  return dispatch => {
+  return (dispatch, getState) => {
     dispatch(requestPortfolio());
-    return fetch(`/api/portfolios/current`)
+    const auth = getState().auth;
+    const { token } = auth;
+    const { id } = auth.user.portfolio;
+    return fetch(`/api/portfolios/${id}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
       .then(
         response => {
           return response.json();
@@ -70,8 +79,16 @@ export function receiveChartData(chartData) {
 export function fetchChartData(period) {
   return (dispatch, getState) => {
     dispatch(requestChartData(period));
-    const { id } = getState().auth.user;
-    return fetch(`/api/portfolios/${id}/chart?period=${period}`)
+    const auth = getState().auth;
+    const { token } = auth;
+    const { id } = auth.user.portfolio;
+    return fetch(`/api/portfolios/${id}/chart?period=${period}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
       .then(response => {
         if (response.ok || response.status === 400) {
           return response.json();

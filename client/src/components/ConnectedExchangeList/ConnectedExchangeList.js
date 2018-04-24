@@ -1,12 +1,14 @@
 import React, { Component } from "react";
-import ExchangeListItem from "../ExchangeListItem/ExchangeListItem";
+import ConnectedExchangeListItem from "../ConnectedExchangeListItem/ConnectedExchangeListItem";
 
-class ExchangeList extends Component {
+class ConnectedExchangeList extends Component {
   render() {
     return (
-      <div className="ExchangeList">
+      <div className="ConnectedExchangeList">
         <div className="hr-divider my-3">
-          <h3 className="hr-divider-content hr-divider-heading">Exchanges</h3>
+          <h3 className="hr-divider-content hr-divider-heading">
+            Connected Exchanges
+          </h3>
         </div>
 
         <div className="alert alert-info" role="alert">
@@ -30,42 +32,42 @@ class ExchangeList extends Component {
         </div>
 
         <ul className="list-group mb-3">
-          <ExchangeListItem
+          <ConnectedExchangeListItem
             name="binance"
             extension="svg"
             backgroundColor="#FFFFFF"
             height="45"
             url="https://www.binance.com/"
           />
-          <ExchangeListItem
+          <ConnectedExchangeListItem
             name="bittrex"
             extension="svg"
             backgroundColor="#0E2E41"
             height="30"
             url="https://bittrex.com/"
           />
-          <ExchangeListItem
+          <ConnectedExchangeListItem
             name="coinbase"
             extension="svg"
             backgroundColor="#F8F8F8"
             height="35"
             url="https://www.coinbase.com/"
           />
-          <ExchangeListItem
+          <ConnectedExchangeListItem
             name="gdax"
             extension="svg"
             backgroundColor="#5A607B"
             height="45"
             url="https://www.gdax.com/"
           />
-          <ExchangeListItem
+          <ConnectedExchangeListItem
             name="kraken"
             extension="png"
             backgroundColor="#FFFFFF"
             height="50"
             url="https://www.kraken.com/"
           />
-          <ExchangeListItem
+          <ConnectedExchangeListItem
             name="poloniex"
             extension="png"
             backgroundColor="#0E0E0E"
@@ -78,4 +80,4 @@ class ExchangeList extends Component {
   }
 }
 
-export default ExchangeList;
+export default ConnectedExchangeList;

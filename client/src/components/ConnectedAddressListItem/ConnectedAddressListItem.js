@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-class AddressListItem extends Component {
+class ConnectedAddressListItem extends Component {
   render() {
     return (
       <li className="list-group-item">
@@ -14,7 +14,10 @@ class AddressListItem extends Component {
             />
           </div>
           <div className="col">
-            <input className="form-control m-1" placeholder="Public Address" />
+            <input
+              className="form-control m-1"
+              placeholder="Public ConnectedAddress"
+            />
           </div>
           <div className="col-2">
             <button className="btn btn-primary float-right">
@@ -27,8 +30,8 @@ class AddressListItem extends Component {
   }
 }
 
-AddressListItem.propTypes = {
+ConnectedAddressListItem.propTypes = {
   symbol: PropTypes.string
 };
 
-export default AddressListItem;
+export default ConnectedAddressListItem;

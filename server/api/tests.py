@@ -19,10 +19,12 @@ http://www.django-rest-framework.org/api-guide/testing/
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.contrib.auth import get_user_model
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 from rest_framework.test import APIClient
 from api.models import Portfolio, Coin, Position, Token
 from api.tasks import fill_daily_historical_prices, allocate_for_user
-from api.trading import test_order
+from api.tokens import account_activation_token
 from unittest.mock import patch
 
 
@@ -64,13 +66,6 @@ class AllocationTestCase(TestCase):
         assert allocation is not None
 
 
-class TradingTestCase(TestCase):
-
-    def test_no_error(self):
-        result = test_order()
-        assert type(result) is dict
-
-
 class UserTestCase(TestCase):
 
     def test_create_user(self):
@@ -82,7 +77,14 @@ class UserTestCase(TestCase):
             'last_name': 'Hall'
         }
         response = client.post('/api/users/', data, format='json')
-        assert response.status_code == 200
+        assert response.status_code == 201
+
+        user = get_user_model().objects.get(pk=response.json()['id'])
+        token = account_activation_token.make_token(user)
+        id = urlsafe_base64_encode(force_bytes(user.id)).decode("utf-8")
+        url = '/api/users/{0}/activate/?token={1}'.format(id, token)
+        response = client.get(url, format='json')
+        assert response.status_code == 302
 
     def test_set_password(self):
         user = get_user_model().objects.create_user(

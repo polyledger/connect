@@ -12,5 +12,7 @@ app_name = 'api'
 urlpatterns = [
     url(r'^authenticate/', CustomAuthToken.as_view()),
     url(r'^settings/', views.RetrieveSettings.as_view()),
+    url(r'^connected_exchanges/', views.ListCreateConnectedExchanges.as_view()),
+    url(r'^exchanges/', views.RetrieveExchanges.as_view()),
     url(r'^', include(router.urls, namespace='api'))
 ]

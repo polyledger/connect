@@ -14,6 +14,10 @@ def get_client_ip(request):
     return ip
 
 
+def get_user_agent(request):
+    return request.META['HTTP_USER_AGENT']
+
+
 class CustomAuthToken(ObtainAuthToken):
     """
     See http://www.django-rest-framework.org/api-guide/authentication/
@@ -27,7 +31,9 @@ class CustomAuthToken(ObtainAuthToken):
         user = User.objects.get(email=user.email)
 
         ip = get_client_ip(request)
-        ip_address, created = IPAddress.objects.get_or_create(ip=ip, user=user)
+        user_agent = get_user_agent(request)
+        ip_address, created = IPAddress.objects.get_or_create(
+            ip=ip, user=user, user_agent=user_agent)
         ip_address.save()
 
         return Response({

@@ -4,7 +4,7 @@ import AlertContainer from "../../containers/AlertContainer";
 import Navbar from "../Navbar/Navbar";
 import Portfolio from "../Portfolio/Portfolio";
 import Analytics from "../Analytics/Analytics";
-import Accounts from "../Accounts/Accounts";
+import AccountsContainer from "../../containers/AccountsContainer";
 import Markets from "../Markets/Markets";
 import SettingsContainer from "../../containers/SettingsContainer";
 import "./AppLayout.css";
@@ -19,7 +19,7 @@ class AppLayout extends Component {
           <Switch>
             <Route exact path="/portfolio" component={Portfolio} />
             <Route path="/portfolio/analytics" component={Analytics} />
-            <Route path="/portfolio/accounts" component={Accounts} />
+            <Route path="/portfolio/accounts" component={AccountsContainer} />
             <Route path="/portfolio/markets" component={Markets} />
             <Route path="/portfolio/settings" component={SettingsContainer} />
           </Switch>

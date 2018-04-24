@@ -1,13 +1,17 @@
-import React, { Component } from 'react';
-import ExchangeList from '../ExchangeList/ExchangeList';
-import AddressList from '../AddressList/AddressList';
+import React, { Component } from "react";
+import ConnectedExchangeList from "../ConnectedExchangeList/ConnectedExchangeList";
+import ConnectedAddressList from "../ConnectedAddressList/ConnectedAddressList";
 
 class Accounts extends Component {
+  componentDidMount() {
+    this.props.fetchConnectedExchanges();
+  }
+
   render() {
     return (
       <div className="Accounts">
-        <ExchangeList />
-        <AddressList />
+        <ConnectedExchangeList exchanges={this.props.connectedExchanges} />
+        <ConnectedAddressList addresses={this.props.connectedAddresses} />
       </div>
     );
   }

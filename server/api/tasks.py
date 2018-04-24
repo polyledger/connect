@@ -33,9 +33,6 @@ def allocate_for_user(self, pk, symbols, risk_score):
     """
     Rebalances portfolio allocations.
     """
-
-    self.update_state(state='PROGRESS')
-
     user = get_user_model().objects.get(pk=pk)
     start = date(year=2017, month=1, day=1)
     allocator = CVaR(symbols=symbols, start=start)

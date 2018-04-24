@@ -125,6 +125,20 @@ def save_user_portfolio(sender, instance, **kwargs):
 
 
 @receiver(models.signals.post_save, sender=User)
+def create_user_bitbutter(sender, instance=None, created=False, **kwargs):
+    """
+    Create object containing Bitbutter integration credentials
+    """
+    if created:
+        Bitbutter.objects.create(user=instance)
+
+
+@receiver(models.signals.post_save, sender=User)
+def save_user_bitbutter(sender, instance, **kwargs):
+    instance.bitbutter.save()
+
+
+@receiver(models.signals.post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     """
     Create an authentication token for new users
@@ -268,6 +282,10 @@ class IPAddress(models.Model):
     user = models.ForeignKey(to='User', related_name='ip_addresses',
                              on_delete=models.CASCADE)
     last_login = models.DateTimeField(auto_now=True)
+    user_agent = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    region = models.CharField(max_length=255)
 
     def __str__(self):
         return self.ip
@@ -275,7 +293,7 @@ class IPAddress(models.Model):
     class Meta:
         verbose_name = 'IP Address'
         verbose_name_plural = 'IP Addresses'
-        unique_together = (('ip', 'user'),)
+        unique_together = (('ip', 'user', 'user_agent'),)
 
 
 class Distribution(models.Model):
@@ -298,6 +316,21 @@ class Price(models.Model):
 
     class Meta:
         unique_together = (('date', 'coin'),)
+
+
+class Bitbutter(models.Model):
+    """
+    Bitbutter integration user credentials
+    """
+    user = models.OneToOneField(to='User', related_name='bitbutter',
+                                on_delete=models.CASCADE)
+    uuid = models.UUIDField(editable=False, null=True)
+    api_key = models.CharField(max_length=255, null=True)
+    secret = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(null=True)
+
+    class Meta:
+        verbose_name_plural = 'bitbutter'
 
 
 class Settings(models.Model):
