@@ -5,9 +5,13 @@ import "./PositionRow.css";
 class PositionRow extends Component {
   getImageSource() {
     try {
-      return require(`../../assets/coins/${this.props.symbol}.png`);
+      return require(`../../assets/coins/${this.props.symbol}.svg`);
     } catch (error) {
-      return require(`../../assets/default.png`);
+      try {
+        return require(`../../assets/coins/${this.props.symbol}.png`);
+      } catch (error) {
+        return require(`../../assets/default.png`);
+      }
     }
   }
 

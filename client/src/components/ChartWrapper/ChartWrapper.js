@@ -36,7 +36,8 @@ class ChartWrapper extends Component {
               </div>
               <div className="col-sm-4">
                 <ChartStat
-                  number={this.props.chart.dollar_change}
+                  number={this.props.chart.all_time_return}
+                  change={this.props.chart.all_time_return_pct}
                   description="All Time Return"
                 />
               </div>
