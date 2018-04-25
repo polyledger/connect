@@ -223,7 +223,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                 asset = entry['size']['symbol']
                 amount = abs(float(entry['size']['size']))
                 portfolio.add(asset, amount, time)
-            elif transaction_type == 'exchange_withdraw':
+            elif transaction_type == 'exchange_withdrawal':
                 asset = entry['size']['symbol']
                 amount = abs(float(entry['size']['size']))
                 portfolio.remove(asset, amount, time)
@@ -247,8 +247,8 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                                                   freq='D')
         start_value = historic_value[0][1]
         current_value = historic_value[-1][1]
-        dollar_change = current_value - start_value
-        percent_change = ((current_value - start_value) / start_value) * 100
+        past_period = current_value - start_value
+        past_period_pct = ((current_value - start_value) / start_value) * 100
 
         content = {
             'series': [
@@ -257,9 +257,9 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                     'data': historic_value
                 }
             ],
-            'dollar_change': dollar_change,
-            'percent_change': percent_change,
-            'value': current_value
+            'value': current_value,
+            'past_period': past_period,
+            'past_period_pct': past_period_pct
         }
         return Response(content)
 

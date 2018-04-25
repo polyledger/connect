@@ -22,7 +22,11 @@ class ChartWrapper extends Component {
           <div className="card-body">
             <div className="row py-2 text-center">
               <div className="col-sm-4">
-                <ChartStat number={758} description="Past Day" />
+                <ChartStat
+                  number={this.props.chart.past_period}
+                  change={this.props.chart.past_period_pct}
+                  description={`Past ${this.props.chart.period}`}
+                />
               </div>
               <div className="col-sm-4">
                 <ChartStat
