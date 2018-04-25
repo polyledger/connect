@@ -214,6 +214,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         response = bb_user_client.get_user_ledger()
         ledger = response.json()[::-1]
         portfolio = PortfolioInstance(start=start)
+        cost_basis = 0
         for entry in ledger:
             transaction_type = entry['transaction_type']
             time = dateutil.parser.parse(entry['time'])
@@ -228,10 +229,12 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                 amount = abs(float(entry['size']['size']))
                 portfolio.remove(asset, amount, time)
             elif transaction_type == 'buy':
+                asset = entry['quote']['symbol']
+                amount = abs(float(entry['quote']['size']))
                 if entry['quote']['symbol'] != 'USD':
-                    asset = entry['quote']['symbol']
-                    amount = abs(float(entry['quote']['size']))
                     portfolio.remove(asset, amount, time)
+                else:
+                    cost_basis += amount
                 asset = entry['base']['symbol']
                 amount = abs(float(entry['base']['size']))
                 portfolio.add(asset, amount, time)
@@ -249,6 +252,8 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         current_value = historic_value[-1][1]
         past_period = current_value - start_value
         past_period_pct = ((current_value - start_value) / start_value) * 100
+        all_time_return = current_value - cost_basis
+        all_time_return_pct = ((current_value - cost_basis)/cost_basis) * 100
 
         content = {
             'series': [
@@ -259,7 +264,9 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             ],
             'value': current_value,
             'past_period': past_period,
-            'past_period_pct': past_period_pct
+            'past_period_pct': past_period_pct,
+            'all_time_return': all_time_return,
+            'all_time_return_pct': all_time_return_pct
         }
         return Response(content)
 
