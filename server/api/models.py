@@ -85,9 +85,13 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+    class Meta:
+        verbose_name = 'User'
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    legal_name = models.CharField(max_length=255)
     # TODO: Add demographic information about user, such as age, income, etc.
 
 
@@ -98,6 +102,7 @@ def create_user_profile(sender, instance=None, created=False, **kwargs):
     """
     if created:
         Profile.objects.create(user=instance)
+        Settings.objects.create(user=instance)
 
 
 @receiver(models.signals.post_save, sender=User)
@@ -117,6 +122,20 @@ def create_user_portfolio(sender, instance=None, created=False, **kwargs):
 @receiver(models.signals.post_save, sender=User)
 def save_user_portfolio(sender, instance, **kwargs):
     instance.portfolio.save()
+
+
+@receiver(models.signals.post_save, sender=User)
+def create_user_bitbutter(sender, instance=None, created=False, **kwargs):
+    """
+    Create object containing Bitbutter integration credentials
+    """
+    if created:
+        Bitbutter.objects.create(user=instance)
+
+
+@receiver(models.signals.post_save, sender=User)
+def save_user_bitbutter(sender, instance, **kwargs):
+    instance.bitbutter.save()
 
 
 @receiver(models.signals.post_save, sender=User)
@@ -259,8 +278,14 @@ class IPAddress(models.Model):
     """
     A table linking users to their known IP addresses
     """
-    ip = models.GenericIPAddressField(unique=True, db_index=True)
-    user = models.ForeignKey(to='User', related_name='ip_addresses')
+    ip = models.GenericIPAddressField(db_index=True)
+    user = models.ForeignKey(to='User', related_name='ip_addresses',
+                             on_delete=models.CASCADE)
+    last_login = models.DateTimeField(auto_now=True)
+    user_agent = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    region = models.CharField(max_length=255)
 
     def __str__(self):
         return self.ip
@@ -268,6 +293,7 @@ class IPAddress(models.Model):
     class Meta:
         verbose_name = 'IP Address'
         verbose_name_plural = 'IP Addresses'
+        unique_together = (('ip', 'user', 'user_agent'),)
 
 
 class Distribution(models.Model):
@@ -292,15 +318,50 @@ class Price(models.Model):
         unique_together = (('date', 'coin'),)
 
 
-class WhitelistedEmail(models.Model):
+class Bitbutter(models.Model):
     """
-    Whitelisted emails for user signup
+    Bitbutter integration user credentials
     """
-    date = models.DateField(auto_now_add=True)
-    email = models.EmailField(
-        primary_key=True,
-        db_index=True,
-        unique=True,
-        null=False,
-        blank=False,
-        max_length=254)
+    user = models.OneToOneField(to='User', related_name='bitbutter',
+                                on_delete=models.CASCADE)
+    uuid = models.UUIDField(editable=False, null=True)
+    api_key = models.CharField(max_length=255, null=True)
+    secret = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(null=True)
+
+    class Meta:
+        verbose_name_plural = 'bitbutter'
+
+
+class Settings(models.Model):
+    """
+    Settings configuring a user's Polyledger portfolio
+    """
+    LOCAL_CURRENCY_CHOICES = (
+        ('usd', 'USD (United States dollar)'),
+    )
+
+    TIME_ZONE_CHOICES = (
+        ('pst', 'US/Pacific'),
+        ('utc', 'UTC'),
+    )
+
+    EMAIL_NOTIFICATION_CHOICES = (
+        ('quarterly', 'Quarterly'),
+        ('monthly', 'Monthly'),
+        ('weekly', 'Weekly'),
+        ('daily', 'Daily'),
+        ('off', 'Off'),
+    )
+
+    user = models.ForeignKey(to='User', related_name='settings')
+    local_currency = models.CharField(choices=LOCAL_CURRENCY_CHOICES,
+                                      max_length=255, default='usd')
+    time_zone = models.CharField(choices=TIME_ZONE_CHOICES, max_length=255,
+                                 default='pst')
+    email_notification = models.CharField(choices=EMAIL_NOTIFICATION_CHOICES,
+                                          max_length=255, default='weekly')
+    two_factor_enabled = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = "settings"

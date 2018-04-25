@@ -1,0 +1,8 @@
+.Signup .card {
+  width: 345px;
+}
+
+.custom-control-label::before {
+  background-color: #eee;
+  border: 1px solid #ced4da;
+}

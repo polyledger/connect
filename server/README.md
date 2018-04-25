@@ -4,18 +4,18 @@
 
 ## Table of Contents
 
-1. [Development](#development)
-    - [Prerequisites](#prerequisites)
-    - [API App](#api-app)
-      - [Task Queue](#task-queue)
-      - [Process for Adding New Coins](#process-for-adding-new-coins)
-    - [Admin App](#admin-app)
-2. [Database](#database)
-    - [Development](#development)
-    - [Staging and Production](#staging-and-production)
-3. [Deployment](#deployment)
-4. [Web Server](#web-server)
-5. [Proxy Server](#proxy-server)
+1.  [Development](#development)
+    *   [Prerequisites](#prerequisites)
+    *   [API App](#api-app)
+        *   [Task Queue](#task-queue)
+        *   [Process for Adding New Coins](#process-for-adding-new-coins)
+    *   [Admin App](#admin-app)
+2.  [Database](#database)
+    *   [Development](#development)
+    *   [Staging and Production](#staging-and-production)
+3.  [Deployment](#deployment)
+4.  [Web Server](#web-server)
+5.  [Proxy Server](#proxy-server)
 
 Install the latest version of Lattice:
 
@@ -116,20 +116,36 @@ Or alternatively, start redis with `redis-server` and run this command:
 (venv) ❯ celery -E -A polyledger worker --loglevel=info -B
 ```
 
+**Running a task in terminal**
+
+```
+(venv) ❯ python manage.py shell
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from api.tasks import fit_distributions
+>>> fit_distributions.apply()
+<EagerResult: 6b55cdc1-8c5c-4575-9265-98f91b10d5dc>
+>>> from api.tasks import allocate_for_user
+>>> pk = 1
+>>> symbols = ['BTC', 'ETH', 'LTC', 'BCH']
+>>> risk_score = 1
+>>> allocate_for_user(pk=pk, symbols=symbols, risk_score=risk_score)
+```
+
 #### Process for Adding New Coins
 
-1. Create a field for the coin in the `Price` model in `./api/models.py` and run the migration
-2. Add the new coin fields to `PriceAdmin` `./api/admin.py` to make them viewable in the admin app
-3. Add the coin symbol to `SUPPORTED_COINS` in `./api/tasks.py`
-4. Ensure a 300x300 PNG image with a transparent background exists in `polyledger/client/src/assets/img/coins` (don't forget to run the build in production)
-5. Create the new coin in the admin app (symbol and name)
-6. Run the `fill_daily_historical_prices` task in `./api/tasks.py`
+1.  Create a field for the coin in the `Price` model in `./api/models.py` and run the migration
+2.  Add the new coin fields to `PriceAdmin` `./api/admin.py` to make them viewable in the admin app
+3.  Add the coin symbol to `SUPPORTED_COINS` in `./api/tasks.py`
+4.  Ensure a 300x300 PNG image with a transparent background exists in `polyledger/client/src/assets/img/coins` (don't forget to run the build in production)
+5.  Create the new coin in the admin app (symbol and name)
+6.  Run the `fill_daily_historical_prices` task in `./api/tasks.py`
 
 ### Admin app
 
 The admin app allows Polyledger admins to use an admin interface for managing content on the site. If the web server is already running, you can log in at these URLs:
 
-Local:   http://localhost:8080/admin/
+Local: http://localhost:8080/admin/
 Staging: https://staging.polyledger.com/admin/
 
 ## Database
@@ -198,7 +214,6 @@ Then reload the app
 (venv) ❯ pkill gunicorn
 (venv) ❯ gunicorn polyledger.wsgi --bind 127.0.0.1:8000 &
 (venv) ❯ bg
-
 ```
 
 ## Proxy Server
@@ -212,8 +227,9 @@ Various helpful commands for Nginx:
 ```
 
 Log locations:
-- Access logs: `/var/log/nginx/access.log`
-- Error logs: `/var/log/nginx/error.log`
+
+*   Access logs: `/var/log/nginx/access.log`
+*   Error logs: `/var/log/nginx/error.log`
 
 For debugging purposes, it may be helpful to tail the log files like so:
 

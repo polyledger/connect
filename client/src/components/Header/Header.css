@@ -1,0 +1,12 @@
+.Header {
+  background-color: #00b894;
+}
+
+.Header .nav-item {
+  color: #fff;
+}
+
+.Header .dropdown .nav-link:hover {
+  cursor: pointer;
+  color: #eee;
+}

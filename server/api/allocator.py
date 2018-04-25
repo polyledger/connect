@@ -23,7 +23,6 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 from api.models import Price, Distribution, Coin
-from django_celery_results.models import TaskResult
 from scipy.optimize import minimize
 from scipy import stats
 
@@ -34,13 +33,11 @@ class Allocator(object):
         self,
         symbols,
         start,
-        end=datetime.today(),
-        task_id=None
+        end=datetime.today()
     ):
         self.symbols = sorted(symbols)
         self.start = start
         self.end = end
-        self.task_id = task_id
 
     def retrieve_data(self):
         """
@@ -174,10 +171,9 @@ class CVaR(Allocator):
         start,
         end=datetime.today(),
         trials=100000,
-        percentile=5,
-        task_id=None
+        percentile=5
     ):
-        Allocator.__init__(self, symbols, start, end, task_id)
+        Allocator.__init__(self, symbols, start, end)
         self.trials = trials
         self.percentile = percentile
 
@@ -280,34 +276,12 @@ class CVaR(Allocator):
         # DataFrame to hold generated sample returns for each coin
         sample_returns = pd.DataFrame(columns=self.symbols)
 
-        # Set current task_id progress
-        current = 0
-        total = len(self.symbols) + 3
-        task_result = TaskResult.objects.get(task_id=self.task_id)
-        task_result.state = 'PROGRESS'
-        task_result.save()
-
         for symbol in self.symbols:
-            task_result.meta = json.dumps({
-                'current': current,
-                'total': total,
-                'message': 'Optimizing for {0}...'.format(symbol)
-            })
-            task_result.save()
             coin = Coin.objects.get(symbol=symbol)
             distribution = Distribution.objects.filter(coin=coin).first()
             dist = getattr(stats, distribution.name)
             params = tuple(map(float, distribution.params.split(',')))
             sample_returns[symbol] = self.generate_sample_returns(dist, params)
-            current += 1
-
-        task_result.meta = json.dumps({
-            'current': current,
-            'total': total,
-            'message': 'Minimizing risk...'
-        })
-        task_result.save()
-        current += 1
 
         # Minimum risk CVaR optimization
         def func(weights):
@@ -318,14 +292,6 @@ class CVaR(Allocator):
         allocation = self.minimize_risk(func)
         min_return = np.dot(allocation, sample_returns.mean())
 
-        task_result.meta = json.dumps({
-            'current': current,
-            'total': total,
-            'message': 'Maximizing returns...'
-        })
-        task_result.save()
-        current += 1
-
         # Maximum return CVaR optimization
         def func(weights):
             """The objective function that maximizes returns."""
@@ -333,14 +299,6 @@ class CVaR(Allocator):
             return portfolio_returns.mean() * -1
 
         max_return = self.maximize_returns(func)
-
-        task_result.meta = json.dumps({
-            'current': current,
-            'total': total,
-            'message': 'Finalizing allocation...'
-        })
-        task_result.save()
-        current += 1
 
         # Generate an efficient frontier
         def func(weights):
@@ -356,13 +314,6 @@ class CVaR(Allocator):
             points=6,
             func_deriv=False
         )
-
-        task_result.meta = json.dumps({
-            'current': current,
-            'total': total,
-            'message': 'Complete'
-        })
-        task_result.save()
 
         sec = time.time() - start_time
         print('Function allocate completed in {0:0.1f} seconds.'.format(sec))

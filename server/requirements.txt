@@ -9,7 +9,7 @@ scipy==1.0.0
 numpy==1.14.0
 pandas==0.18.1
 requests==2.18.4
-django-celery-results==1.0.1
 django-celery-beat==1.1.0
 django-redis-cache==1.7.1
 django-cors-headers==2.0.0
+chainbridge==1.1.5

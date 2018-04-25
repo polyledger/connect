@@ -1,19 +1,23 @@
+import dateutil.parser
 from datetime import date, timedelta
-from api.models import User, Coin, Portfolio, Token
-from django_celery_results.models import TaskResult
+from api.models import User, Coin, Portfolio, Token, Settings, IPAddress
 from django.contrib.auth import get_user_model
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.conf import settings
 from rest_framework import permissions, authentication, viewsets, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
-from api.serializers import TaskResultSerializer
+from api.serializers import PasswordSerializer, PersonalDetailSerializer
+from api.serializers import SettingsSerializer
 from api.tokens import account_activation_token
 from api.backtest import backtest
 from api.tasks import allocate_for_user
+from api.auth import get_client_ip, get_user_agent
+from api.bitbutter import get_bb_partner_client, get_bb_user_client
 
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
@@ -28,31 +32,9 @@ class IsCreationOrIsAuthenticated(permissions.BasePermission):
             return True
 
 
-class TaskResultViewSet(viewsets.ModelViewSet):
-    model = TaskResult
-    authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication,
-    )
-    serializer_class = TaskResultSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    queryset = TaskResult.objects.all()
-
-    def get_object(self):
-        pk = self.kwargs.get('pk')
-
-        try:
-            return TaskResult.objects.get(task_id=pk)
-        except TaskResult.DoesNotExist:
-            raise Http404
-
-
 class UserViewSet(viewsets.ModelViewSet):
     model = User
-    authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication,
-    )
+    authentication_classes = (authentication.TokenAuthentication,)
     serializer_class = UserSerializer
     permission_classes = [IsCreationOrIsAuthenticated]
 
@@ -81,21 +63,60 @@ class UserViewSet(viewsets.ModelViewSet):
         if user is not None and \
                 account_activation_token.check_token(user, token):
             user.is_active = True
-            user.save()
             auth_token = Token.objects.get(user=user)
-        redirect_url = settings.CLIENT_URL + '?token=' + str(auth_token)
+
+            # Save IP address and user agent
+            ip = get_client_ip(request)
+            user_agent = get_user_agent(request)
+            ip_address = IPAddress(ip=ip, user=user, user_agent=user_agent)
+            ip_address.save()
+
+            # Save Bitbutter user
+            response = get_bb_partner_client().create_user()
+            bb_user = response.json()['user']
+            user.bitbutter.uuid = bb_user['id']
+            created_at = dateutil.parser.parse(bb_user['created_at'])
+            user.bitbutter.created_at = created_at
+            user.bitbutter.api_key = bb_user['credentials']['api_key']
+            user.bitbutter.secret = bb_user['credentials']['secret']
+            user.save()
+        redirect_url = settings.CLIENT_URL + '?token=' + str(auth_token.key)
         return HttpResponseRedirect(redirect_url)
 
     def destroy(self, request, *args, **kwargs):
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
 
+    @detail_route(methods=['PUT'], serializer_class=PasswordSerializer)
+    def set_password(self, request, pk):
+        serializer = PasswordSerializer(data=request.data)
+        user = User.objects.get(pk=pk)
+
+        if serializer.is_valid():
+            if not user.check_password(serializer.data.get('old_password')):
+                return Response({'errors': [{'message': 'Wrong password.'}]},
+                                status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(serializer.data.get('new_password'))
+            user.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['PUT'], serializer_class=PersonalDetailSerializer)
+    def set_personal_details(self, request, pk):
+        serializer = PersonalDetailSerializer(data=request.data)
+        user = User.objects.get(pk=pk)
+
+        if serializer.is_valid():
+            user.first_name = serializer.data['first_name']
+            user.last_name = serializer.data['last_name']
+            user.email = serializer.data['email']
+            user.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class PortfolioViewSet(viewsets.ModelViewSet):
     model = Portfolio
-    authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication,
-    )
+    authentication_classes = (authentication.TokenAuthentication,)
     serializer_class = PortfolioSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -224,9 +245,81 @@ class PortfolioViewSet(viewsets.ModelViewSet):
 class CoinViewSet(viewsets.ReadOnlyModelViewSet):
     model = Coin
     queryset = Coin.objects.all()
-    authentication_classes = (
-        authentication.BasicAuthentication,
-        authentication.TokenAuthentication,
-    )
+    authentication_classes = (authentication.TokenAuthentication,)
     serializer_class = CoinSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class RetrieveSettings(APIView):
+    """
+    View to retrieve user settings.
+
+    * Requires token authentication.
+    * Only authenticated user settings can be retrieved.
+    """
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        """
+        Return authenticated user's settings.
+        """
+        settings = Settings.objects.get(user=request.user)
+        serializer = SettingsSerializer(settings)
+        return Response(serializer.data)
+
+
+class ListCreateDestroyConnectedExchanges(APIView):
+    """
+    View to retrieve user's connected exchanges via Bitbutter.
+    """
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        """
+        Return authenticated user's connected exchanges.
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        response = bb_user_client.get_user_connected_exchanges()
+        return Response(response.json())
+
+    def post(self, request, format=None):
+        """
+        Connect an exchange
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        payload = {
+            'credentials': {
+                'api_key': request.data['api_key'],
+                'secret': request.data['secret']
+            },
+            'exchange_id': request.data['exchange_id']
+        }
+        response = bb_user_client.connect_exchange(payload)
+        return Response(response.json())
+
+    def delete(self, request, format=None):
+        """
+        Disconnect an exchange
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        exchange_id = request.data['exchange_id']
+        response = bb_user_client.disconnect_exchange(exchange_id)
+        return Response(response.json())
+
+
+class RetrieveExchanges(APIView):
+    """
+    View exchanges that can be connected with Bitbutter
+    """
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        """
+        Return connectable exchanges
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        response = bb_user_client.get_all_exchanges()
+        return Response(response.json())

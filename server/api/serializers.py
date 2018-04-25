@@ -1,17 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.exceptions import PermissionDenied
-from api.models import User, Portfolio, Coin, Position, WhitelistedEmail
-from django_celery_results.models import TaskResult
+from api.models import User, Portfolio, Coin, Position, Settings
 from api.tasks import send_confirmation_email
 from rest_framework import serializers
-
-
-class TaskResultSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = TaskResult
-        fields = ('task_id', 'status', 'meta')
 
 
 class CoinSerializer(serializers.ModelSerializer):
@@ -72,13 +63,6 @@ class UserSerializer(serializers.ModelSerializer):
         return self.request.user
 
     def create(self, validated_data):
-        email = validated_data.get('email')
-
-        try:
-            WhitelistedEmail.objects.get(email=email)
-        except WhitelistedEmail.DoesNotExist:
-            raise PermissionDenied
-
         password = validated_data.pop('password')
         user = User(**validated_data)
         user.is_active = False
@@ -87,3 +71,33 @@ class UserSerializer(serializers.ModelSerializer):
         current_site = get_current_site(self.context['request'])
         send_confirmation_email(user.id, user.email, current_site)
         return user
+
+
+class PasswordSerializer(serializers.Serializer):
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+
+class PersonalDetailSerializer(serializers.Serializer):
+    """
+    Serializer for user detail change endpoint.
+    """
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+    email = serializers.EmailField(max_length=255)
+
+
+class SettingsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for settings endpoint.
+    """
+    class Meta:
+        model = Settings
+        fields = ('id', 'local_currency', 'time_zone', 'email_notification',
+                  'two_factor_enabled')
+        extra_kwargs = {
+            'id': {'read_only': True}
+        }
