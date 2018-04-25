@@ -5,7 +5,8 @@ const initialState = {
   chart: {
     isFetching: true,
     period: "7D"
-  }
+  },
+  positions: []
 };
 
 export default function portfolio(state = initialState, action) {
@@ -35,6 +36,15 @@ export default function portfolio(state = initialState, action) {
       });
       return Object.assign({}, state, {
         chart: chart
+      });
+    case types.REQUEST_POSITIONS:
+      return Object.assign({}, state, {
+        isFetching: true
+      });
+    case types.RECEIVE_POSITIONS:
+      return Object.assign({}, state, {
+        isFetching: false,
+        positions: action.positions
       });
     default:
       return state;

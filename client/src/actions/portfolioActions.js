@@ -25,6 +25,47 @@ export function receivePortfolio(portfolio) {
   };
 }
 
+export function requestPositions() {
+  return {
+    type: types.REQUEST_POSITIONS
+  };
+}
+
+export function receivePositions(positions) {
+  return {
+    type: types.RECEIVE_POSITIONS,
+    positions
+  };
+}
+
+export function fetchPositions() {
+  return (dispatch, getState) => {
+    dispatch(requestPositions());
+    const auth = getState().auth;
+    const { token } = auth;
+    const { id } = auth.user.portfolio;
+    fetch(`/api/portfolios/${id}/assets/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
+      .then(response => {
+        if (response.ok || response.status === 400) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(json => {
+        dispatch(receivePositions(json));
+      })
+      .catch(error => {
+        dispatch(addAlert(error.toString(), "danger"));
+      });
+  };
+}
+
 /**
  * Fetch user's portfolio.
  */
@@ -41,15 +82,18 @@ export function fetchPortfolio() {
         "Content-Type": "application/json"
       }
     })
-      .then(
-        response => {
+      .then(response => {
+        if (response.ok || response.status === 400) {
           return response.json();
-        },
-        error => {
-          return error;
         }
-      )
-      .then(json => dispatch(receivePortfolio(json)));
+        throw new Error(response.statusText);
+      })
+      .then(json => {
+        dispatch(receivePortfolio(json));
+      })
+      .catch(error => {
+        dispatch(addAlert(error.toString(), "danger"));
+      });
   };
 }
 

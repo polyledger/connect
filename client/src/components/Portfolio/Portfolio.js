@@ -7,7 +7,10 @@ class Portfolio extends Component {
     return (
       <div className="Portfolio">
         <ChartContainer />
-        <PositionTable />
+        <PositionTable
+          fetchPositions={this.props.fetchPositions}
+          positions={this.props.positions}
+        />
       </div>
     );
   }

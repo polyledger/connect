@@ -14,7 +14,7 @@ from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from api.serializers import PasswordSerializer, PersonalDetailSerializer
 from api.serializers import SettingsSerializer
 from api.tokens import account_activation_token
-from api.backtest import backtest
+from api.backtest import backtest, Portfolio as PortfolioInstance
 from api.tasks import allocate_for_user
 from api.auth import get_client_ip, get_user_agent
 from api.bitbutter import get_bb_partner_client, get_bb_user_client
@@ -192,6 +192,15 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         return Response(content)
 
     @detail_route(methods=['GET'])
+    def assets(self, request, pk=None):
+        bb_user_client = get_bb_user_client(request.user)
+        response = bb_user_client.get_user_balance()
+        balances = response.json()
+        condition = lambda x: float(x['asset']['size']) > 0
+        greater_than_zero = list(filter(condition, balances))
+        return Response(greater_than_zero)
+
+    @detail_route(methods=['GET'])
     def chart(self, request, pk=None):
         portfolio = self.get_object()
 
@@ -201,43 +210,56 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         end = date.today()
         start = end - timedelta(days=days[period])
 
-        # Run the backtests
-        allocations = portfolio.positions.all().values_list('coin', 'amount')
-        investment = portfolio.usd
-        freq = 'D'
+        bb_user_client = get_bb_user_client(request.user)
+        response = bb_user_client.get_user_ledger()
+        ledger = response.json()[::-1]
+        portfolio = PortfolioInstance(start=start)
+        for entry in ledger:
+            transaction_type = entry['transaction_type']
+            time = dateutil.parser.parse(entry['time'])
+            if time.date() < start:
+                pass
+            if transaction_type == 'exchange_deposit':
+                asset = entry['size']['symbol']
+                amount = abs(float(entry['size']['size']))
+                portfolio.add(asset, amount, time)
+            elif transaction_type == 'exchange_withdraw':
+                asset = entry['size']['symbol']
+                amount = abs(float(entry['size']['size']))
+                portfolio.remove(asset, amount, time)
+            elif transaction_type == 'buy':
+                if entry['quote']['symbol'] != 'USD':
+                    asset = entry['quote']['symbol']
+                    amount = abs(float(entry['quote']['size']))
+                    portfolio.remove(asset, amount, time)
+                asset = entry['base']['symbol']
+                amount = abs(float(entry['base']['size']))
+                portfolio.add(asset, amount, time)
+            elif transaction_type == 'sell':
+                asset = entry['base']['symbol']
+                amount = abs(float(entry['base']['size']))
+                portfolio.remove(asset, amount, time)
+                asset = entry['quote']['symbol']
+                amount = abs(float(entry['quote']['size']))
+                portfolio.add(asset, amount, time)
 
-        portfolio = backtest(
-            allocations=allocations,
-            investment=investment,
-            start=start,
-            end=end,
-            freq=freq
-        )
-
-        bitcoin = backtest(
-            allocations=[('BTC', 100)],
-            investment=investment,
-            start=start,
-            end=end,
-            freq=freq
-        )
+        historic_value = portfolio.historic_value(start=start, end=end,
+                                                  freq='D')
+        start_value = historic_value[0][1]
+        current_value = historic_value[-1][1]
+        dollar_change = current_value - start_value
+        percent_change = ((current_value - start_value) / start_value) * 100
 
         content = {
             'series': [
                 {
                     'name': 'Portfolio',
-                    'data': portfolio['historic_value']
-                },
-                {
-                    'name': 'Bitcoin',
-                    'data': bitcoin['historic_value']
+                    'data': historic_value
                 }
             ],
-            'change': {
-                'dollar': portfolio['dollar_change'],
-                'percent': portfolio['percent_change']
-            },
-            'value': portfolio['value']
+            'dollar_change': dollar_change,
+            'percent_change': percent_change,
+            'value': current_value
         }
         return Response(content)
 

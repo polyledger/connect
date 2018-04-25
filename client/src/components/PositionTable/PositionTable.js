@@ -1,9 +1,24 @@
-import React, { Component } from 'react';
-import PositionRow from '../PositionRow/PositionRow';
-import './PositionTable.css';
+import React, { Component } from "react";
+import PositionRow from "../PositionRow/PositionRow";
+import "./PositionTable.css";
 
 class PositionTable extends Component {
+  componentDidMount() {
+    this.props.fetchPositions();
+  }
+
   render() {
+    let positions = [];
+    Array.from(this.props.positions).forEach((position, index) => {
+      positions.push(
+        <PositionRow
+          key={position.id}
+          coin={position.asset.name}
+          symbol={position.asset.symbol}
+          amount={position.asset.size}
+        />
+      );
+    });
     return (
       <div className="PositionTable">
         <div className="card table-responsive">
@@ -12,34 +27,10 @@ class PositionTable extends Component {
               <tr>
                 <th scope="col" />
                 <th scope="col">Coin</th>
-                <th scope="col">Percent</th>
                 <th scope="col">Quantity</th>
-                <th scope="col">Value</th>
               </tr>
             </thead>
-            <tbody>
-              <PositionRow
-                coin="Bitcoin"
-                symbol="BTC"
-                percent="40%"
-                amount="0.1153"
-                value="$5,000.00"
-              />
-              <PositionRow
-                coin="Ethereum"
-                symbol="ETH"
-                percent="40%"
-                amount="2.9458"
-                value="$5,000.00"
-              />
-              <PositionRow
-                coin="Litecoin"
-                symbol="LTC"
-                percent="20%"
-                amount="2.1234"
-                value="$800.00"
-              />
-            </tbody>
+            <tbody>{positions}</tbody>
           </table>
         </div>
       </div>

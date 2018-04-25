@@ -16,34 +16,23 @@ class ChartWrapper extends Component {
   }
 
   render() {
-    let chart = this.props.portfolio.chart;
-
     return (
       <div className="ChartWrapper">
         <div className="card">
           <div className="card-body">
             <div className="row py-2 text-center">
               <div className="col-sm-4">
-                <ChartStat
-                  number={758}
-                  sign="-"
-                  delta={1.3}
-                  description="Past Day"
-                />
+                <ChartStat number={758} description="Past Day" />
               </div>
               <div className="col-sm-4">
                 <ChartStat
-                  number={1000}
-                  sign="+"
-                  delta={5}
+                  number={this.props.chart.value}
                   description="Market Value"
                 />
               </div>
               <div className="col-sm-4">
                 <ChartStat
-                  number={758}
-                  delta={1.3}
-                  sign="-"
+                  number={this.props.chart.dollar_change}
                   description="All Time Return"
                 />
               </div>
@@ -55,7 +44,7 @@ class ChartWrapper extends Component {
             </div>
             <div className="row py-2">
               <div className="col-md-12">
-                <Chart series={chart.series} />
+                <Chart series={this.props.chart.series} />
               </div>
             </div>
           </div>

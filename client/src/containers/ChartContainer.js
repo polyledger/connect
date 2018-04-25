@@ -3,7 +3,7 @@ import { fetchPortfolio, fetchChartData } from "../actions/portfolioActions";
 import ChartWrapper from "../components/ChartWrapper/ChartWrapper";
 
 const mapStateToProps = state => {
-  return state;
+  return state.portfolio;
 };
 
 const mapDispatchToProps = dispatch => ({

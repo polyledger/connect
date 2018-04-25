@@ -3,6 +3,14 @@ import PropTypes from "prop-types";
 import "./PositionRow.css";
 
 class PositionRow extends Component {
+  getImageSource() {
+    try {
+      return require(`../../assets/coins/${this.props.symbol}.png`);
+    } catch (error) {
+      return require(`../../assets/default.png`);
+    }
+  }
+
   render() {
     return (
       <tr>
@@ -10,15 +18,13 @@ class PositionRow extends Component {
           <img
             height="35"
             alt={`${this.props.coin} Logo`}
-            src={require(`../../assets/coins/${this.props.symbol}.png`)}
+            src={this.getImageSource()}
           />
         </th>
         <td>{this.props.coin}</td>
-        <td>{this.props.percent}</td>
         <td>
           {this.props.amount} {this.props.symbol}
         </td>
-        <td>{this.props.value}</td>
       </tr>
     );
   }

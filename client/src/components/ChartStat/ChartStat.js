@@ -1,26 +1,15 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import numeral from "numeral";
 import "../ChartStat/ChartStat.css";
 
 class ChartStat extends Component {
-  getDirection() {
-    return this.props.sign === "+" ? "positive" : "negative";
-  }
-
   render() {
+    let number = numeral(this.props.number).format("$0,0.00");
     return (
       <div className="ChartStat">
         <div className="statcard p-1">
-          <h3 className="statcard-number">
-            {this.props.sign}${this.props.number}
-            <small
-              className={
-                "delta-indicator delta-" + this.getDirection(this.props.sign)
-              }
-            >
-              {this.props.delta}%
-            </small>
-          </h3>
+          <h3 className="statcard-number">{number}</h3>
           <span className="statcard-desc">{this.props.description}</span>
         </div>
       </div>

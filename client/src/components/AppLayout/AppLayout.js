@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
 import AlertContainer from "../../containers/AlertContainer";
 import Navbar from "../Navbar/Navbar";
-import Portfolio from "../Portfolio/Portfolio";
+import PortfolioContainer from "../../containers/PortfolioContainer";
 import Analytics from "../Analytics/Analytics";
 import AccountsContainer from "../../containers/AccountsContainer";
 import Markets from "../Markets/Markets";
@@ -17,7 +17,7 @@ class AppLayout extends Component {
         <div className="container p-3">
           <AlertContainer />
           <Switch>
-            <Route exact path="/portfolio" component={Portfolio} />
+            <Route exact path="/portfolio" component={PortfolioContainer} />
             <Route path="/portfolio/analytics" component={Analytics} />
             <Route path="/portfolio/accounts" component={AccountsContainer} />
             <Route path="/portfolio/markets" component={Markets} />

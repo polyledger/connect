@@ -9,6 +9,7 @@ from __future__ import print_function
 
 import time
 import pandas as pd
+import dateutil.parser
 from datetime import date
 from api.models import Price
 from django.core.exceptions import ObjectDoesNotExist
@@ -65,7 +66,8 @@ class Portfolio(object):
         # Backdate the portfolio by changing its values temporarily
         backdated_assets = self.assets.copy()
         for trade in list(reversed(self.history)):
-            if trade['date'] > date.strftime('%Y-%m-%d'):
+            if dateutil.parser.parse(trade['date']).strftime('%Y-%m-%d') > \
+                    date.strftime('%Y-%m-%d'):
                 backdated_assets[trade['asset']] -= trade['amount']
 
                 if backdated_assets[trade['asset']] == 0:
@@ -138,7 +140,7 @@ class Portfolio(object):
         if amount < 0:
             raise ValueError('Asset amount must be greater than zero. '
                              'Given amount: {}'.format(amount))
-        if self.value(date=date, asset=asset) < amount:
+        if self.assets[asset] < amount:
             raise ValueError('Removal of {0} requested but only {1} exists in '
                              'portfolio.'.format(amount, self.assets[asset]))
         self.assets[asset] -= amount
