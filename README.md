@@ -2,9 +2,9 @@
   <img src="/client/src/assets/logo.png?raw=true" height="100">
 </p>
 
-> Automated cryptocurrency portfolio platform
+![Screenshot](/polyledger.png?raw=true)
 
-![Screenshot](/demo.png?raw=true)
+> Cryptoasset portfolio management platform
 
 ---
 
