@@ -13,7 +13,7 @@ class ConnectedAddressListItem extends Component {
               src={require(`../../assets/coins/${this.props.symbol}.png`)}
             />
           </div>
-          <div className="col-xs-6 col-md-6">${this.props.address}</div>
+          <div className="col-xs-6 col-md-6">{this.props.address}</div>
           <div className="col-xs-4 col-md-4 mt-2">
             <button className="btn btn-outline-secondary float-right">
               Remove
