@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ConnectedExchangeList from "../ConnectedExchangeList/ConnectedExchangeList";
 import ConnectedAddressList from "../ConnectedAddressList/ConnectedAddressList";
 import ExchangeListModal from "../ExchangeListModal/ExchangeListModal";
+import AssetListModal from "../AssetListModal/AssetListModal";
 
 class Accounts extends Component {
   componentDidMount() {
@@ -24,7 +25,12 @@ class Accounts extends Component {
               </button>
             </div>
             <div className="dashhead-toolbar-item">
-              <button type="button" className="btn btn-outline-primary">
+              <button
+                type="button"
+                className="btn btn-outline-primary"
+                data-toggle="modal"
+                data-target="#assetModal"
+              >
                 Link address
               </button>
             </div>
@@ -39,6 +45,11 @@ class Accounts extends Component {
           connectExchange={this.props.connectExchange}
           fetchExchanges={this.props.fetchExchanges}
           exchanges={this.props.exchanges}
+        />
+        <AssetListModal
+          connectAddress={this.props.connectAddress}
+          fetchAssets={this.props.fetchAssets}
+          assets={this.props.assets}
         />
       </div>
     );

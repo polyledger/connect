@@ -46,6 +46,47 @@ export function fetchConnectedExchanges() {
   };
 }
 
+export function requestConnectedAddresses() {
+  return {
+    type: types.REQUEST_CONNECTED_ADDRESSES
+  };
+}
+
+export function receiveConnectedAddresses(connectedAddresses) {
+  return {
+    type: types.RECEIVE_CONNECTED_ADDRESSES,
+    connectedAddresses
+  };
+}
+
+export function fetchConnectedAddresses() {
+  return (dispatch, getState) => {
+    dispatch(requestConnectedAddresses());
+    const auth = getState().auth;
+    const { token } = auth;
+    return fetch(`/api/connected_addresses/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(json => {
+        let connectedAddresses = json.connected_addresses;
+        dispatch(receiveConnectedAddresses(connectedAddresses));
+      })
+      .catch(error => {
+        dispatch(addAlert(error.toString(), "danger"));
+      });
+  };
+}
+
 export function requestExchanges() {
   return {
     type: types.REQUEST_EXCHANGES
@@ -80,6 +121,48 @@ export function fetchExchanges() {
       .then(json => {
         let exchanges = json.exchanges;
         dispatch(receiveExchanges(exchanges));
+      })
+      .catch(error => {
+        dispatch(addAlert(error.toString(), "danger"));
+      });
+  };
+}
+
+export function requestAssets() {
+  return {
+    type: types.REQUEST_ASSETS
+  };
+}
+
+export function receiveAssets(assets) {
+  return {
+    type: types.RECEIVE_ASSETS,
+    assets
+  };
+}
+
+export function fetchAssets() {
+  return (dispatch, getState) => {
+    dispatch(requestAssets());
+    const auth = getState().auth;
+    const { token } = auth;
+    return fetch(`/api/assets`, {
+      method: "GET",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(json => {
+        console.log(json);
+        let assets = json.assets;
+        dispatch(receiveAssets(assets));
       })
       .catch(error => {
         dispatch(addAlert(error.toString(), "danger"));
@@ -128,10 +211,44 @@ export function connectExchangeSuccess(exchangeId) {
   };
 }
 
-export function disconnectExchangeSuccess(exchangeId) {
+export function connectAddress(addressId, apiKey, secret) {
+  return (dispatch, getState) => {
+    const auth = getState().auth;
+    const { token } = auth;
+    return fetch(`/api/connected_addresses/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        address_id: addressId,
+        api_key: apiKey,
+        secret: secret
+      })
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(json => {
+        let connectedAddressId = json.connected_address_id;
+        dispatch(addAlert("Connected address successfully.", "success"));
+        dispatch(fetchConnectedAddresses());
+        dispatch(connectAddressSuccess(connectedAddressId));
+      })
+      .catch(error => {
+        dispatch(addAlert(error.toString(), "danger"));
+      });
+  };
+}
+
+export function connectAddressSuccess(addressId) {
   return {
-    type: types.DISCONNECT_EXCHANGE_SUCCESS,
-    exchangeId
+    type: types.CONNECT_ADDRESS_SUCCESS,
+    addressId
   };
 }
 
@@ -162,5 +279,49 @@ export function disconnectExchange(exchangeId) {
       .catch(error => {
         dispatch(addAlert(error.toString(), "danger"));
       });
+  };
+}
+
+export function disconnectExchangeSuccess(exchangeId) {
+  return {
+    type: types.DISCONNECT_EXCHANGE_SUCCESS,
+    exchangeId
+  };
+}
+
+export function disconnectAddress(addressId) {
+  return (dispatch, getState) => {
+    const auth = getState().auth;
+    const { token } = auth;
+    return fetch(`/api/connected_addresses/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        address_id: addressId
+      })
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(json => {
+        dispatch(disconnectAddressSuccess(addressId));
+        dispatch(addAlert("Disconnected address successfully.", "success"));
+      })
+      .catch(error => {
+        dispatch(addAlert(error.toString(), "danger"));
+      });
+  };
+}
+
+export function disconnectAddressSuccess(addressId) {
+  return {
+    type: types.DISCONNECT_ADDRESS_SUCCESS,
+    addressId
   };
 }

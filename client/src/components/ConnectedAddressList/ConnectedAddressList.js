@@ -3,6 +3,23 @@ import ConnectedAddressListItem from "../ConnectedAddressListItem/ConnectedAddre
 
 class ConnectedAddressList extends Component {
   render() {
+    let addresses = [];
+    this.props.addresses.forEach(address => {
+      addresses.push(
+        <ConnectedAddressListItem
+          symbol={address.asset.symbol}
+          address={address.address}
+          key={address.id}
+          id={address.id}
+          disconnectAddress={this.props.disconnectAddress}
+        />
+      );
+    });
+
+    if (addresses.length === 0) {
+      addresses = <span>No connected addresses</span>;
+    }
+
     return (
       <div className="ConnectedAddressList">
         <div className="hr-divider my-3">
@@ -11,12 +28,7 @@ class ConnectedAddressList extends Component {
           </h3>
         </div>
 
-        <ul className="list-group mb-3">
-          <ConnectedAddressListItem
-            symbol="BTC"
-            address="1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"
-          />
-        </ul>
+        <ul className="list-group mb-3">{addresses}</ul>
       </div>
     );
   }

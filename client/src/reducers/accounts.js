@@ -4,7 +4,8 @@ const initialState = {
   isFetching: false,
   connectedExchanges: [],
   connectedAddresses: [],
-  exchanges: []
+  exchanges: [],
+  assets: []
 };
 
 export default function accounts(state = initialState, action) {
@@ -27,6 +28,15 @@ export default function accounts(state = initialState, action) {
         isFetching: false,
         exchanges: action.exchanges
       });
+    case types.REQUEST_ASSETS:
+      return Object.assign({}, state, {
+        isFetching: true
+      });
+    case types.RECEIVE_ASSETS:
+      return Object.assign({}, state, {
+        isFetching: false,
+        assets: action.assets
+      });
     case types.CONNECT_EXCHANGE_SUCCESS:
       return Object.assign({}, state, {});
     case types.DISCONNECT_EXCHANGE_SUCCESS:
@@ -34,6 +44,13 @@ export default function accounts(state = initialState, action) {
         return exchange.id !== action.exchangeId;
       });
       return Object.assign({}, state, { connectedExchanges });
+    case types.CONNECT_ADDRESS_SUCCESS:
+      return Object.assign({}, state, {});
+    case types.DISCONNECT_ADDRESS_SUCCESS:
+      let connectedAddresses = state.connectedAddresses.filter(address => {
+        return address.id !== action.addressId;
+      });
+      return Object.assign({}, state, { connectedAddresses });
 
     default:
       return state;

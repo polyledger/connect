@@ -229,11 +229,12 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                 amount = abs(float(entry['size']['size']))
                 portfolio.remove(asset, amount, time)
             elif transaction_type == 'buy':
-                asset = entry['quote']['symbol']
-                amount = abs(float(entry['quote']['size']))
                 if entry['quote']['symbol'] != 'USD':
+                    asset = entry['quote']['symbol']
+                    amount = abs(float(entry['quote']['size']))
                     portfolio.remove(asset, amount, time)
                 else:
+                    amount = abs(float(entry['quote']['size']))
                     cost_basis += amount
                 asset = entry['base']['symbol']
                 amount = abs(float(entry['base']['size']))
@@ -277,6 +278,22 @@ class CoinViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (authentication.TokenAuthentication,)
     serializer_class = CoinSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class RetrieveAssets(APIView):
+    """
+    View to retrieve supported assets.
+    """
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, format=None):
+        """
+        Return assets
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        response = bb_user_client.get_all_assets()
+        assets = response.json()
+        return Response(assets)
 
 
 class RetrieveSettings(APIView):
