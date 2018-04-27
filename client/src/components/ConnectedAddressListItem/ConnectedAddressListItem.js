@@ -2,6 +2,11 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 class ConnectedAddressListItem extends Component {
+  onClick(event) {
+    event.preventDefault();
+    this.props.disconnectAddress(this.props.id);
+  }
+
   render() {
     return (
       <li className="ConnectedAddressListItem list-group-item">
@@ -15,7 +20,10 @@ class ConnectedAddressListItem extends Component {
           </div>
           <div className="col-xs-6 col-md-6">{this.props.address}</div>
           <div className="col-xs-4 col-md-4 mt-2">
-            <button className="btn btn-outline-secondary float-right">
+            <button
+              className="btn btn-outline-secondary float-right"
+              onClick={event => this.onClick(event)}
+            >
               Remove
             </button>
           </div>

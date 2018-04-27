@@ -296,6 +296,44 @@ class RetrieveAssets(APIView):
         return Response(assets)
 
 
+class ListCreateDestroyConnectedAddresses(APIView):
+    """
+    View for user's connected addresses via Bitbutter.
+    """
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        """
+        Return authenticated user's connected addresses.
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        response = bb_user_client.get_user_connected_addresses()
+        return Response(response.json())
+
+    def post(self, request, format=None):
+        """
+        Connect an address
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        payload = {
+            'user_id': str(request.user.bitbutter.uuid),
+            'address': request.data['address'],
+            'asset_id': request.data['asset_id']
+        }
+        response = bb_user_client.connect_address(payload)
+        return Response(response.json())
+
+    def delete(self, request, format=None):
+        """
+        Disconnect an exchange
+        """
+        bb_user_client = get_bb_user_client(request.user)
+        address_id = request.data['address_id']
+        response = bb_user_client.disconnect_address(address_id)
+        return Response(response.json())
+
+
 class RetrieveSettings(APIView):
     """
     View to retrieve user settings.
@@ -317,7 +355,7 @@ class RetrieveSettings(APIView):
 
 class ListCreateDestroyConnectedExchanges(APIView):
     """
-    View to retrieve user's connected exchanges via Bitbutter.
+    View for user's connected exchanges via Bitbutter.
     """
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)

@@ -33,6 +33,7 @@ class AssetListModal extends Component {
           id={asset.id}
           key={asset.id}
           symbol={asset.symbol}
+          connectAddress={this.props.connectAddress}
         />
       );
     });

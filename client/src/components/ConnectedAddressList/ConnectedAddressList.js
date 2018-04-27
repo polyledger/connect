@@ -3,12 +3,12 @@ import ConnectedAddressListItem from "../ConnectedAddressListItem/ConnectedAddre
 
 class ConnectedAddressList extends Component {
   render() {
-    let addresses = [];
-    this.props.addresses.forEach(address => {
-      addresses.push(
+    let connectedAddresses = [];
+    this.props.connectedAddresses.forEach(address => {
+      connectedAddresses.push(
         <ConnectedAddressListItem
-          symbol={address.asset.symbol}
-          address={address.address}
+          symbol={address.address.asset.symbol}
+          address={address.address.address}
           key={address.id}
           id={address.id}
           disconnectAddress={this.props.disconnectAddress}
@@ -16,8 +16,8 @@ class ConnectedAddressList extends Component {
       );
     });
 
-    if (addresses.length === 0) {
-      addresses = <span>No connected addresses</span>;
+    if (connectedAddresses.length === 0) {
+      connectedAddresses = <span>No connected addresses</span>;
     }
 
     return (
@@ -28,7 +28,7 @@ class ConnectedAddressList extends Component {
           </h3>
         </div>
 
-        <ul className="list-group mb-3">{addresses}</ul>
+        <ul className="list-group mb-3">{connectedAddresses}</ul>
       </div>
     );
   }

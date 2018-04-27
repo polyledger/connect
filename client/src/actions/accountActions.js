@@ -160,7 +160,6 @@ export function fetchAssets() {
         throw new Error(response.statusText);
       })
       .then(json => {
-        console.log(json);
         let assets = json.assets;
         dispatch(receiveAssets(assets));
       })
@@ -211,7 +210,7 @@ export function connectExchangeSuccess(exchangeId) {
   };
 }
 
-export function connectAddress(addressId, apiKey, secret) {
+export function connectAddress(assetId, address) {
   return (dispatch, getState) => {
     const auth = getState().auth;
     const { token } = auth;
@@ -222,9 +221,8 @@ export function connectAddress(addressId, apiKey, secret) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        address_id: addressId,
-        api_key: apiKey,
-        secret: secret
+        asset_id: assetId,
+        address: address
       })
     })
       .then(response => {

@@ -15,6 +15,8 @@ urlpatterns = [
     url(r'^assets/', views.RetrieveAssets.as_view()),
     url(r'^connected_exchanges/',
         views.ListCreateDestroyConnectedExchanges.as_view()),
+    url(r'^connected_addresses/',
+        views.ListCreateDestroyConnectedAddresses.as_view()),
     url(r'^exchanges/', views.RetrieveExchanges.as_view()),
     url(r'^', include(router.urls, namespace='api'))
 ]

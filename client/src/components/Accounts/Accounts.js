@@ -7,6 +7,7 @@ import AssetListModal from "../AssetListModal/AssetListModal";
 class Accounts extends Component {
   componentDidMount() {
     this.props.fetchConnectedExchanges();
+    this.props.fetchConnectedAddresses();
   }
 
   render() {
@@ -40,7 +41,10 @@ class Accounts extends Component {
           connectedExchanges={this.props.connectedExchanges}
           disconnectExchange={this.props.disconnectExchange}
         />
-        <ConnectedAddressList addresses={this.props.connectedAddresses} />
+        <ConnectedAddressList
+          connectedAddresses={this.props.connectedAddresses}
+          disconnectAddress={this.props.disconnectAddress}
+        />
         <ExchangeListModal
           connectExchange={this.props.connectExchange}
           fetchExchanges={this.props.fetchExchanges}

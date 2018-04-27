@@ -66,7 +66,12 @@ class AssetListModalItem extends Component {
     const validation = this.validator.validate(this.state);
     this.setState({ validation }, () => {
       if (validation.isValid) {
-        this.props.connectAsset(this.state.assetId, this.state.address);
+        this.props.connectAddress(this.state.assetId, this.state.address);
+        this.setState({
+          adress: "",
+          selected: false,
+          hovering: false
+        });
       }
     });
     this.submitted = true;

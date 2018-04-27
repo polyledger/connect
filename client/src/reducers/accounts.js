@@ -44,6 +44,15 @@ export default function accounts(state = initialState, action) {
         return exchange.id !== action.exchangeId;
       });
       return Object.assign({}, state, { connectedExchanges });
+    case types.REQUEST_CONNECTED_ADDRESSES:
+      return Object.assign({}, state, {
+        isFetching: true
+      });
+    case types.RECEIVE_CONNECTED_ADDRESSES:
+      return Object.assign({}, state, {
+        isFetching: false,
+        connectedAddresses: action.connectedAddresses
+      });
     case types.CONNECT_ADDRESS_SUCCESS:
       return Object.assign({}, state, {});
     case types.DISCONNECT_ADDRESS_SUCCESS:
