@@ -15,7 +15,9 @@ class PositionTable extends Component {
           key={position.id}
           coin={position.asset.name}
           symbol={position.asset.symbol}
-          amount={position.asset.size}
+          quantity={position.asset.size}
+          price={position.asset.price}
+          marketValue={position.asset.market_value}
         />
       );
     });
@@ -28,6 +30,8 @@ class PositionTable extends Component {
                 <th scope="col" />
                 <th scope="col">Coin</th>
                 <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col">Market Value</th>
               </tr>
             </thead>
             <tbody>{positions}</tbody>

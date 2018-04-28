@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import numeral from "numeral";
 import "./PositionRow.css";
 
 class PositionRow extends Component {
@@ -27,8 +28,10 @@ class PositionRow extends Component {
         </th>
         <td>{this.props.coin}</td>
         <td>
-          {this.props.amount} {this.props.symbol}
+          {this.props.quantity} {this.props.symbol}
         </td>
+        <td>{numeral(this.props.price).format("$0,0.00")}</td>
+        <td>{numeral(this.props.marketValue).format("$0,0.00")}</td>
       </tr>
     );
   }
