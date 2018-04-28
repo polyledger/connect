@@ -66,6 +66,12 @@ class ExchangeListModalItem extends Component {
           this.state.apiKey,
           this.state.secret
         );
+        this.setState({
+          apiKey: "",
+          secret: "",
+          selected: false,
+          hovering: false
+        });
       }
     });
     this.submitted = true;
