@@ -1,6 +1,6 @@
 import dateutil.parser
 from datetime import date, timedelta
-from api.models import User, Coin, Portfolio, Token, Settings, IPAddress
+from api.models import User, Coin, Portfolio, Token, Settings, IPAddress, Price
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.utils.encoding import force_text
@@ -196,9 +196,18 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         bb_user_client = get_bb_user_client(request.user)
         response = bb_user_client.get_user_balance()
         balances = response.json()
-        condition = lambda x: float(x['asset']['size']) > 0
-        greater_than_zero = list(filter(condition, balances))
-        return Response(greater_than_zero)
+
+        assets = []
+        for balance in balances:
+            if float(balance['asset']['size']) > 0:
+                coin = balance['asset']['symbol']
+                price = Price.objects.get(date=date.today(), coin=coin).price
+                quantity = float(balance['asset']['size'])
+                market_value = price * quantity
+                balance['asset']['price'] = price
+                balance['asset']['market_value'] = market_value
+                assets.append(balance)
+        return Response(assets)
 
     @detail_route(methods=['GET'])
     def chart(self, request, pk=None):
@@ -215,11 +224,13 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         ledger = response.json()[::-1]
         portfolio = PortfolioInstance(start=start)
         cost_basis = 0
+        cost_basis_period = 0
+        profit = 0
+        profit_period = 0
         for entry in ledger:
             transaction_type = entry['transaction_type']
             time = dateutil.parser.parse(entry['time'])
-            if time.date() < start:
-                pass
+
             if transaction_type == 'exchange_deposit':
                 asset = entry['size']['symbol']
                 amount = abs(float(entry['size']['size']))
@@ -229,32 +240,40 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                 amount = abs(float(entry['size']['size']))
                 portfolio.remove(asset, amount, time)
             elif transaction_type == 'buy':
-                if entry['quote']['symbol'] != 'USD':
-                    asset = entry['quote']['symbol']
-                    amount = abs(float(entry['quote']['size']))
-                    portfolio.remove(asset, amount, time)
-                else:
-                    amount = abs(float(entry['quote']['size']))
-                    cost_basis += amount
-                asset = entry['base']['symbol']
-                amount = abs(float(entry['base']['size']))
-                portfolio.add(asset, amount, time)
-            elif transaction_type == 'sell':
-                asset = entry['base']['symbol']
-                amount = abs(float(entry['base']['size']))
-                portfolio.remove(asset, amount, time)
-                asset = entry['quote']['symbol']
                 amount = abs(float(entry['quote']['size']))
-                portfolio.add(asset, amount, time)
+                quote = entry['quote']['symbol']
+                if quote == 'USD':
+                    cost_basis += amount
+                    if time.date() > start:
+                        cost_basis_period += amount
+                else:
+                    portfolio.remove(quote, amount, time)
+                base = entry['base']['symbol']
+                amount = abs(float(entry['base']['size']))
+                portfolio.add(base, amount, time)
+            elif transaction_type == 'sell':
+                base = entry['base']['symbol']
+                amount = abs(float(entry['base']['size']))
+                portfolio.remove(base, amount, time)
+                quote = entry['quote']['symbol']
+                amount = abs(float(entry['quote']['size']))
+                if quote == 'USD':
+                    profit += amount
+                    if time.date() > start:
+                        profit_period += amount
+                portfolio.add(quote, amount, time)
 
+        # Don't include USD in portfolio valuation
+        portfolio.remove('USD', portfolio.assets['USD'], date.today())
         historic_value = portfolio.historic_value(start=start, end=end,
                                                   freq='D')
-        start_value = historic_value[0][1]
-        current_value = historic_value[-1][1]
-        past_period = current_value - start_value
-        past_period_pct = ((current_value - start_value) / start_value) * 100
-        all_time_return = current_value - cost_basis
-        all_time_return_pct = ((current_value - cost_basis)/cost_basis) * 100
+        start_value = round(historic_value[0][1], 2)
+        current_value = round(historic_value[-1][1], 2)
+        past_period = round(current_value - start_value - cost_basis_period +
+                            profit_period, 2)
+        past_period_pct = (past_period / (start_value + cost_basis_period))
+        all_time_return = current_value - cost_basis + profit
+        all_time_return_pct = (all_time_return / cost_basis)
 
         content = {
             'series': [

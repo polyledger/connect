@@ -10,7 +10,7 @@ from __future__ import print_function
 import time
 import pandas as pd
 import dateutil.parser
-from datetime import date
+from datetime import date, datetime
 from api.models import Price
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -93,6 +93,20 @@ class Portfolio(object):
                     value += amount
         return value
 
+    def get_assets(self, date=date.today()):
+        """
+        Get contents of portfolio at the specified date.
+        """
+        if date is date.today():
+            return self.assets
+
+        backdated_assets = self.assets.copy()
+        for trade in list(reversed(self.history)):
+            if dateutil.parser.parse(trade['date']).strftime('%Y-%m-%d') > \
+                    date.strftime('%Y-%m-%d'):
+                backdated_assets[trade['asset']] -= trade['amount']
+        return backdated_assets
+
     def historic_value(self, start, end=date.today(), freq='D'):
         """
         Get portfolio value data during the specified timeframe.
@@ -105,9 +119,15 @@ class Portfolio(object):
 
         values = []
         assets = self.assets.copy()
-        usd = assets.pop('USD')
+        del assets['USD']
 
         coins = [coin for coin in assets]
+
+        if len(coins) == 0:
+            range = map(lambda x: x.timestamp(), pd.date_range(start=start, end=end, freq=freq))
+            for x in range:
+                values.append([x, 0])
+            return values
         queryset = self.get_prices(coins, start, end)
         df = pd.DataFrame(data=list(queryset.values()))
         df.set_index('date', inplace=True)
@@ -122,10 +142,13 @@ class Portfolio(object):
         df.fillna(value=0, inplace=True)
 
         for index, row in df.iterrows():
-            x = time.mktime(index.timetuple()) * 1000
+            x = time.mktime(index.timetuple())
+            date = datetime.fromtimestamp(x).date()
+            assets = self.get_assets(date=date)
+            del assets['USD']
             amounts = [assets[coin] for coin in sorted(assets)]
-            y = row.dot(amounts) + usd
-            values.append([x, y])
+            y = row.dot(amounts)
+            values.append([x * 1000, round(y, 2)])
 
         return values
 
@@ -141,8 +164,9 @@ class Portfolio(object):
             raise ValueError('Asset amount must be greater than zero. '
                              'Given amount: {}'.format(amount))
         if self.assets[asset] < amount:
-            raise ValueError('Removal of {0} requested but only {1} exists in '
-                             'portfolio.'.format(amount, self.assets[asset]))
+            raise ValueError('Removal of {0} {1} requested but only {2} '
+                             'exists in portfolio.'.format(
+                                amount, asset, self.assets[asset]))
         self.assets[asset] -= amount
         self.history.append({
             'date': str(date),
