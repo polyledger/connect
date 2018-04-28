@@ -13,7 +13,7 @@ class ChartStat extends Component {
           (this.props.change > 0 ? "positive" : "negative")
         }
       >
-        {numeral(this.props.change).format("0,00.00")}%
+        {numeral(this.props.change).format("0,0.00%")}
       </small>
     ) : (
       ""
