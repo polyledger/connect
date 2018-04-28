@@ -68,7 +68,7 @@ class AssetListModalItem extends Component {
       if (validation.isValid) {
         this.props.connectAddress(this.state.assetId, this.state.address);
         this.setState({
-          adress: "",
+          address: "",
           selected: false,
           hovering: false
         });
