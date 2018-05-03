@@ -201,7 +201,12 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         for balance in balances:
             if float(balance['asset']['size']) > 0:
                 coin = balance['asset']['symbol']
-                price = Price.objects.get(date=date.today(), coin=coin).price
+                try:
+                    price = Price.objects.get(
+                        date=date.today(),
+                        coin=coin).price
+                except Price.DoesNotExist:
+                    price = 0
                 quantity = float(balance['asset']['size'])
                 market_value = price * quantity
                 balance['asset']['price'] = price
