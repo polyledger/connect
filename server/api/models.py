@@ -318,6 +318,20 @@ class Price(models.Model):
         unique_together = (('date', 'coin'),)
 
 
+class WhitelistedEmail(models.Model):
+    """
+    Whitelisted emails for user signup
+    """
+    date = models.DateField(auto_now_add=True)
+    email = models.EmailField(
+        primary_key=True,
+        db_index=True,
+        unique=True,
+        null=False,
+        blank=False,
+        max_length=254)
+
+
 class Bitbutter(models.Model):
     """
     Bitbutter integration user credentials

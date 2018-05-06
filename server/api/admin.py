@@ -9,7 +9,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from api.models import User, Profile, Portfolio, Coin, Position, Price
 from api.models import Distribution, IPAddress, Deposit, Withdrawal
-from api.models import Transaction, Settings, Bitbutter
+from api.models import Transaction, Settings, Bitbutter, WhitelistedEmail
 
 
 class UserCreationForm(forms.ModelForm):
@@ -157,6 +157,10 @@ class BitbutterAdmin(admin.ModelAdmin):
     list_display = ('user', 'uuid', 'created_at', 'api_key', 'secret')
 
 
+class WhitelistedEmailAdmin(admin.ModelAdmin):
+    list_display = ('date', 'email')
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Portfolio, PortfolioAdmin)
@@ -170,4 +174,5 @@ admin.site.register(Coin, CoinAdmin)
 admin.site.register(Price, PriceAdmin)
 admin.site.register(Settings, SettingsAdmin)
 admin.site.register(Bitbutter, BitbutterAdmin)
+admin.site.register(WhitelistedEmail, WhitelistedEmailAdmin)
 admin.site.unregister(Group)
