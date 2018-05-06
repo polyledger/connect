@@ -49,7 +49,10 @@ class ChartWrapper extends Component {
             </div>
             <div className="row py-2">
               <div className="col-md-12">
-                <Chart series={this.props.chart.series} />
+                <Chart
+                  series={this.props.chart.series}
+                  isFetching={this.props.chart.isFetching}
+                />
               </div>
             </div>
           </div>
