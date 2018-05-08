@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/web/src/assets/logo.png?raw=true" height="100">
+  <img src="/web_client/src/assets/logo.png?raw=true" height="100">
 </p>
 
 ![Screenshot](/polyledger.png?raw=true)
@@ -19,7 +19,7 @@ You must have [Docker](https://www.docker.com/community-edition) installed on yo
 You must also install web dependencies before running the application in Docker.
 
 ```
-❯ cd polyledger/web && npm i
+❯ cd polyledger/web_client && npm i
 ```
 
 To install the private packages, you have to export an NPM token as an environment variable. That token should look like `NPM_TOKEN=00000000-0000-0000-0000-000000000000`. Export it in your shell. Now you can build the web container with the private packages:
