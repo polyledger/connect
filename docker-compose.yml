@@ -55,6 +55,7 @@ services:
     depends_on:
       - redis
       - postgres
+      - server
     ports: []
 
   celery_beat:

@@ -3,7 +3,6 @@ version: "3"
 volumes:
   pgdata:
     driver: local
-  static:
 
 services:
 
@@ -14,10 +13,6 @@ services:
       dockerfile: ./nginx/Dockerfile
     image: nginx
     restart: always
-    volumes:
-      - static:/usr/share/nginx/html/static/admin
-      - static:/usr/share/nginx/html/static/polyledger
-      - static:/usr/share/nginx/html/static/rest_framework
     ports:
       - 80:80
     depends_on:
@@ -35,10 +30,6 @@ services:
     depends_on:
       - postgres
     env_file: .env.production
-    volumes:
-      - static:/usr/share/nginx/html/static/admin
-      - static:/usr/share/nginx/html/static/polyledger
-      - static:/usr/share/nginx/html/static/rest_framework
     command: >
       bash -c '
       python manage.py makemigrations &&
@@ -70,6 +61,7 @@ services:
     depends_on:
       - redis
       - postgres
+      - server
     ports: []
     volumes: []
 
