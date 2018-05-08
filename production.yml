@@ -15,7 +15,9 @@ services:
     image: nginx
     restart: always
     volumes:
-      - static:/usr/share/nginx/html/static/
+      - static:/usr/share/nginx/html/static/admin
+      - static:/usr/share/nginx/html/static/polyledger
+      - static:/usr/share/nginx/html/static/rest_framework
     ports:
       - 80:80
     depends_on:
@@ -34,7 +36,9 @@ services:
       - postgres
     env_file: .env.production
     volumes:
-      - static:/usr/share/nginx/html/static/
+      - static:/usr/share/nginx/html/static/admin
+      - static:/usr/share/nginx/html/static/polyledger
+      - static:/usr/share/nginx/html/static/rest_framework
     command: >
       bash -c '
       python manage.py makemigrations &&
@@ -62,7 +66,7 @@ services:
     <<: *server
     container_name: celery_worker
     hostname: celery_worker
-    command: celery -A polyledger worker -l info -u matt
+    command: celery -A polyledger worker -l info
     depends_on:
       - redis
       - postgres
