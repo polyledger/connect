@@ -48,7 +48,7 @@ services:
 
   postgres:
     container_name: postgres
-    image: postgres:latest
+    image: postgres:10.3-alpine
     hostname: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -57,7 +57,7 @@ services:
 
   redis:
     container_name: redis
-    image: redis:latest
+    image: redis:4.0.9-alpine
     hostname: redis
     ports:
       - 6379:6379
