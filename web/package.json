@@ -1,7 +1,7 @@
 {
   "name": "polyledger",
   "version": "3.0.0",
-  "description": "The front-end client for the Polyledger platform",
+  "description": "The web client for the Polyledger platform",
   "author": "Matthew Rosendin <matthew@polyledger.com>",
   "private": true,
   "devDependencies": {

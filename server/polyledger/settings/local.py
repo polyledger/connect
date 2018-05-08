@@ -1,7 +1,7 @@
 import os
 from .base import *  # noqa: F403
 
-CLIENT_URL = 'http://localhost:3000/activate/'
+ACTIVATION_URL = 'http://localhost:3000/activate/'
 
 DEBUG = True
 

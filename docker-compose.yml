@@ -1,13 +1,13 @@
 version: "3"
 services:
 
-  client:
-    container_name: client
+  web:
+    container_name: web
     build:
-      context: ./client
+      context: ./web
       dockerfile: Dockerfile
     volumes:
-      - ./client:/usr/src/client
+      - ./web:/usr/src/web
     ports:
       - 3000:3000
     depends_on:

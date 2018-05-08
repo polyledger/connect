@@ -1,6 +1,6 @@
 from .base import *
 
-CLIENT_URL = 'http://app.polyledger.com/activate/'
+ACTIVATION_URL = 'http://app.polyledger.com/activate/'
 
 DEBUG = False
 

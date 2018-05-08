@@ -80,7 +80,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user.bitbutter.api_key = bb_user['credentials']['api_key']
             user.bitbutter.secret = bb_user['credentials']['secret']
             user.save()
-        redirect_url = settings.CLIENT_URL + '?token=' + str(auth_token.key)
+        redirect_url = settings.ACTIVATION_URL + '?token=' + str(auth_token.key)
         return HttpResponseRedirect(redirect_url)
 
     def destroy(self, request, *args, **kwargs):
