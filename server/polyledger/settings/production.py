@@ -1,6 +1,6 @@
 from .base import *
 
-ACTIVATION_URL = 'http://app.polyledger.com/activate/'
+ACTIVATION_URL = 'http://portfolio.polyledger.com/activate/'
 
 DEBUG = False
 
@@ -36,4 +36,4 @@ SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
-CSRF_TRUSTED_ORIGINS = ['app.polyledger.com', 'admin.polyledger.com']
+CSRF_TRUSTED_ORIGINS = ['portfolio.polyledger.com', 'admin.polyledger.com']
