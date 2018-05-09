@@ -276,9 +276,17 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         current_value = round(historic_value[-1][1], 2)
         past_period = round(current_value - start_value - cost_basis_period +
                             profit_period, 2)
-        past_period_pct = (past_period / (start_value + cost_basis_period))
         all_time_return = current_value - cost_basis + profit
-        all_time_return_pct = (all_time_return / cost_basis)
+
+        try:
+            past_period_pct = (past_period / (start_value + cost_basis_period))
+        except ZeroDivisionError:
+            past_period_pct = 0
+
+        try:
+            all_time_return_pct = (all_time_return / cost_basis)
+        except ZeroDivisionError:
+            all_time_return_pct = 0
 
         content = {
             'series': [
