@@ -68,7 +68,7 @@ class Login extends Component {
 
   render() {
     if (this.props.auth.isLoggedIn) {
-      return <Redirect to="/portfolio" />;
+      return <Redirect to="/" />;
     }
 
     let submitButtonText = this.props.auth.isFetching ? (

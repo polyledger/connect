@@ -8,12 +8,7 @@ class Navbar extends Component {
       <div className="Navbar">
         <ul className="nav nav-bordered navbar-padded justify-content-center text-center">
           <li className="nav-item">
-            <NavLink
-              exact
-              className="nav-link"
-              activeClassName="active"
-              to="/portfolio"
-            >
+            <NavLink exact className="nav-link" activeClassName="active" to="/">
               <i className="icon icon-pie-chart" />{" "}
               <span className="d-none d-sm-inline">Portfolio</span>
               <small className="iconav-nav-label d-sm-none">Portfolio</small>
@@ -34,7 +29,7 @@ class Navbar extends Component {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/portfolio/accounts"
+              to="/accounts"
             >
               <i className="icon icon-wallet" />{" "}
               <span className="d-none d-sm-inline">Accounts</span>
@@ -45,7 +40,7 @@ class Navbar extends Component {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/portfolio/markets"
+              to="/markets"
             >
               <i className="icon icon-line-graph" />{" "}
               <span className="d-none d-sm-inline">Markets</span>
@@ -56,7 +51,7 @@ class Navbar extends Component {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/portfolio/settings"
+              to="/settings"
             >
               <i className="icon icon-cog" />{" "}
               <span className="d-none d-sm-inline">Settings</span>

@@ -6,8 +6,7 @@ import configureStore from "../../store/configureStore";
 import { clearAlerts } from "../../actions/alertActions";
 import App from "../App/App";
 import HeaderContainer from "../../containers/HeaderContainer";
-import AppLayout from "../AppLayout/AppLayout";
-import EmptyLayout from "../EmptyLayout/EmptyLayout";
+import AppLayoutContainer from "../../containers/AppLayoutContainer";
 import Footer from "../Footer/Footer";
 import "./Root.css";
 
@@ -27,8 +26,7 @@ class Root extends Component {
               <App onRouteChange={this.onRouteChange}>
                 <HeaderContainer />
                 <Switch>
-                  <Route path="/portfolio" component={AppLayout} />
-                  <Route component={EmptyLayout} />
+                  <Route path="/" component={AppLayoutContainer} />
                 </Switch>
                 <Footer />
               </App>
