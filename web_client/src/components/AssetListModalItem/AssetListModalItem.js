@@ -24,8 +24,6 @@ class AssetListModalItem extends Component {
       validation: this.validator.valid()
     };
 
-    this.cardBody = React.createRef();
-    this.image = React.createRef();
     this.hovering = false;
     this.submitted = false;
   }
@@ -42,16 +40,10 @@ class AssetListModalItem extends Component {
     }
   }
 
-  targetIsParent(target) {
-    return target === this.cardBody.current || target === this.image.current;
-  }
-
   onClick(event) {
-    if (this.targetIsParent(event.target)) {
-      this.setState({
-        selected: !this.state.selected
-      });
-    }
+    this.setState({
+      selected: !this.state.selected
+    });
   }
 
   onChange(event) {
@@ -96,6 +88,7 @@ class AssetListModalItem extends Component {
 
     let content = this.state.selected ? (
       <form
+        onClick={event => event.stopPropagation()}
         className={
           "m-3 " + (this.submitted ? "was-validated" : "needs-validation")
         }
@@ -148,12 +141,10 @@ class AssetListModalItem extends Component {
             onClick={event => this.onClick(event)}
             onMouseEnter={event => this.onMouseEnter(event)}
             onMouseLeave={event => this.onMouseLeave(event)}
-            ref={this.cardBody}
           >
             <div>
               <img
                 height="50"
-                ref={this.image}
                 alt={this.props.symbol}
                 src={this.getImageSource(this.props.symbol)}
               />
