@@ -15,7 +15,7 @@ services:
     env_file: .env.development
     command: yarn start
 
-  server: &server
+  server:
     container_name: server
     build:
       context: ./server
@@ -23,16 +23,10 @@ services:
     hostname: server
     ports:
       - 8000:8000
-    volumes:
-      - ./server:/srv/polyledger
     depends_on:
       - postgres
+      - redis
     env_file: .env.development
-    command: >
-      bash -c '
-      python manage.py makemigrations &&
-      python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8000'
 
   postgres:
     container_name: postgres
@@ -47,25 +41,3 @@ services:
     hostname: redis
     ports:
       - 6379:6379
-
-  celery_worker:
-    <<: *server
-    container_name: celery_worker
-    command: celery -A polyledger worker -l info
-    depends_on:
-      - redis
-      - postgres
-      - server
-    ports: []
-
-  celery_beat:
-    <<: *server
-    container_name: celery_beat
-    command: >
-      bash -c '
-      rm -f celerybeat.pid &&
-      celery -A polyledger beat -l info -s celerybeat-schedule.db'
-    depends_on:
-      - redis
-      - postgres
-    ports: []
