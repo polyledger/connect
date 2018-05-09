@@ -11,7 +11,6 @@ services:
     build:
       context: .
       dockerfile: ./nginx/Dockerfile
-    image: nginx
     restart: always
     ports:
       - 80:80
@@ -19,7 +18,7 @@ services:
       - server
     command: nginx -g 'daemon off';
 
-  server: &server
+  server:
     container_name: server
     build:
       context: ./server
@@ -29,13 +28,8 @@ services:
       - 8000:8000
     depends_on:
       - postgres
+      - redis
     env_file: .env.production
-    command: >
-      bash -c '
-      python manage.py makemigrations &&
-      python manage.py migrate &&
-      python manage.py collectstatic --noinput &&
-      gunicorn polyledger.wsgi -b 0.0.0.0:8000'
 
   postgres:
     container_name: postgres
@@ -52,27 +46,3 @@ services:
     hostname: redis
     ports:
       - 6379:6379
-
-  celery_worker:
-    <<: *server
-    container_name: celery_worker
-    hostname: celery_worker
-    command: celery -A polyledger worker -l info
-    depends_on:
-      - redis
-      - postgres
-      - server
-    ports: []
-    volumes: []
-
-  celery_beat:
-    <<: *server
-    container_name: celery_beat
-    hostname: celery_beat
-    command: celery -A polyledger beat -l info -s celerybeat-schedule.db
-    depends_on:
-      - redis
-      - postgres
-      - server
-    ports: []
-    volumes: []
