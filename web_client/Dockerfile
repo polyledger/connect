@@ -16,5 +16,5 @@ RUN rm -f /usr/src/web_client/.npmrc
 # Bundle the source
 COPY . /usr/src/web_client/
 
-EXPOSE 8080
+EXPOSE 80
 CMD ["yarn", "start"]
