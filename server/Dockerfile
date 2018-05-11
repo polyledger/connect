@@ -10,7 +10,7 @@ RUN mkdir -p $INSTALL_PATH
 # Set working directory to /srv/polyledger
 WORKDIR $INSTALL_PATH
 
-# Install supervisord
+# Install supervisor
 RUN apt-get update && apt-get install -y supervisor
 
 # Copy requirements and install to enable caching on rebuilds
@@ -25,5 +25,8 @@ COPY . .
 # Define environment variables
 ENV PYTHONUNBUFFERED 1
 
+# Create a non-root user
+RUN useradd polyledger
+
 # Run supervisord
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord", "-c", "/srv/polyledger/supervisord.conf"]
