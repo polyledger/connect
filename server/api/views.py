@@ -267,6 +267,15 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                     if time.date() > start:
                         profit_period += amount
                 portfolio.add(quote, amount, time)
+            """ NOTE: Ignore the commented code below for now. """
+            # elif transaction_type == 'address_withdrawal':
+            #     asset = entry['size']['symbol']
+            #     amount = abs(float(entry['size']['size']))
+            #     portfolio.remove(asset, amount, time)
+            # elif transaction_type == 'address_deposit':
+            #     asset = entry['size']['symbol']
+            #     amount = abs(float(entry['size']['size']))
+            #     portfolio.add(asset, amount, time)
 
         # Don't include USD in portfolio valuation
         portfolio.remove('USD', portfolio.assets['USD'], date.today())
