@@ -19,7 +19,7 @@ COPY requirements.txt /srv/polyledger
 # Install any needed packages specified in requirements.txt
 RUN pip3 install -r requirements.txt
 
-# Copy the current directory contents into the container at /capstone
+# Copy the current directory contents into the container
 COPY . .
 
 # Define environment variables
