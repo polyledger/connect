@@ -10,7 +10,7 @@ class Activation extends Component {
 
   render() {
     if (this.props.auth.isLoggedIn) {
-      return <Redirect to="/portfolio" />;
+      return <Redirect to="/" />;
     }
 
     return (
