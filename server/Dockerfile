@@ -28,5 +28,9 @@ ENV PYTHONUNBUFFERED 1
 # Create a non-root user
 RUN useradd polyledger
 
+# Give write access to folders containing Celery PID/scheduler and static files
+RUN mkdir /tmp/celery /var/celery /srv/polyledger/static
+RUN chown -R polyledger /tmp/celery /var/celery /srv/polyledger/static
+
 # Run supervisord
 CMD ["/usr/bin/supervisord", "-c", "/srv/polyledger/supervisord.conf"]
