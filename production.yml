@@ -32,6 +32,7 @@ services:
     env_file: .env.production
     environment:
       - REDIS_URL=redis://redis
+      - DATABASE_URL=postgres://postgres@postgres:5432/postgres
 
   postgres:
     container_name: postgres
