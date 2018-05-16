@@ -30,6 +30,8 @@ services:
       - postgres
       - redis
     env_file: .env.production
+    environment:
+      - REDIS_URL=redis://redis
 
   postgres:
     container_name: postgres

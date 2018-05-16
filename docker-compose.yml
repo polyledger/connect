@@ -27,6 +27,8 @@ services:
       - postgres
       - redis
     env_file: .env.development
+    environment:
+      - REDIS_URL=redis://redis
 
   postgres:
     container_name: postgres
