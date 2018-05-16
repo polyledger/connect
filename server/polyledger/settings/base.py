@@ -90,10 +90,11 @@ TEMPLATES = [
 # Cache settings
 # https://docs.djangoproject.com/en/2.0/topics/cache/
 # https://github.com/sebleier/django-redis-cache
+redis_location = os.environ['REDIS_URL'] or '/tmp/redis.sock'
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': '/tmp/redis.sock',
+        'LOCATION': redis_location,
         'OPTIONS': {
             'DB': 1,
             'PARSER_CLASS': 'redis.connection.HiredisParser',
@@ -159,8 +160,9 @@ EMAIL_PORT = 587
 
 # Celery application definition
 # http://docs.celeryproject.org/en/v4.0.2/userguide/configuration.html
-CELERY_BROKER_URL = 'redis://redis:6379'
-CELERY_RESULT_BACKEND = 'redis://redis:6379'
+broker = os.environ['REDIS_URL'] or 'redis://redis'
+CELERY_BROKER_URL = broker
+CELERY_RESULT_BACKEND = broker
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
