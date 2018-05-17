@@ -267,15 +267,22 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                     if time.date() > start:
                         profit_period += amount
                 portfolio.add(quote, amount, time)
-            """ NOTE: Ignore the commented code below for now. """
-            # elif transaction_type == 'address_withdrawal':
-            #     asset = entry['size']['symbol']
-            #     amount = abs(float(entry['size']['size']))
-            #     portfolio.remove(asset, amount, time)
-            # elif transaction_type == 'address_deposit':
-            #     asset = entry['size']['symbol']
-            #     amount = abs(float(entry['size']['size']))
-            #     portfolio.add(asset, amount, time)
+            elif transaction_type == 'address_withdrawal':
+                asset = entry['size']['symbol']
+                amount = abs(float(entry['size']['size']))
+                portfolio.remove(asset, amount, time)
+            elif transaction_type == 'address_deposit':
+                asset = entry['size']['symbol']
+                amount = abs(float(entry['size']['size']))
+                portfolio.add(asset, amount, time)
+            elif transaction_type == 'internal_address_withdrawal':
+                asset = entry['size']['symbol']
+                amount = abs(float(entry['size']['size']))
+                portfolio.remove(asset, amount, time)
+            elif transaction_type == 'internal_adddress_deposit':
+                asset = entry['size']['symbol']
+                amount = abs(float(entry['size']['size']))
+                portfolio.add(asset, amount, time)
 
         # Don't include USD in portfolio valuation
         portfolio.remove('USD', portfolio.assets['USD'], date.today())
@@ -288,12 +295,14 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         all_time_return = current_value - cost_basis + profit
 
         try:
-            past_period_pct = (past_period / (start_value + cost_basis_period))
+            past_period_pct = (
+                float(past_period) / float(start_value + cost_basis_period)
+            )
         except ZeroDivisionError:
             past_period_pct = 0
 
         try:
-            all_time_return_pct = (all_time_return / cost_basis)
+            all_time_return_pct = (float(all_time_return) / float(cost_basis))
         except ZeroDivisionError:
             all_time_return_pct = 0
 
