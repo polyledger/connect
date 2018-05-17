@@ -146,7 +146,7 @@ class Portfolio(object):
             date = datetime.fromtimestamp(x).date()
             assets = self.get_assets(date=date)
             del assets['USD']
-            amounts = [assets[coin] for coin in sorted(assets)]
+            amounts = [assets[coin] for coin in sorted(assets) if coin in df.columns]
             y = row.dot(amounts)
             values.append([x * 1000, round(y, 2)])
 
