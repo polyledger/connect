@@ -34,30 +34,32 @@ class PasswordForm extends Component {
     ]);
 
     this.state = {
-      oldPassword: "",
-      newPassword: "",
-      newPasswordConfirmation: "",
-      validation: this.validator.valid()
+      form: {
+        oldPassword: "",
+        newPassword: "",
+        newPasswordConfirmation: ""
+      },
+      validation: this.validator.getInitialState()
     };
 
     this.submitted = false;
   }
 
   onChange(event) {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
+    let form = { ...this.state.form };
+    form[event.target.name] = event.target.value;
+    this.setState({ form });
   }
 
   onSubmit(event) {
     event.preventDefault();
 
-    const validation = this.validator.validate(this.state);
+    const validation = this.validator.validate(this.state.form);
     this.setState({ validation }, () => {
       if (validation.isValid) {
         let passwords = {
-          old_password: this.state.oldPassword,
-          new_password: this.state.newPassword
+          old_password: this.state.form.oldPassword,
+          new_password: this.state.form.newPassword
         };
         this.props.onUpdatePassword(passwords);
       }
@@ -67,7 +69,7 @@ class PasswordForm extends Component {
 
   render() {
     let validation = this.submitted
-      ? this.validator.validate(this.state)
+      ? this.validator.validate(this.state.form)
       : this.state.validation;
 
     return (
@@ -91,7 +93,7 @@ class PasswordForm extends Component {
                 className="form-control"
                 id="oldPassword"
                 name="oldPassword"
-                value={this.state.oldPassword}
+                value={this.state.form.oldPassword}
                 onChange={event => this.onChange(event)}
                 required
               />
@@ -117,7 +119,7 @@ class PasswordForm extends Component {
                 className="form-control"
                 id="newPassword"
                 name="newPassword"
-                value={this.state.newPassword}
+                value={this.state.form.newPassword}
                 onChange={event => this.onChange(event)}
                 required
               />
@@ -145,7 +147,7 @@ class PasswordForm extends Component {
                 type="password"
                 className="form-control"
                 name="newPasswordConfirmation"
-                value={this.state.newPasswordConfirmation}
+                value={this.state.form.newPasswordConfirmation}
                 onChange={event => this.onChange(event)}
                 required
               />

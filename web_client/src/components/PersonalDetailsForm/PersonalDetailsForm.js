@@ -34,31 +34,33 @@ class PersonalDetailsForm extends Component {
     ]);
 
     this.state = {
-      firstName: this.props.user.firstName,
-      lastName: this.props.user.lastName,
-      email: this.props.user.email,
-      validation: this.validator.valid()
+      form: {
+        firstName: this.props.user.firstName,
+        lastName: this.props.user.lastName,
+        email: this.props.user.email
+      },
+      validation: this.validator.getInitialState()
     };
 
     this.submitted = false;
   }
 
   onChange(event) {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
+    let form = { ...this.state.form };
+    form[event.target.name] = event.target.value;
+    this.setState({ form });
   }
 
   onSubmit(event) {
     event.preventDefault();
 
-    const validation = this.validator.validate(this.state);
+    const validation = this.validator.validate(this.state.form);
     this.setState({ validation }, () => {
       if (validation.isValid) {
         let personalDetails = {
-          first_name: this.state.firstName,
-          last_name: this.state.lastName,
-          email: this.state.email
+          first_name: this.state.form.firstName,
+          last_name: this.state.form.lastName,
+          email: this.state.form.email
         };
         this.props.onUpdatePersonalDetails(personalDetails);
       }
@@ -68,7 +70,7 @@ class PersonalDetailsForm extends Component {
 
   render() {
     let validation = this.submitted
-      ? this.validator.validate(this.state)
+      ? this.validator.validate(this.state.form)
       : this.state.validation;
 
     return (
@@ -93,7 +95,7 @@ class PersonalDetailsForm extends Component {
                 id="firstName"
                 name="firstName"
                 placeholder="Your first name"
-                value={this.state.firstName}
+                value={this.state.form.firstName}
                 onChange={event => this.onChange(event)}
                 required
               />
@@ -120,7 +122,7 @@ class PersonalDetailsForm extends Component {
                 id="lastName"
                 name="lastName"
                 placeholder="Your last name"
-                value={this.state.lastName}
+                value={this.state.form.lastName}
                 onChange={event => this.onChange(event)}
                 required
               />
@@ -147,7 +149,7 @@ class PersonalDetailsForm extends Component {
                 id="email"
                 name="email"
                 placeholder="Email"
-                value={this.state.email}
+                value={this.state.form.email}
                 onChange={event => this.onChange(event)}
                 required
               />

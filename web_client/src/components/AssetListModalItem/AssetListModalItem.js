@@ -18,11 +18,13 @@ class AssetListModalItem extends Component {
     ]);
 
     this.state = {
-      assetId: this.props.id,
-      address: "",
+      form: {
+        assetId: this.props.id,
+        address: ""
+      },
       selected: false,
       hovering: false,
-      validation: this.validator.valid()
+      validation: this.validator.getInitialState()
     };
 
     this.hovering = false;
@@ -36,23 +38,24 @@ class AssetListModalItem extends Component {
   }
 
   onChange(event) {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
+    let form = { ...this.state.form };
+    form[event.target.name] = event.target.value;
+    this.setState({ form });
   }
 
   onSubmit(event) {
     event.preventDefault();
 
-    const validation = this.validator.validate(this.state);
+    const validation = this.validator.validate(this.state.form);
     this.setState({ validation }, () => {
       if (validation.isValid) {
-        this.props.connectAddress(this.state.assetId, this.state.address);
-        this.setState({
-          address: "",
-          selected: false,
-          hovering: false
-        });
+        this.props.connectAddress(
+          this.state.form.assetId,
+          this.state.form.address
+        );
+        let form = { ...this.state.form };
+        form.address = "";
+        this.setState({ form, selected: false, hovering: false });
       }
     });
     this.submitted = true;
@@ -72,7 +75,7 @@ class AssetListModalItem extends Component {
 
   render() {
     let validation = this.submitted
-      ? this.validator.validate(this.state)
+      ? this.validator.validate(this.state.form)
       : this.state.validation;
 
     let content = this.state.selected ? (
@@ -88,7 +91,7 @@ class AssetListModalItem extends Component {
           <input
             placeholder="Public address"
             name="address"
-            value={this.state.address}
+            value={this.state.form.address}
             onChange={event => this.onChange(event)}
             className="form-control"
             required

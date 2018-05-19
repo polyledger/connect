@@ -48,9 +48,11 @@ class Signup extends Component {
       },
       {
         field: "passwordConfirmation",
-        method: (confirmation, state) => state.password === confirmation,
+        method: (confirmation, form) => {
+          return form.password === confirmation;
+        },
         validWhen: true,
-        message: "Password and password confirmation do not match."
+        message: "Passwords do not match."
       },
       {
         field: "recaptcha",
@@ -67,14 +69,16 @@ class Signup extends Component {
     ]);
 
     this.state = {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      passwordConfirmation: "",
-      recaptcha: "",
-      termsOfService: false,
-      validation: this.validator.valid()
+      form: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        passwordConfirmation: "",
+        recaptcha: "",
+        termsOfService: false
+      },
+      validation: this.validator.getInitialState()
     };
 
     this.submitted = false;
@@ -94,26 +98,28 @@ class Signup extends Component {
           : event.target.value;
     }
 
-    this.setState({
-      [name]: value
-    });
+    let form = { ...this.state.form };
+    form[name] = value;
+    this.setState({ form });
   }
 
   onExpired(value) {
-    this.setState({ recaptcha: "" });
+    let form = { ...this.state.form };
+    form.recaptcha = "";
+    this.setState({ form });
   }
 
   onSubmit(event) {
     event.preventDefault();
 
-    const validation = this.validator.validate(this.state);
+    const validation = this.validator.validate(this.state.form);
     this.setState({ validation }, () => {
       if (validation.isValid) {
         let credentials = {
-          first_name: this.state.firstName,
-          last_name: this.state.lastName,
-          email: this.state.email,
-          password: this.state.password
+          first_name: this.state.form.firstName,
+          last_name: this.state.form.lastName,
+          email: this.state.form.email,
+          password: this.state.form.password
         };
         this.props.signup(credentials);
       }
@@ -135,7 +141,7 @@ class Signup extends Component {
     );
 
     let validation = this.submitted
-      ? this.validator.validate(this.state)
+      ? this.validator.validate(this.state.form)
       : this.state.validation;
 
     return (
@@ -158,7 +164,7 @@ class Signup extends Component {
                   >
                     <input
                       type="text"
-                      value={this.state.firstName}
+                      value={this.state.form.firstName}
                       onChange={event => this.onChange(event)}
                       name="firstName"
                       className="form-control"
@@ -179,7 +185,7 @@ class Signup extends Component {
                   >
                     <input
                       type="text"
-                      value={this.state.lastName}
+                      value={this.state.form.lastName}
                       onChange={event => this.onChange(event)}
                       name="lastName"
                       className="form-control"
@@ -201,7 +207,7 @@ class Signup extends Component {
                 >
                   <input
                     type="email"
-                    value={this.state.email}
+                    value={this.state.form.email}
                     onChange={event => this.onChange(event)}
                     name="email"
                     className="form-control"
@@ -225,7 +231,7 @@ class Signup extends Component {
                 >
                   <input
                     type="password"
-                    value={this.state.password}
+                    value={this.state.form.password}
                     onChange={event => this.onChange(event)}
                     name="password"
                     className="form-control"
@@ -247,7 +253,7 @@ class Signup extends Component {
                 >
                   <input
                     type="password"
-                    value={this.state.passwordConfirmation}
+                    value={this.state.form.passwordConfirmation}
                     onChange={event => this.onChange(event)}
                     name="passwordConfirmation"
                     className="form-control"

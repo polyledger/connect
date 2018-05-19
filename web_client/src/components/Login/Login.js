@@ -29,10 +29,12 @@ class Login extends Component {
     ]);
 
     this.state = {
-      email: "",
-      password: "",
-      remember: false,
-      validation: this.validator.valid()
+      form: {
+        email: "",
+        password: "",
+        remember: false
+      },
+      validation: this.validator.getInitialState()
     };
 
     this.submitted = false;
@@ -44,21 +46,22 @@ class Login extends Component {
       event.target.type === "checkbox"
         ? String(event.target.checked)
         : event.target.value;
-    this.setState({
-      [name]: value
-    });
+    let form = { ...this.state.form };
+    form[name] = value;
+    this.setState({ form });
   }
 
   onSubmit(event) {
     event.preventDefault();
 
-    const validation = this.validator.validate(this.state);
+    const validation = this.validator.validate(this.state.form);
     this.setState({ validation }, () => {
+      console.log(validation);
       if (validation.isValid) {
         let credentials = {
-          email: this.state.email,
-          password: this.state.password,
-          remember: this.state.remember
+          email: this.state.form.email,
+          password: this.state.form.password,
+          remember: this.state.form.remember
         };
         this.props.login(credentials);
       }
@@ -80,7 +83,7 @@ class Login extends Component {
     );
 
     let validation = this.submitted
-      ? this.validator.validate(this.state)
+      ? this.validator.validate(this.state.form)
       : this.state.validation;
 
     return (
@@ -102,7 +105,7 @@ class Login extends Component {
                 >
                   <input
                     type="email"
-                    value={this.state.email}
+                    value={this.state.form.email}
                     onChange={event => this.onChange(event)}
                     name="email"
                     className="form-control"
@@ -124,7 +127,7 @@ class Login extends Component {
                   <div className="input-group">
                     <input
                       type="password"
-                      value={this.state.password}
+                      value={this.state.form.password}
                       onChange={event => this.onChange(event)}
                       name="password"
                       className="form-control"

@@ -24,12 +24,14 @@ class ExchangeListModalItem extends Component {
     ]);
 
     this.state = {
-      exchangeId: this.props.id,
-      apiKey: "",
-      secret: "",
+      form: {
+        exchangeId: this.props.id,
+        apiKey: "",
+        secret: ""
+      },
       selected: false,
       hovering: false,
-      validation: this.validator.valid()
+      validation: this.validator.getInitialState()
     };
 
     this.hovering = false;
@@ -43,28 +45,26 @@ class ExchangeListModalItem extends Component {
   }
 
   onChange(event) {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
+    let form = { ...this.state.form };
+    form[event.target.name] = event.target.value;
+    this.setState({ form });
   }
 
   onSubmit(event) {
     event.preventDefault();
 
-    const validation = this.validator.validate(this.state);
+    const validation = this.validator.validate(this.state.form);
     this.setState({ validation }, () => {
       if (validation.isValid) {
         this.props.connectExchange(
-          this.state.exchangeId,
-          this.state.apiKey,
-          this.state.secret
+          this.state.form.exchangeId,
+          this.state.form.apiKey,
+          this.state.form.secret
         );
-        this.setState({
-          apiKey: "",
-          secret: "",
-          selected: false,
-          hovering: false
-        });
+        let form = { ...this.state.form };
+        form.apiKey = "";
+        form.secret = "";
+        this.setState({ form, selected: false, hovering: false });
       }
     });
     this.submitted = true;
@@ -84,7 +84,7 @@ class ExchangeListModalItem extends Component {
 
   render() {
     let validation = this.submitted
-      ? this.validator.validate(this.state)
+      ? this.validator.validate(this.state.form)
       : this.state.validation;
 
     let content = this.state.selected ? (
@@ -100,7 +100,7 @@ class ExchangeListModalItem extends Component {
           <input
             placeholder="API Key"
             name="apiKey"
-            value={this.state.apiKey}
+            value={this.state.form.apiKey}
             onChange={event => this.onChange(event)}
             className="form-control"
             required
@@ -117,7 +117,7 @@ class ExchangeListModalItem extends Component {
           <input
             placeholder="Secret"
             name="secret"
-            value={this.state.secret}
+            value={this.state.form.secret}
             onChange={event => this.onChange(event)}
             className="form-control"
             required
