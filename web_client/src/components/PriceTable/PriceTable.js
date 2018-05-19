@@ -25,13 +25,21 @@ class PriceTable extends Component {
           <table className="table table-hover mb-0">
             <thead>
               <tr>
-                <th scope="col">#</th>
-                <th scope="col" className="w-25">
+                <th scope="col" className="w-15 text-center">
+                  #
+                </th>
+                <th scope="col" className="w-20">
                   Coin
                 </th>
-                <th scope="col">Price</th>
-                <th scope="col">Market Cap</th>
-                <th scope="col">24h Change</th>
+                <th scope="col" className="w-20 text-right">
+                  Price
+                </th>
+                <th scope="col" className="w-25 text-right">
+                  Market Cap
+                </th>
+                <th scope="col" className="w-20 text-right">
+                  24h Change
+                </th>
               </tr>
             </thead>
             <tbody>{priceRows}</tbody>
