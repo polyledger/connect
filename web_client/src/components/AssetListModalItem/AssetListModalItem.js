@@ -119,7 +119,7 @@ class AssetListModalItem extends Component {
         </button>
       </form>
     ) : (
-      ""
+      <div className="text-primary">{this.props.symbol}</div>
     );
 
     return (
