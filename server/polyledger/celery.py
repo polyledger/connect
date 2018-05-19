@@ -14,7 +14,7 @@ from django.dispatch import receiver
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'polyledger.settings.local')
 
-app = Celery('polyledger', broker='redis://redis')
+app = Celery('polyledger')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
