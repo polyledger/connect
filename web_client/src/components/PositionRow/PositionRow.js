@@ -19,7 +19,7 @@ class PositionRow extends Component {
   render() {
     return (
       <tr>
-        <th scope="row">
+        <th scope="row" className="text-center">
           <img
             height="35"
             alt={`${this.props.coin} Logo`}
@@ -30,8 +30,12 @@ class PositionRow extends Component {
         <td>
           {this.props.quantity} {this.props.symbol}
         </td>
-        <td>{numeral(this.props.price).format("$0,0.00")}</td>
-        <td>{numeral(this.props.marketValue).format("$0,0.00")}</td>
+        <td className="text-right">
+          {numeral(this.props.price).format("$0,0.00")}
+        </td>
+        <td className="text-right">
+          {numeral(this.props.marketValue).format("$0,0.00")}
+        </td>
       </tr>
     );
   }

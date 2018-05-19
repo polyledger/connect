@@ -30,8 +30,12 @@ class PositionTable extends Component {
                 <th scope="col" />
                 <th scope="col">Coin</th>
                 <th scope="col">Quantity</th>
-                <th scope="col">Price</th>
-                <th scope="col">Market Value</th>
+                <th scope="col" className="text-right">
+                  Price
+                </th>
+                <th scope="col" className="text-right">
+                  Market Value
+                </th>
               </tr>
             </thead>
             <tbody>{positions}</tbody>
