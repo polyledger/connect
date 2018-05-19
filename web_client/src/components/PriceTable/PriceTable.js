@@ -26,7 +26,9 @@ class PriceTable extends Component {
             <thead>
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Coin</th>
+                <th scope="col" className="w-25">
+                  Coin
+                </th>
                 <th scope="col">Price</th>
                 <th scope="col">Market Cap</th>
                 <th scope="col">24h Change</th>
