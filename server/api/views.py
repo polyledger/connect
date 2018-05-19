@@ -279,7 +279,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                 asset = entry['size']['symbol']
                 amount = abs(float(entry['size']['size']))
                 portfolio.remove(asset, amount, time)
-            elif transaction_type == 'internal_adddress_deposit':
+            elif transaction_type == 'internal_address_deposit':
                 asset = entry['size']['symbol']
                 amount = abs(float(entry['size']['size']))
                 portfolio.add(asset, amount, time)
