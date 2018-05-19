@@ -31,7 +31,7 @@ class PositionTable extends Component {
                 <th scope="col">Coin</th>
                 <th scope="col">Quantity</th>
                 <th scope="col" className="text-right">
-                  Price
+                  Unit Price
                 </th>
                 <th scope="col" className="text-right">
                   Market Value
