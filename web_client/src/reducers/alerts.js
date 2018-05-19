@@ -6,6 +6,12 @@ let initialState = [];
 export default function alerts(state = initialState, action) {
   switch (action.type) {
     case types.ADD_ALERT:
+      if (state.length >= 1) {
+        if (state[state.length - 1].text === action.text) {
+          // The previous error is the same, so don't add a duplicate alert.
+          return state;
+        }
+      }
       return [
         ...state,
         {
