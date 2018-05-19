@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import FormValidator from "../../utils/formValidator";
+import getImageSource from "../../utils/imageUtils";
 import "./AssetListModalItem.css";
 
 class AssetListModalItem extends Component {
@@ -26,18 +27,6 @@ class AssetListModalItem extends Component {
 
     this.hovering = false;
     this.submitted = false;
-  }
-
-  getImageSource() {
-    try {
-      return require(`../../assets/coins/${this.props.symbol}.svg`);
-    } catch (error) {
-      try {
-        return require(`../../assets/coins/${this.props.symbol}.png`);
-      } catch (error) {
-        return require(`../../assets/default.png`);
-      }
-    }
   }
 
   onClick(event) {
@@ -146,7 +135,7 @@ class AssetListModalItem extends Component {
               <img
                 height="50"
                 alt={this.props.symbol}
-                src={this.getImageSource(this.props.symbol)}
+                src={getImageSource("coins", this.props.symbol)}
               />
               {content}
             </div>

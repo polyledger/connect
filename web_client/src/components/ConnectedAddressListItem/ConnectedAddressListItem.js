@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import getImageSource from "../../utils/imageUtils";
 
 class ConnectedAddressListItem extends Component {
   onClick(event) {
@@ -15,7 +16,7 @@ class ConnectedAddressListItem extends Component {
             <img
               height="40"
               alt={this.props.symbol}
-              src={require(`../../assets/coins/${this.props.symbol}.png`)}
+              src={getImageSource("coins", this.props.symbol)}
             />
           </div>
           <div className="col-xs-6 col-md-6">{this.props.address}</div>

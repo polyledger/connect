@@ -1,21 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import numeral from "numeral";
+import getImageSource from "../../utils/imageUtils";
 import "./PositionRow.css";
 
 class PositionRow extends Component {
-  getImageSource() {
-    try {
-      return require(`../../assets/coins/${this.props.symbol}.svg`);
-    } catch (error) {
-      try {
-        return require(`../../assets/coins/${this.props.symbol}.png`);
-      } catch (error) {
-        return require(`../../assets/default.png`);
-      }
-    }
-  }
-
   render() {
     return (
       <tr>
@@ -23,7 +12,7 @@ class PositionRow extends Component {
           <img
             height="35"
             alt={`${this.props.coin} Logo`}
-            src={this.getImageSource()}
+            src={getImageSource("coins", this.props.symbol)}
           />
         </th>
         <td>{this.props.coin}</td>

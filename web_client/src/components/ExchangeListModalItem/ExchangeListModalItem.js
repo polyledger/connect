@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import FormValidator from "../../utils/formValidator";
+import getImageSource from "../../utils/imageUtils";
 import "./ExchangeListModalItem.css";
 
 class ExchangeListModalItem extends Component {
@@ -183,7 +184,11 @@ class ExchangeListModalItem extends Component {
               <img
                 height={this.props.height}
                 alt={this.props.name}
-                src={require(`../../assets/exchanges/${this.props.name.toLowerCase()}.${this.props.extension.toLowerCase()}`)}
+                src={getImageSource(
+                  "exchanges",
+                  this.props.name.toLowerCase(),
+                  this.props.extension.toLowerCase()
+                )}
               />
               {content}
             </div>
