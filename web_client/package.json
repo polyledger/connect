@@ -10,7 +10,7 @@
     "react-scripts": "1.1.1"
   },
   "dependencies": {
-    "@polyledger/bootstrap": "^1.0.1",
+    "@polyledger/bootstrap": "^1.0.3",
     "babel-polyfill": "^6.26.0",
     "coinage-lib": "^1.0.4",
     "cross-fetch": "^2.1.0",
