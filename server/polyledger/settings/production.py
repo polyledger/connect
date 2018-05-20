@@ -13,19 +13,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = '/srv/polyledger/static'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'postgres',
-        'PORT': 5432,
-    }
-}
-
 # These settings can be enabled with HTTPS
 # SECURE_HSTS_SECONDS = True
 # SECURE_HSTS_INCLUDE_SUBDOMAINS = True

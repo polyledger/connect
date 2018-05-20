@@ -15,13 +15,3 @@ STATIC_ROOT = '../static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')  # noqa: F405
 ]
-
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),  # noqa: F405
-    }
-}
