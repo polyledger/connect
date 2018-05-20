@@ -63,6 +63,19 @@ And now load the data:
 ❯ docker exec -it <container_id> python manage.py loaddata initial_data.json --app api
 ```
 
+To fetch prices for cryptoassets, run the following:
+
+```
+❯ docker exec -it <container_id> python manage.py shell
+```
+
+This will launch an interactive Python shell. You can call the task:
+
+```python
+>>> from api.tasks import fill_daily_historical_prices
+>>> fill_daily_historical_prices()
+```
+
 ---
 
 ## Production
