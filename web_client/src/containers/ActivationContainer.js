@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { activate } from "../actions/authActions";
-import Activation from "../components/Activation/Activation";
+import Activation from "../components/Auth/Activation/Activation";
 
 const mapStateToProps = state => {
   return state;

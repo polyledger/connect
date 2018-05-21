@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Redirect } from "react-router";
-import FormValidator from "../../utils/formValidator";
+import FormValidator from "../../../utils/formValidator";
 import "./Signup.css";
 
 class Signup extends Component {

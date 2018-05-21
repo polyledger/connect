@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { addAlert } from "../actions/alertActions";
 import { login } from "../actions/authActions";
-import Login from "../components/Login/Login";
+import Login from "../components/Auth/Login/Login";
 
 const mapStateToProps = state => {
   return state;

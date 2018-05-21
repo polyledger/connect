@@ -11,7 +11,7 @@ import RiskAssessment from "../RiskAssessment/RiskAssessment";
 import LoginContainer from "../../containers/LoginContainer";
 import SignupContainer from "../../containers/SignupContainer";
 import ActivationContainer from "../../containers/ActivationContainer";
-import ConfirmEmail from "../ConfirmEmail/ConfirmEmail";
+import ConfirmEmail from "../Auth/ConfirmEmail/ConfirmEmail";
 import NoMatch from "./NoMatch/NoMatch";
 import HeaderContainer from "../../containers/HeaderContainer";
 import Footer from "./Footer/Footer";

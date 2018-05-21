@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
-import FormValidator from "../../utils/formValidator";
+import FormValidator from "../../../utils/formValidator";
 import "./Login.css";
 
 class Login extends Component {
