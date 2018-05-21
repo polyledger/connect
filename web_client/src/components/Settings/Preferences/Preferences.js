@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import "./PreferencesSettings.css";
+import "./Preferences.css";
 
-class PreferencesSettings extends Component {
+class Preferences extends Component {
   render() {
     return (
-      <div className="PreferencesSettings">
+      <div className="Preferences">
         <form>
           <h5>General</h5>
           <div className="form-group row">
@@ -97,4 +97,4 @@ class PreferencesSettings extends Component {
   }
 }
 
-export default PreferencesSettings;
+export default Preferences;

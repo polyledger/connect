@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import PersonalDetailsForm from "../PersonalDetailsForm/PersonalDetailsForm";
-import PasswordForm from "../PasswordForm/PasswordForm";
+import PersonalDetailsForm from "./PersonalDetailsForm/PersonalDetailsForm";
+import PasswordForm from "./PasswordForm/PasswordForm";
 import "./UserSettings.css";
 
 class UserSettings extends Component {

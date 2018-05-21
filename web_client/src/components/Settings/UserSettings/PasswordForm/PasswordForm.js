@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import FormValidator from "../../utils/formValidator";
+import FormValidator from "../../../../utils/formValidator";
 
 class PasswordForm extends Component {
   constructor(props) {
