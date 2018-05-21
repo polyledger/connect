@@ -51,25 +51,20 @@ Start the development services:
 ❯ docker-compose up
 ```
 
-If you have fresh volumes and containers, you can pre-populate the database. Just copy this container id:
+If you have fresh volumes and containers, you can pre-populate the database. It will create a user that can log into the [app](http://localhost:3000/login) and [admin interface](http://localhost:8000/admin/login). Just run these commands in a separate shell:
 
 ```
-❯ docker-compose ps -q web_client
+❯ container_id=$(docker-compose ps -q server)
+❯ docker exec -it $container_id python manage.py loaddata initial_data.json --app api
 ```
 
-And now load the data:
+If you pre-populate the database, 10 coins will also be created. To fetch prices, run the following:
 
 ```
-❯ docker exec -it <container_id> python manage.py loaddata initial_data.json --app api
+❯ docker exec -it $container_id python manage.py shell
 ```
 
-To fetch prices for cryptoassets, run the following:
-
-```
-❯ docker exec -it <container_id> python manage.py shell
-```
-
-This will launch an interactive Python shell. You can call the task:
+This will launch an interactive Python shell. You can call the task to fetch prices:
 
 ```python
 >>> from api.tasks import fill_daily_historical_prices
