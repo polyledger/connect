@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import logo from "../../assets/logo-light.png";
-import HeaderDropdown from "../HeaderDropdown/HeaderDropdown";
+import logo from "../../../assets/logo-light.png";
+import HeaderDropdown from "./HeaderDropdown/HeaderDropdown";
 import "./Header.css";
 
 class Header extends Component {

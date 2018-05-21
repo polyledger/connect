@@ -1,10 +1,8 @@
 html,
 body,
 #root,
-#root > .AppLayout,
-#root > .EmptyLayout,
-.AppLayout > .container,
-.EmptyLayout > .container {
+#root > .App,
+.App > .container {
   min-height: 100vh !important;
 }
 
