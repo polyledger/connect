@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "../ChartNav/ChartNav.css";
+import "./ChartNav.css";
 
 class ChartNav extends Component {
   render() {

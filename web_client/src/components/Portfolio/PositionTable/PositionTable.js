@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import PositionRow from "../PositionRow/PositionRow";
+import PositionRow from "./PositionRow/PositionRow";
 import "./PositionTable.css";
 
 class PositionTable extends Component {

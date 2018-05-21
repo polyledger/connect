@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import numeral from "numeral";
-import getImageSource from "../../utils/imageUtils";
+import getImageSource from "../../../../utils/imageUtils";
 import "./PositionRow.css";
 
 class PositionRow extends Component {

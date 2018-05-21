@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import Chart from "../Chart/Chart";
-import ChartNav from "../ChartNav/ChartNav";
-import ChartStat from "../ChartStat/ChartStat";
+import Chart from "./Chart/Chart";
+import ChartNav from "./ChartNav/ChartNav";
+import ChartStat from "./ChartStat/ChartStat";
 import "./ChartWrapper.css";
 
 class ChartWrapper extends Component {

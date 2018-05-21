@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import numeral from "numeral";
-import "../ChartStat/ChartStat.css";
+import "./ChartStat.css";
 
 class ChartStat extends Component {
   render() {

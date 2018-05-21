@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Highcharts from "highcharts";
-import getChartOptions from "../../utils/ChartUtils";
+import getChartOptions from "../../../../utils/ChartUtils";
 import "./Chart.css";
 
 class Chart extends Component {
