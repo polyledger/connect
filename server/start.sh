@@ -4,7 +4,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-python manage.py makemigrations &&
+python manage.py makemigrations --noinput &&
 python manage.py migrate
 
 if [ "$PYTHON_ENV" = "development" ]
