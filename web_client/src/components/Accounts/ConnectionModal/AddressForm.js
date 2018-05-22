@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import $ from "jquery";
 import PropTypes from "prop-types";
 import FormValidator from "../../../utils/formValidator";
 import getImageSource from "../../../utils/imageUtils";
@@ -39,13 +40,14 @@ class AddressForm extends Component {
     const validation = this.validator.validate(this.state.form);
     this.setState({ validation }, () => {
       if (validation.isValid) {
-        this.props.connectAddress(
-          this.state.form.assetId,
-          this.state.form.address
-        );
-        let form = { ...this.state.form };
-        form.address = "";
-        this.setState({ form });
+        this.props
+          .connectAddress(this.state.form.assetId, this.state.form.address)
+          .then(() => {
+            let form = { ...this.state.form };
+            form.address = "";
+            this.setState({ form });
+            $(".modal").modal("hide");
+          });
       }
     });
     this.submitted = true;

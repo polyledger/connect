@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import $ from "jquery";
 import PropTypes from "prop-types";
 import FormValidator from "../../../utils/formValidator";
 
@@ -45,15 +46,19 @@ class ExchangeForm extends Component {
     const validation = this.validator.validate(this.state.form);
     this.setState({ validation }, () => {
       if (validation.isValid) {
-        this.props.connectExchange(
-          this.state.form.exchangeId,
-          this.state.form.apiKey,
-          this.state.form.secret
-        );
-        let form = { ...this.state.form };
-        form.apiKey = "";
-        form.secret = "";
-        this.setState({ form, selected: false, hovering: false });
+        this.props
+          .connectExchange(
+            this.state.form.exchangeId,
+            this.state.form.apiKey,
+            this.state.form.secret
+          )
+          .then(() => {
+            let form = { ...this.state.form };
+            form.apiKey = "";
+            form.secret = "";
+            this.setState({ form });
+            $(".modal").modal("hide");
+          });
       }
     });
     this.submitted = true;
@@ -85,6 +90,18 @@ class ExchangeForm extends Component {
             </div>
           </div>
         </div>
+        {this.state.syncInProgress ? (
+          <div className="progress">
+            <div
+              className="progress-bar progress-bar-striped progress-bar-animated"
+              role="progressbar"
+              aria-valuenow="75"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              style={{ width: "75%" }}
+            />
+          </div>
+        ) : null}
         <form
           onClick={event => event.stopPropagation()}
           className={
