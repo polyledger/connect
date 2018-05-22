@@ -15,7 +15,10 @@ def get_client_ip(request):
 
 
 def get_user_agent(request):
-    return request.META['HTTP_USER_AGENT']
+    try:
+        return request.META['HTTP_USER_AGENT']
+    except KeyError:
+        return ''
 
 
 class CustomAuthToken(ObtainAuthToken):
