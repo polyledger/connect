@@ -1,9 +1,31 @@
 import React, { Component } from "react";
-import ExchangeListModalItem from "./ExchangeListModalItem/ExchangeListModalItem";
+import Toolbar from "../Toolbar/Toolbar";
+import ExchangeListItem from "./ExchangeListItem/ExchangeListItem";
 
-class ExchangeListModal extends Component {
+class ExchangeList extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      exchanges: this.props.exchanges
+    };
+
+    this.filterList = this.filterList.bind(this);
+  }
+
   componentDidMount() {
     this.props.fetchExchanges();
+  }
+
+  filterList(event) {
+    let updatedList = this.props.exchanges;
+    updatedList = updatedList.filter(exchange => {
+      return (
+        exchange.name.toLowerCase().search(event.target.value.toLowerCase()) !==
+        -1
+      );
+    });
+    this.setState({ exchanges: updatedList });
   }
 
   render() {
@@ -81,10 +103,10 @@ class ExchangeListModal extends Component {
     };
 
     let exchanges = [];
-    this.props.exchanges.forEach((exchange, index) => {
+    this.state.exchanges.forEach((exchange, index) => {
       if (options.hasOwnProperty(exchange.name)) {
         exchanges.push(
-          <ExchangeListModalItem
+          <ExchangeListItem
             url={options[exchange.name].url}
             name={exchange.name}
             color={options[exchange.name].color}
@@ -100,58 +122,31 @@ class ExchangeListModal extends Component {
     });
 
     return (
-      <div
-        className="ExchangeListModal modal fade"
-        id="exchangeModal"
-        tabIndex="-1"
-        role="dialog"
-        aria-labelledby="exchangeModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-lg" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exchangeModalLabel">
-                Connect an exchange
-              </h5>
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
+      <div className="ExchangeList">
+        <Toolbar title="Connect an exchange" onChange={this.filterList} />
+        <div className="alert alert-info" role="alert">
+          <div className="row">
+            <div className="col-1 d-flex justify-content-center align-items-center">
+              <i className="fa fa-info-circle" />
             </div>
-            <div className="modal-body">
-              <div className="container">
-                <div className="alert alert-info" role="alert">
-                  <div className="row">
-                    <div className="col-1 d-flex justify-content-center align-items-center">
-                      <i className="fa fa-info-circle" />
-                    </div>
-                    <div className="col-10">
-                      Enter your read-only API keys to connect to cryptoasset
-                      exchanges. <em>Never</em> enter API keys that have
-                      writable permissions enabled.{" "}
-                      <a
-                        href="https://polyledger.zendesk.com/hc/en-us/articles/360002808492-What-are-API-keys-"
-                        className="alert-link"
-                        target="blank"
-                      >
-                        Learn more
-                      </a>.
-                    </div>
-                  </div>
-                </div>
-                <div className="row">{exchanges}</div>
-              </div>
+            <div className="col-10">
+              Enter your read-only API keys to connect to cryptoasset exchanges.{" "}
+              <em>Never</em> enter API keys that have writable permissions
+              enabled.{" "}
+              <a
+                href="https://polyledger.zendesk.com/hc/en-us/articles/360002808492-What-are-API-keys-"
+                className="alert-link"
+                target="blank"
+              >
+                Learn more
+              </a>.
             </div>
           </div>
         </div>
+        <div className="row">{exchanges}</div>
       </div>
     );
   }
 }
 
-export default ExchangeListModal;
+export default ExchangeList;

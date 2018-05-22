@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import FormValidator from "../../../../utils/formValidator";
 import getImageSource from "../../../../utils/imageUtils";
-import "./AssetListModalItem.css";
+import "./AssetListItem.css";
 
-class AssetListModalItem extends Component {
+class AssetListItem extends Component {
   constructor(props) {
     super(props);
 
@@ -107,7 +107,7 @@ class AssetListModalItem extends Component {
         <button
           type="submit"
           data-toggle="modal"
-          data-target="#assetModal"
+          data-target="#asset"
           className="btn btn-block btn-outline-primary pull-right"
           style={{
             color: this.props.color,
@@ -123,7 +123,7 @@ class AssetListModalItem extends Component {
     );
 
     return (
-      <div className="col-4 mb-2 AssetListModalItem">
+      <div className="col-4 mb-2 AssetListItem">
         <div
           className={"card" + (this.state.hovering ? " border-success" : "")}
           style={{ height: "250px" }}
@@ -149,11 +149,11 @@ class AssetListModalItem extends Component {
   }
 }
 
-AssetListModalItem.propTypes = {
+AssetListItem.propTypes = {
   name: PropTypes.string,
   height: PropTypes.string,
   extension: PropTypes.string,
   backgroundColor: PropTypes.string
 };
 
-export default AssetListModalItem;
+export default AssetListItem;

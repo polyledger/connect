@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import FormValidator from "../../../../utils/formValidator";
 import getImageSource from "../../../../utils/imageUtils";
-import "./ExchangeListModalItem.css";
+import "./ExchangeListItem.css";
 
-class ExchangeListModalItem extends Component {
+class ExchangeListItem extends Component {
   constructor(props) {
     super(props);
 
@@ -166,7 +166,7 @@ class ExchangeListModalItem extends Component {
     );
 
     return (
-      <div className="col-6 mb-2 ExchangeListModalItem">
+      <div className="col-6 mb-2 ExchangeListItem">
         <div
           className={"card" + (this.state.hovering ? " border-success" : "")}
           style={{
@@ -199,11 +199,11 @@ class ExchangeListModalItem extends Component {
   }
 }
 
-ExchangeListModalItem.propTypes = {
+ExchangeListItem.propTypes = {
   name: PropTypes.string,
   height: PropTypes.string,
   extension: PropTypes.string,
   backgroundColor: PropTypes.string
 };
 
-export default ExchangeListModalItem;
+export default ExchangeListItem;

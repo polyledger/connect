@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import getImageSource from "../../../../utils/imageUtils";
+import getImageSource from "../../../../../utils/imageUtils";
 
 class ConnectedAddressListItem extends Component {
   onClick(event) {
