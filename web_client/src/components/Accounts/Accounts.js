@@ -27,6 +27,7 @@ class Accounts extends Component {
               <ExchangeList
                 exchanges={this.props.exchanges}
                 fetchExchanges={this.props.fetchExchanges}
+                connectExchange={this.props.connectExchange}
               />
             )}
           />
@@ -36,6 +37,7 @@ class Accounts extends Component {
               <AssetList
                 assets={this.props.assets}
                 fetchAssets={this.props.fetchAssets}
+                connectAddress={this.props.connectAddress}
               />
             )}
           />

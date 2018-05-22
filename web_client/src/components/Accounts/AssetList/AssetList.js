@@ -35,6 +35,7 @@ class AssetList extends Component {
         <AssetListItem
           id={asset.id}
           key={asset.id}
+          name={asset.name}
           symbol={asset.symbol}
           connectAddress={this.props.connectAddress}
         />

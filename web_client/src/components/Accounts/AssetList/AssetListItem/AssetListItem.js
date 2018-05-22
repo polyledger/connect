@@ -119,7 +119,11 @@ class AssetListItem extends Component {
         </button>
       </form>
     ) : (
-      <div className="text-primary">{this.props.symbol}</div>
+      <div>
+        <span className="lead text-primary my-2">{this.props.symbol}</span>
+        <br />
+        <span>{this.props.name}</span>
+      </div>
     );
 
     return (
