@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import EmailIcon from "../../assets/icons/email.png";
+import EmailIcon from "../../../assets/icons/email.png";
 import "./ConfirmEmail.css";
 
 class ConfirmEmail extends Component {

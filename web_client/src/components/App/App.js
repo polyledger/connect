@@ -7,7 +7,7 @@ import Analytics from "../Analytics/Analytics";
 import AccountsContainer from "../../containers/AccountsContainer";
 import Markets from "../Markets/Markets";
 import SettingsContainer from "../../containers/SettingsContainer";
-import RiskAssessment from "../RiskAssessment/RiskAssessment";
+import RiskAssessment from "../Onboarding/RiskAssessment/RiskAssessment";
 import LoginContainer from "../../containers/LoginContainer";
 import SignupContainer from "../../containers/SignupContainer";
 import ActivationContainer from "../../containers/ActivationContainer";
