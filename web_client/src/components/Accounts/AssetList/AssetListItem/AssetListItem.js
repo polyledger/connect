@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import FormValidator from "../../../../utils/formValidator";
 import getImageSource from "../../../../utils/imageUtils";
 import "./AssetListItem.css";
 
@@ -8,57 +7,9 @@ class AssetListItem extends Component {
   constructor(props) {
     super(props);
 
-    this.validator = new FormValidator([
-      {
-        field: "address",
-        method: "isEmpty",
-        validWhen: false,
-        message: "Address is required."
-      }
-    ]);
-
     this.state = {
-      form: {
-        assetId: this.props.id,
-        address: ""
-      },
-      selected: false,
-      hovering: false,
-      validation: this.validator.getInitialState()
+      hovering: false
     };
-
-    this.hovering = false;
-    this.submitted = false;
-  }
-
-  onClick(event) {
-    this.setState({
-      selected: !this.state.selected
-    });
-  }
-
-  onChange(event) {
-    let form = { ...this.state.form };
-    form[event.target.name] = event.target.value;
-    this.setState({ form });
-  }
-
-  onSubmit(event) {
-    event.preventDefault();
-
-    const validation = this.validator.validate(this.state.form);
-    this.setState({ validation }, () => {
-      if (validation.isValid) {
-        this.props.connectAddress(
-          this.state.form.assetId,
-          this.state.form.address
-        );
-        let form = { ...this.state.form };
-        form.address = "";
-        this.setState({ form, selected: false, hovering: false });
-      }
-    });
-    this.submitted = true;
   }
 
   onMouseEnter(event) {
@@ -74,69 +25,16 @@ class AssetListItem extends Component {
   }
 
   render() {
-    let validation = this.submitted
-      ? this.validator.validate(this.state.form)
-      : this.state.validation;
-
-    let content = this.state.selected ? (
-      <form
-        onClick={event => event.stopPropagation()}
-        className={
-          "m-3 " + (this.submitted ? "was-validated" : "needs-validation")
-        }
-        onSubmit={event => this.onSubmit(event)}
-        noValidate
-      >
-        <div className="form-group">
-          <input
-            placeholder="Public address"
-            name="address"
-            value={this.state.form.address}
-            onChange={event => this.onChange(event)}
-            className="form-control"
-            required
-          />
-          {validation.address.isInvalid ? (
-            <div className="invalid-feedback text-left">
-              {validation.address.message}
-            </div>
-          ) : (
-            ""
-          )}
-        </div>
-        <button
-          type="submit"
-          data-toggle="modal"
-          data-target="#asset"
-          className="btn btn-block btn-outline-primary pull-right"
-          style={{
-            color: this.props.color,
-            borderColor: this.props.color,
-            backgroundColor: this.props.backgroundColor
-          }}
-        >
-          Submit
-        </button>
-      </form>
-    ) : (
-      <div>
-        <span className="lead text-primary my-2">{this.props.symbol}</span>
-        <br />
-        <span>{this.props.name}</span>
-      </div>
-    );
-
     return (
-      <div className="col-4 mb-2 AssetListItem">
+      <div className="col-2 my-2 AssetListItem">
         <div
           className={"card" + (this.state.hovering ? " border-success" : "")}
-          style={{ height: "250px" }}
         >
           <div
-            className="card-body text-center py-5 d-flex justify-content-center align-items-center"
-            onClick={event => this.onClick(event)}
+            className="card-body text-center py-3 d-flex justify-content-center align-items-center"
             onMouseEnter={event => this.onMouseEnter(event)}
             onMouseLeave={event => this.onMouseLeave(event)}
+            onClick={event => this.props.onClick(this.props)}
           >
             <div>
               <img
@@ -144,7 +42,13 @@ class AssetListItem extends Component {
                 alt={this.props.symbol}
                 src={getImageSource("coins", this.props.symbol)}
               />
-              {content}
+              <div>
+                <span className="lead text-primary my-2">
+                  {this.props.symbol}
+                </span>
+                <br />
+                <span>{this.props.name}</span>
+              </div>
             </div>
           </div>
         </div>

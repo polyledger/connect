@@ -18,6 +18,8 @@ class Accounts extends Component {
                 connectedAddresses={this.props.connectedAddresses}
                 fetchConnectedExchanges={this.props.fetchConnectedExchanges}
                 fetchConnectedAddresses={this.props.fetchConnectedAddresses}
+                disconnectAddress={this.props.disconnectAddress}
+                disconnectExchange={this.props.disconnectExchange}
               />
             )}
           />

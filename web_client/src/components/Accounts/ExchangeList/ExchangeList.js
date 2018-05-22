@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+import $ from "jquery";
 import Toolbar from "../Toolbar/Toolbar";
+import ConnectionModal from "../ConnectionModal/ConnectionModal";
 import ExchangeListItem from "./ExchangeListItem/ExchangeListItem";
 
 class ExchangeList extends Component {
@@ -7,10 +9,12 @@ class ExchangeList extends Component {
     super(props);
 
     this.state = {
-      exchanges: this.props.exchanges
+      exchanges: this.props.exchanges,
+      selected: null
     };
 
     this.filterList = this.filterList.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   componentDidMount() {
@@ -26,6 +30,11 @@ class ExchangeList extends Component {
       );
     });
     this.setState({ exchanges: updatedList });
+  }
+
+  onClick(exchange) {
+    this.setState({ selected: exchange });
+    $(".modal").modal("show");
   }
 
   render() {
@@ -82,7 +91,7 @@ class ExchangeList extends Component {
       HitBTC: {
         backgroundColor: "#1D201E",
         extension: "png",
-        height: "45",
+        height: "30",
         url: "https://hitbtc.com",
         color: "#3DACD5"
       },
@@ -116,6 +125,7 @@ class ExchangeList extends Component {
             connectExchange={this.props.connectExchange}
             id={exchange.id}
             key={exchange.id}
+            onClick={this.onClick}
           />
         );
       }
@@ -124,26 +134,12 @@ class ExchangeList extends Component {
     return (
       <div className="ExchangeList">
         <Toolbar title="Connect an exchange" onChange={this.filterList} />
-        <div className="alert alert-info" role="alert">
-          <div className="row">
-            <div className="col-1 d-flex justify-content-center align-items-center">
-              <i className="fa fa-info-circle" />
-            </div>
-            <div className="col-10">
-              Enter your read-only API keys to connect to cryptoasset exchanges.{" "}
-              <em>Never</em> enter API keys that have writable permissions
-              enabled.{" "}
-              <a
-                href="https://polyledger.zendesk.com/hc/en-us/articles/360002808492-What-are-API-keys-"
-                className="alert-link"
-                target="blank"
-              >
-                Learn more
-              </a>.
-            </div>
-          </div>
-        </div>
         <div className="row">{exchanges}</div>
+        <ConnectionModal
+          title="Connect an exchange"
+          exchange={this.state.selected}
+          connectExchange={this.props.connectExchange}
+        />
       </div>
     );
   }

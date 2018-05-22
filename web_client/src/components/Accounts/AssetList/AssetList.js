@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+import $ from "jquery";
 import Toolbar from "../Toolbar/Toolbar";
+import ConnectionModal from "../ConnectionModal/ConnectionModal";
 import AssetListItem from "./AssetListItem/AssetListItem";
 
 class AssetList extends Component {
@@ -7,10 +9,12 @@ class AssetList extends Component {
     super(props);
 
     this.state = {
-      assets: this.props.assets
+      assets: this.props.assets,
+      selected: null
     };
 
     this.filterList = this.filterList.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   componentDidMount() {
@@ -28,6 +32,11 @@ class AssetList extends Component {
     this.setState({ assets: updatedList });
   }
 
+  onClick(asset) {
+    this.setState({ selected: asset });
+    $(".modal").modal("show");
+  }
+
   render() {
     let assets = [];
     this.state.assets.forEach((asset, index) => {
@@ -37,6 +46,7 @@ class AssetList extends Component {
           key={asset.id}
           name={asset.name}
           symbol={asset.symbol}
+          onClick={this.onClick}
           connectAddress={this.props.connectAddress}
         />
       );
@@ -45,18 +55,12 @@ class AssetList extends Component {
     return (
       <div className="AssetList">
         <Toolbar title="Connect an address" onChange={this.filterList} />
-        <div className="alert alert-info" role="alert">
-          <div className="row">
-            <div className="col-1 d-flex justify-content-center align-items-center">
-              <i className="fa fa-info-circle" />
-            </div>
-            <div className="col-10">
-              Select an asset and enter your public address to connect your
-              wallet.
-            </div>
-          </div>
-        </div>
         <div className="row">{assets}</div>
+        <ConnectionModal
+          title="Connect an address"
+          asset={this.state.selected}
+          connectAddress={this.props.connectAddress}
+        />
       </div>
     );
   }
