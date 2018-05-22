@@ -26,7 +26,7 @@ class ExchangeListItem extends Component {
 
   render() {
     return (
-      <div className="col-4 my-2 ExchangeListItem">
+      <div className="col-md-4 col-sm-4 my-2 ExchangeListItem">
         <div
           className={"card" + (this.state.hovering ? " border-success" : "")}
           style={{

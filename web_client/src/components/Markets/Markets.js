@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import coinage from "coinage-lib";
 import PriceTable from "./PriceTable/PriceTable";
-import "./Markets.css";
 
 class Markets extends Component {
   constructor(props) {

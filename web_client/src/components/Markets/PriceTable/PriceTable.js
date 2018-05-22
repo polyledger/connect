@@ -21,29 +21,23 @@ class PriceTable extends Component {
     });
     return (
       <div className="PriceTable">
-        <div className="card table-responsive">
-          <table className="table table-hover mb-0">
-            <thead>
-              <tr>
-                <th scope="col" className="w-15 text-center">
-                  #
-                </th>
-                <th scope="col" className="w-20">
-                  Coin
-                </th>
-                <th scope="col" className="w-20 text-right">
-                  Price
-                </th>
-                <th scope="col" className="w-25 text-right">
-                  Market Cap
-                </th>
-                <th scope="col" className="w-20 text-right">
-                  24h Change
-                </th>
-              </tr>
-            </thead>
-            <tbody>{priceRows}</tbody>
-          </table>
+        <div className="card">
+          <div className="table-responsive">
+            <table className="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th scope="col" className="text-center">
+                    #
+                  </th>
+                  <th scope="col">Coin</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Market Cap</th>
+                  <th scope="col">24h Change</th>
+                </tr>
+              </thead>
+              <tbody>{priceRows}</tbody>
+            </table>
+          </div>
         </div>
       </div>
     );

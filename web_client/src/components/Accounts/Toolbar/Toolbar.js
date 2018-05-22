@@ -8,7 +8,7 @@ class Toolbar extends Component {
       <div className="Toolbar">
         <form className="form-inline d-flex justify-content-between mb-2">
           <h3>{this.props.title}</h3>
-          <div className="btn-group btn-group-thirds">
+          <div className="btn-group btn-group-thirds mb-2">
             <NavLink
               exact
               role="button"

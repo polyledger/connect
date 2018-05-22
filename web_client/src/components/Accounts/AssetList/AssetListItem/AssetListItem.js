@@ -26,7 +26,7 @@ class AssetListItem extends Component {
 
   render() {
     return (
-      <div className="col-2 my-2 AssetListItem">
+      <div className="col-md-2 col-sm-3 my-2 AssetListItem">
         <div
           className={"card" + (this.state.hovering ? " border-success" : "")}
         >

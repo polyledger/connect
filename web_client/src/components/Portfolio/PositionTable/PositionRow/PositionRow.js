@@ -19,12 +19,8 @@ class PositionRow extends Component {
         <td>
           {this.props.quantity} {this.props.symbol}
         </td>
-        <td className="text-right">
-          {numeral(this.props.price).format("$0,0.00")}
-        </td>
-        <td className="text-right">
-          {numeral(this.props.marketValue).format("$0,0.00")}
-        </td>
+        <td>{numeral(this.props.price).format("$0,0.00")}</td>
+        <td>{numeral(this.props.marketValue).format("$0,0.00")}</td>
       </tr>
     );
   }

@@ -33,14 +33,14 @@ class PriceRow extends Component {
             <span className="PriceRow__Coin">{this.props.name}</span>
           </span>
         </td>
-        <td className="PriceRow__Price--column text-right">
+        <td className="PriceRow__Price--column">
           {numeral(this.props.price).format("$0,0.00")}
         </td>
-        <td className="PriceRow__Market_Cap--column text-right">
+        <td className="PriceRow__Market_Cap--column">
           {numeral(this.props.marketCap).format("$0,0")}
         </td>
         <td
-          className={`Pricerow__Delta--column delta-indicator text-right delta-${this.getDeltaIndicator()}`}
+          className={`Pricerow__Delta--column delta-indicator delta-${this.getDeltaIndicator()}`}
         >
           {numeral(this.props.change24h).format("0,0.00") + "%"}
         </td>

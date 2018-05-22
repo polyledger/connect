@@ -8,8 +8,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from api.models import User, Profile, Portfolio, Coin, Position, Price
-from api.models import Distribution, IPAddress, Deposit, Withdrawal
-from api.models import Transaction, Settings, Bitbutter, WhitelistedEmail
+from api.models import Distribution, IPAddress, Transaction, Settings
+from api.models import Bitbutter, WhitelistedEmail
 
 
 class UserCreationForm(forms.ModelForm):
@@ -127,19 +127,9 @@ class DistributionAdmin(admin.ModelAdmin):
     list_display = ('date', 'coin', 'name', 'params')
 
 
-class DepositAdmin(admin.ModelAdmin):
-    list_display = ('status', 'coinbase_user_id', 'coinbase_account_id',
-                    'transaction', 'amount', 'coin')
-
-
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('date', 'portfolio', 'category', 'status', 'amount',
-                    'coin')
-
-
-class WithdrawalAdmin(admin.ModelAdmin):
-    list_display = ('status', 'coinbase_user_id', 'coinbase_account_id',
-                    'transaction', 'amount', 'coin')
+    list_display = ('date', 'portfolio', 'category', 'base', 'quote',
+                    'base_size', 'quote_size')
 
 
 class PriceAdmin(admin.ModelAdmin):
@@ -152,7 +142,16 @@ class SettingsAdmin(admin.ModelAdmin):
                     'time_zone', 'local_currency')
 
 
+class BitbutterChangeForm(forms.ModelForm):
+    """A form for updating Bitbutter credneitals."""
+
+    class Meta:
+        model = Bitbutter
+        fields = ('uuid', 'created_at', 'api_key', 'secret')
+
+
 class BitbutterAdmin(admin.ModelAdmin):
+    form = BitbutterChangeForm
     list_display = ('user', 'uuid', 'created_at', 'api_key', 'secret')
 
 
@@ -167,8 +166,6 @@ admin.site.register(Position, PositionAdmin)
 admin.site.register(IPAddress, IPAddressAdmin)
 admin.site.register(Distribution, DistributionAdmin)
 admin.site.register(Transaction, TransactionAdmin)
-admin.site.register(Deposit, DepositAdmin)
-admin.site.register(Withdrawal, WithdrawalAdmin)
 admin.site.register(Coin, CoinAdmin)
 admin.site.register(Price, PriceAdmin)
 admin.site.register(Settings, SettingsAdmin)
