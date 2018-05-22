@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import ConnectedExchangeList from "../ConnectedExchangeList/ConnectedExchangeList";
-import ConnectedAddressList from "../ConnectedAddressList/ConnectedAddressList";
-import ExchangeListModal from "../ExchangeListModal/ExchangeListModal";
-import AssetListModal from "../AssetListModal/AssetListModal";
+import ConnectedExchangeList from "./ConnectedExchangeList/ConnectedExchangeList";
+import ConnectedAddressList from "./ConnectedAddressList/ConnectedAddressList";
+import ExchangeListModal from "./ExchangeListModal/ExchangeListModal";
+import AssetListModal from "./AssetListModal/AssetListModal";
 
 class Accounts extends Component {
   componentDidMount() {

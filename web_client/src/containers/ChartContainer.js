@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { fetchPortfolio, fetchChartData } from "../actions/portfolioActions";
-import ChartWrapper from "../components/ChartWrapper/ChartWrapper";
+import ChartWrapper from "../components/Portfolio/ChartWrapper/ChartWrapper";
 
 const mapStateToProps = state => {
   return state.portfolio;

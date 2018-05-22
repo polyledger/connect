@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import UserSettings from "../UserSettings/UserSettings";
-import PreferencesSettings from "../PreferencesSettings/PreferencesSettings";
-import SecuritySettings from "../SecuritySettings/SecuritySettings";
-import APISettings from "../APISettings/APISettings";
+import UserSettings from "./UserSettings/UserSettings";
+import Preferences from "./Preferences/Preferences";
+import SecuritySettings from "./SecuritySettings/SecuritySettings";
+import APISettings from "./APISettings/APISettings";
 import "./Settings.css";
 
 class Settings extends Component {
@@ -96,7 +96,7 @@ class Settings extends Component {
                 <div className="container">
                   <div className="row">
                     <div className="col-sm-8 offset-sm-2">
-                      <PreferencesSettings />
+                      <Preferences />
                     </div>
                   </div>
                 </div>
