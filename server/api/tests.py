@@ -34,7 +34,7 @@ from api.tokens import account_activation_token
 
 class UserTestCase(TestCase):
 
-    def test_create_user(self):
+    def test_signup(self):
         WhitelistedEmail.objects.create(email='ari@polyledger.com')
         client = APIClient()
         data = {
@@ -53,19 +53,35 @@ class UserTestCase(TestCase):
         response = client.get(url, format='json')
         assert response.status_code == 302
 
+    def test_login(self):
+        get_user_model().objects.create_user(
+            first_name='Ari',
+            last_name='Hall',
+            email='ari@polyledger.com',
+            password='polyledger'
+        )
+        client = APIClient()
+        data = {
+            'username': 'ari@polyledger.com',
+            'password': 'polyledger'
+        }
+        url = '/api/authenticate/'
+        response = client.post(url, data, format='json')
+        assert response.status_code is 200
+
     def test_set_password(self):
         user = get_user_model().objects.create_user(
             first_name='Ari',
             last_name='Hall',
             email='ari@polyledger.com',
-            password='top_secret'
+            password='polyledger'
         )
         token = Token.objects.get(user=user)
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token {0}'.format(token.key))
         data = {
-            'old_password': 'top_secret',
-            'new_password': 'polyledger'
+            'old_password': 'polyledger',
+            'new_password': 'top_secret_password'
         }
         url = '/api/users/{0}/set_password/'.format(user.pk)
         response = client.put(url, data, format='json')
@@ -76,7 +92,7 @@ class UserTestCase(TestCase):
             first_name='Ari',
             last_name='Hall',
             email='ari@polyledger.com',
-            password='top_secret')
+            password='polyledger')
         token = Token.objects.get(user=user)
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token {0}'.format(token.key))
