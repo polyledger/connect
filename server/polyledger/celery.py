@@ -13,7 +13,6 @@ from celery.signals import worker_ready
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'polyledger.settings.local')
 
-broker = os.environ['REDIS_URL'] or 'redis://redis'
 app = Celery('polyledger')
 
 # Using a string here means the worker doesn't have to serialize
