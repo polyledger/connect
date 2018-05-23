@@ -270,10 +270,14 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             elif transaction_type == 'address_withdrawal':
                 asset = entry['size']['symbol']
                 amount = abs(float(entry['size']['size']))
+                fee = float(entry['network_fee']['size'])
+                amount += fee
                 portfolio.remove(asset, amount, time)
             elif transaction_type == 'address_deposit':
                 asset = entry['size']['symbol']
                 amount = abs(float(entry['size']['size']))
+                fee = float(entry['network_fee']['size'])
+                amount -= fee
                 portfolio.add(asset, amount, time)
             elif transaction_type == 'internal_address_withdrawal':
                 asset = entry['size']['symbol']
