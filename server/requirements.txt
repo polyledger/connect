@@ -14,3 +14,5 @@ django-cors-headers==2.0.0
 chainbridge==1.1.5
 whitenoise==3.3.1
 dj-database-url
+billiard>=3.5.0.2,<3.6.0
+kombu>=4.0.2,<5.0
