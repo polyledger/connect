@@ -45,7 +45,11 @@ class AddressForm extends Component {
           .then(() => {
             let form = { ...this.state.form };
             form.address = "";
-            this.setState({ form });
+            this.submitted = false;
+            this.setState({
+              form,
+              validation: this.validator.getInitialState()
+            });
             $(".modal").modal("hide");
           });
       }
