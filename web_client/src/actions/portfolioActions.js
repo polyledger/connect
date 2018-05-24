@@ -44,7 +44,7 @@ export function fetchPositions() {
     const auth = getState().auth;
     const { token } = auth;
     const { id } = auth.user.portfolio;
-    fetch(`/api/portfolios/${id}/assets/`, {
+    fetch(`/api/portfolios/${id}/positions/`, {
       method: "GET",
       headers: {
         Authorization: `Token ${token}`,

@@ -16,7 +16,12 @@
   {
     "model": "api.profile",
     "pk": 1,
-    "fields": { "user": 1, "legal_name": "" }
+    "fields": {
+      "user": 1,
+      "bitbutter_user_id": "40c3c12e-ada0-41d4-9a0e-b905c2eeeb7c",
+      "bitbutter_api_key": "19RcjqXvffU7GMATT5E541s3RfPw4BA75",
+      "bitbutter_secret": "L4rR4DurrBvug9CbWJ75uqxjWUML6F8o3wgCtYauV73Sx6u8Qphi"
+    }
   },
   { "model": "api.coin", "pk": "BCH", "fields": { "name": "Bitcoin Cash" } },
   { "model": "api.coin", "pk": "BTC", "fields": { "name": "Bitcoin" } },
@@ -33,27 +38,13 @@
     "pk": 1,
     "fields": {
       "created": "2018-05-11T06:20:31.054Z",
-      "title": "My Portfolio",
-      "risk_score": null,
-      "user": 1,
-      "usd": 0.0
+      "user": 1
     }
   },
   {
     "model": "api.whitelistedemail",
     "pk": "admin@polyledger.com",
     "fields": { "date": "2018-05-11" }
-  },
-  {
-    "model": "api.bitbutter",
-    "pk": 1,
-    "fields": {
-      "user": 1,
-      "uuid": "40c3c12e-ada0-41d4-9a0e-b905c2eeeb7c",
-      "api_key": "19RcjqXvffU7GMATT5E541s3RfPw4BA75",
-      "secret": "L4rR4DurrBvug9CbWJ75uqxjWUML6F8o3wgCtYauV73Sx6u8Qphi",
-      "created_at": "2018-05-22T17:07:44.654Z"
-    }
   },
   {
     "model": "api.settings",

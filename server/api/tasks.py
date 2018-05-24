@@ -21,36 +21,8 @@ from api.tokens import account_activation_token
 import pytz
 import time
 import requests
-import numpy as np
-import pandas as pd
 from datetime import datetime, date
-from api.models import Price, Position, Coin, Distribution
-from api.allocator import CVaR
-
-
-@shared_task(bind=True)
-def allocate_for_user(self, pk, symbols, risk_score):
-    """
-    Rebalances portfolio allocations.
-    """
-    user = get_user_model().objects.get(pk=pk)
-    start = date(year=2017, month=1, day=1)
-    allocator = CVaR(symbols=symbols, start=start)
-    allocations = allocator.allocate()
-    allocation = allocations.loc[risk_score-1]
-
-    user.portfolio.positions.all().delete()
-
-    for symbol in symbols:
-        position = Position(
-            coin=Coin.objects.get(symbol=symbol),
-            amount=allocation[symbol],
-            portfolio=user.portfolio
-        )
-        position.save()
-        user.portfolio.positions.add(position)
-
-    user.save()
+from api.models import Price, Coin
 
 
 @shared_task
@@ -78,53 +50,6 @@ def send_confirmation_email(pk, recipient, site_url):
     )
     email.attach_alternative(html_content, "text/html")
     email.send()
-
-
-@shared_task
-def fit_distributions(coins=Coin.objects.all()):
-    """
-    Fits distributions to coin returns and stores the result.
-    """
-    start = date(year=2017, month=1, day=1)
-    symbols = [coin.symbol for coin in coins]
-    allocator = CVaR(symbols=symbols, start=start)
-    prices = allocator.retrieve_data()
-
-    # Replace NAs with zeros
-    prices.replace(0, np.nan, inplace=True)
-    prices = prices.reset_index(drop=True)
-
-    # Order rows ascending by time (oldest first, newest last)
-    # prices.sort_values(['time'], ascending=True, inplace=True)
-
-    # Truncate dataframe to prices on or after 2016-01-01
-    # prices = prices[prices['time'] >= '2016-01-01']
-    # prices = prices.reset_index(drop=True)
-
-    # Create a dataframe of daily returns
-    objs = [prices[symbols].apply(lambda x: x / x.shift(1) - 1)]
-    daily_returns = pd.concat(objs=objs, axis=1)
-    daily_returns = daily_returns.reset_index(drop=True)
-
-    tzinfo = pytz.UTC
-    today = datetime.utcnow().replace(
-        hour=0,
-        minute=0,
-        second=0,
-        microsecond=0,
-        tzinfo=tzinfo)
-
-    for symbol in symbols:
-        returns = daily_returns[symbol]
-        distribution = allocator.fit_distribution(returns=returns)
-        name = distribution[0].name
-        params = str(list(distribution[1])).strip('[]')
-        coin = Coin.objects.get(symbol=symbol)
-        distribution = Distribution.objects.get(coin=coin)
-        distribution.date = today
-        distribution.name = name
-        distribution.params = params
-        distribution.save()
 
 
 @shared_task

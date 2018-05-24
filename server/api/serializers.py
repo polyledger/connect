@@ -32,21 +32,12 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Portfolio
-        fields = ('id', 'created', 'title', 'risk_score', 'usd', 'coins',
-                  'positions')
+        fields = ('id', 'created', 'coins', 'positions')
         read_only_fields = ('id', 'created', 'positions',)
 
     def get_queryset(self):
         user = self.request.user
         return Portfolio.objects.filter(user=user)
-
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.usd = validated_data.get('usd', instance.usd)
-        instance.risk_score = validated_data.get(
-            'risk_score', instance.risk_score)
-        instance.save()
-        return instance
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -54,8 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'first_name', 'last_name', 'password',
-                  'portfolio')
+        fields = ('id', 'email', 'first_name', 'last_name', 'password', 'portfolio')
         extra_kwargs = {
             'id': {'read_only': True},
             'password': {'write_only': True}
@@ -105,8 +95,7 @@ class SettingsSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Settings
-        fields = ('id', 'local_currency', 'time_zone', 'email_notification',
-                  'two_factor_enabled')
+        fields = ('id', 'local_currency', 'time_zone', 'email_notification', 'two_factor_enabled')
         extra_kwargs = {
             'id': {'read_only': True}
         }

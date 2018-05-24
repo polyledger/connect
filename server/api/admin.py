@@ -8,8 +8,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from api.models import User, Profile, Portfolio, Coin, Position, Price
-from api.models import Distribution, IPAddress, Transaction, Settings
-from api.models import Bitbutter, WhitelistedEmail
+from api.models import IPAddress, Transaction, Settings, WhitelistedEmail
 
 
 class UserCreationForm(forms.ModelForm):
@@ -96,7 +95,8 @@ class UserAdmin(BaseUserAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user',)
+    list_display = ('user', 'bitbutter_user_id', 'bitbutter_api_key',
+                    'bitbutter_secret',)
 
 
 class PositionInline(admin.TabularInline):
@@ -105,7 +105,7 @@ class PositionInline(admin.TabularInline):
 
 
 class PortfolioAdmin(admin.ModelAdmin):
-    list_display = ('user', 'title', 'risk_score', 'usd')
+    list_display = ('user',)
     inlines = [PositionInline]
 
 
@@ -120,11 +120,6 @@ class PositionAdmin(admin.ModelAdmin):
 
 class IPAddressAdmin(admin.ModelAdmin):
     list_display = ('ip', 'user', 'last_login', 'user_agent')
-
-
-class DistributionAdmin(admin.ModelAdmin):
-    ordering = ('-date', 'coin',)
-    list_display = ('date', 'coin', 'name', 'params')
 
 
 class TransactionAdmin(admin.ModelAdmin):
@@ -142,19 +137,6 @@ class SettingsAdmin(admin.ModelAdmin):
                     'time_zone', 'local_currency')
 
 
-class BitbutterChangeForm(forms.ModelForm):
-    """A form for updating Bitbutter credneitals."""
-
-    class Meta:
-        model = Bitbutter
-        fields = ('uuid', 'created_at', 'api_key', 'secret')
-
-
-class BitbutterAdmin(admin.ModelAdmin):
-    form = BitbutterChangeForm
-    list_display = ('user', 'uuid', 'created_at', 'api_key', 'secret')
-
-
 class WhitelistedEmailAdmin(admin.ModelAdmin):
     list_display = ('date', 'email')
 
@@ -164,11 +146,9 @@ admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Portfolio, PortfolioAdmin)
 admin.site.register(Position, PositionAdmin)
 admin.site.register(IPAddress, IPAddressAdmin)
-admin.site.register(Distribution, DistributionAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Coin, CoinAdmin)
 admin.site.register(Price, PriceAdmin)
 admin.site.register(Settings, SettingsAdmin)
-admin.site.register(Bitbutter, BitbutterAdmin)
 admin.site.register(WhitelistedEmail, WhitelistedEmailAdmin)
 admin.site.unregister(Group)

@@ -116,7 +116,6 @@ class PortfolioTestCase(TestCase):
             email='ari@polyledger.com',
             password='top_secret'
         )
-        self.user.profile.risk_score = 3
         Position.objects.create(
             portfolio=self.user.portfolio,
             coin=Coin.objects.get(name='Bitcoin'),

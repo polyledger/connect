@@ -9,10 +9,17 @@ partner_id = os.environ['BITBUTTER_PARTNER_ID']
 
 
 def get_user_client(user):
-    return Client(user.bitbutter.api_key, user.bitbutter.secret, base_uri,
-                  user_id=user.bitbutter.uuid)
+    return Client(
+        api_key=user.profile.bitbutter_api_key,
+        api_secret=user.profile.bitbutter_secret,
+        base_uri=base_uri,
+        user_id=user.profile.bitbutter_user_id)
 
 
 def get_partner_client():
-    return Client(api_key, api_secret, base_uri, partnership_id=partnership_id,
-                  partner_id=partner_id)
+    return Client(
+        api_key=api_key,
+        api_secret=api_secret,
+        base_uri=base_uri,
+        partnership_id=partnership_id,
+        partner_id=partner_id)

@@ -9,13 +9,12 @@ from django.conf import settings
 from rest_framework import permissions, authentication, viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import detail_route
 from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from api.serializers import PasswordSerializer, PersonalDetailSerializer
 from api.serializers import SettingsSerializer
 from api.tokens import account_activation_token
-from api.backtest import backtest, Portfolio as PortfolioInstance
-from api.tasks import allocate_for_user
+from api.backtest import Portfolio as PortfolioInstance
 from api.auth import get_client_ip, get_user_agent
 from api.bitbutter import get_partner_client, get_user_client
 
@@ -48,20 +47,15 @@ class UserViewSet(viewsets.ModelViewSet):
             return self.request.user
         return super(UserViewSet, self).get_object()
 
-    @detail_route(
-        methods=['GET'],
-        permission_classes=[permissions.AllowAny]
-    )
+    @detail_route(methods=['GET'], permission_classes=[permissions.AllowAny])
     def activate(self, request, pk=None):
         try:
             uid = force_text(urlsafe_base64_decode(pk))
             user = get_user_model().objects.get(pk=uid)
             token = request.query_params.get('token', None)
-        except(TypeError, ValueError, OverflowError,
-               get_user_model().DoesNotExist):
+        except(TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
             user = None
-        if user is not None and \
-                account_activation_token.check_token(user, token):
+        if user is not None and account_activation_token.check_token(user, token):
             user.is_active = True
             auth_token = Token.objects.get(user=user)
 
@@ -71,14 +65,14 @@ class UserViewSet(viewsets.ModelViewSet):
             ip_address = IPAddress(ip=ip, user=user, user_agent=user_agent)
             ip_address.save()
 
-            # Save Bitbutter user
-            response = get_partner_client().create_user()
-            bb_user = response.json()['user']
-            user.bitbutter.uuid = bb_user['id']
-            created_at = dateutil.parser.parse(bb_user['created_at'])
-            user.bitbutter.created_at = created_at
-            user.bitbutter.api_key = bb_user['credentials']['api_key']
-            user.bitbutter.secret = bb_user['credentials']['secret']
+            # Save Bitbutter credentials
+            client = get_partner_client()
+            response = client.create_user()
+            created_user = response.json()['user']
+            credentials = created_user['credentials']
+            user.profile.bitbutter_user_id = created_user['id']
+            user.profile.bitbutter_api_key = credentials['api_key']
+            user.profile.bitbutter_secret = credentials['secret']
             user.save()
         redirect_url = settings.ACTIVATION_URL + '?token=' + str(auth_token.key)
         return HttpResponseRedirect(redirect_url)
@@ -93,8 +87,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             if not user.check_password(serializer.data.get('old_password')):
-                return Response({'errors': [{'message': 'Wrong password.'}]},
-                                status=status.HTTP_400_BAD_REQUEST)
+                content = {'errors': [{'message': 'Wrong password.'}]}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
             user.set_password(serializer.data.get('new_password'))
             user.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -126,93 +120,26 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     def get_object(self):
         return self.request.user.portfolio
 
-    def update(self, request, pk=None):
-        user = self.request.user
-        portfolio = self.get_object()
-        serializer = self.get_serializer(portfolio, data=request.data)
-
-        if serializer.is_valid():
-            self.perform_update(serializer)
-            coins = serializer.data['coins']
-            risk_score = serializer.data['risk_score']
-            coins = request.data['coins']
-            task_result = allocate_for_user.delay(user.id, coins, risk_score)
-            content = {
-                'portfolio': serializer.data,
-                'task_result': {
-                    'id': task_result.id,
-                    'status': task_result.status
-                }
-            }
-            return Response(content)
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-
-    @list_route(permission_classes=[permissions.AllowAny], methods=['GET'])
-    def public_charts(self, request):
-        # Perform a 1 year backtest on Polyledger portfolio and Bitcoin
-        portfolio = User.objects.get(email='admin@polyledger.com').portfolio
-        allocations = portfolio.positions.all().values_list('coin', 'amount')
-        freq = 'D'
-        end = date.today()
-        start = end - timedelta(days=364)
-
-        portfolio = backtest(
-            allocations=allocations,
-            investment=1,
-            start=start,
-            end=end,
-            freq=freq
-        )
-
-        bitcoin = backtest(
-            allocations=[('BTC', 100)],
-            investment=1,
-            start=start,
-            end=end,
-            freq=freq
-        )
-
-        content = {
-            'series': [
-                {
-                    'name': 'Polyledger',
-                    'data': portfolio['historic_value']
-                },
-                {
-                    'name': 'Bitcoin',
-                    'data': bitcoin['historic_value']
-                }
-            ],
-            'change': {
-                'percent': portfolio['percent_change']
-            }
-        }
-        return Response(content)
-
     @detail_route(methods=['GET'])
-    def assets(self, request, pk=None):
-        bb_user_client = get_user_client(request.user)
-        response = bb_user_client.get_user_balance()
-        balances = response.json()
+    def positions(self, request, pk=None):
+        client = get_user_client(request.user)
+        positions = client.get_user_balance().json()
 
-        assets = []
-        for balance in balances:
-            if float(balance['asset']['size']) > 0:
-                coin = balance['asset']['symbol']
+        response = []
+        for position in positions:
+            if float(position['asset']['size']) > 0:
+                coin = position['asset']['symbol']
                 try:
-                    price = Price.objects.get(
-                        date=date.today(),
-                        coin=coin).price
+                    object = Price.objects.get(date=date.today(), coin=coin)
+                    price = object.price
                 except Price.DoesNotExist:
                     price = 0
-                quantity = float(balance['asset']['size'])
+                quantity = float(position['asset']['size'])
                 market_value = price * quantity
-                balance['asset']['price'] = price
-                balance['asset']['market_value'] = market_value
-                assets.append(balance)
-        return Response(assets)
+                position['asset']['price'] = price
+                position['asset']['market_value'] = market_value
+                response.append(position)
+        return Response(response)
 
     @detail_route(methods=['GET'])
     def chart(self, request, pk=None):
@@ -224,8 +151,8 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         end = date.today()
         start = end - timedelta(days=days[period])
 
-        bb_user_client = get_user_client(request.user)
-        response = bb_user_client.get_user_ledger()
+        client = get_user_client(request.user)
+        response = client.get_user_ledger()
         ledger = response.json()[::-1]
         portfolio = PortfolioInstance(start=start)
         cost_basis = 0
@@ -290,18 +217,14 @@ class PortfolioViewSet(viewsets.ModelViewSet):
 
         # Don't include USD in portfolio valuation
         portfolio.remove('USD', portfolio.assets['USD'], date.today())
-        historic_value = portfolio.historic_value(start=start, end=end,
-                                                  freq='D')
+        historic_value = portfolio.historic_value(start=start, end=end, freq='D')
         start_value = round(historic_value[0][1], 2)
         current_value = round(historic_value[-1][1], 2)
-        past_period = round(current_value - start_value - cost_basis_period +
-                            profit_period, 2)
+        past_period = round(current_value - start_value - cost_basis_period + profit_period, 2)
         all_time_return = current_value - cost_basis + profit
 
         try:
-            past_period_pct = (
-                float(past_period) / float(start_value + cost_basis_period)
-            )
+            past_period_pct = float(past_period) / float(start_value + cost_basis_period)
         except ZeroDivisionError:
             past_period_pct = 0
 
@@ -344,8 +267,8 @@ class RetrieveAssets(APIView):
         """
         Return assets
         """
-        bb_user_client = get_user_client(request.user)
-        response = bb_user_client.get_all_assets()
+        client = get_user_client(request.user)
+        response = client.get_all_assets()
         assets = response.json()
         return Response(assets)
 
@@ -361,39 +284,36 @@ class ListCreateDestroyConnectedAddresses(APIView):
         """
         Return authenticated user's connected addresses.
         """
-        bb_user_client = get_user_client(request.user)
-        response = bb_user_client.get_user_connected_addresses()
+        client = get_user_client(request.user)
+        response = client.get_user_connected_addresses()
         return Response(response.json())
 
     def post(self, request, format=None):
         """
         Connect an address
         """
-        bb_user_client = get_user_client(request.user)
+        client = get_user_client(request.user)
         payload = {
-            'user_id': str(request.user.bitbutter.uuid),
+            'user_id': str(request.user.profile.bitbutter_user_id),
             'address': request.data['address'],
             'asset_id': request.data['asset_id']
         }
-        response = bb_user_client.connect_address(payload)
+        response = client.connect_address(payload)
         return Response(response.json())
 
     def delete(self, request, format=None):
         """
         Disconnect an exchange
         """
-        bb_user_client = get_user_client(request.user)
+        client = get_user_client(request.user)
         address_id = request.data['address_id']
-        response = bb_user_client.disconnect_address(address_id)
+        response = client.disconnect_address(address_id)
         return Response(response.json())
 
 
 class RetrieveSettings(APIView):
     """
     View to retrieve user settings.
-
-    * Requires token authentication.
-    * Only authenticated user settings can be retrieved.
     """
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
@@ -418,15 +338,15 @@ class ListCreateDestroyConnectedExchanges(APIView):
         """
         Return authenticated user's connected exchanges.
         """
-        bb_user_client = get_user_client(request.user)
-        response = bb_user_client.get_user_connected_exchanges()
+        client = get_user_client(request.user)
+        response = client.get_user_connected_exchanges()
         return Response(response.json())
 
     def post(self, request, format=None):
         """
         Connect an exchange
         """
-        bb_user_client = get_user_client(request.user)
+        client = get_user_client(request.user)
         payload = {
             'credentials': {
                 'api_key': request.data['api_key'],
@@ -434,16 +354,16 @@ class ListCreateDestroyConnectedExchanges(APIView):
             },
             'exchange_id': request.data['exchange_id']
         }
-        response = bb_user_client.connect_exchange(payload)
+        response = client.connect_exchange(payload)
         return Response(response.json())
 
     def delete(self, request, format=None):
         """
         Disconnect an exchange
         """
-        bb_user_client = get_user_client(request.user)
+        client = get_user_client(request.user)
         exchange_id = request.data['exchange_id']
-        response = bb_user_client.disconnect_exchange(exchange_id)
+        response = client.disconnect_exchange(exchange_id)
         return Response(response.json())
 
 
@@ -458,6 +378,6 @@ class RetrieveExchanges(APIView):
         """
         Return connectable exchanges
         """
-        bb_user_client = get_user_client(request.user)
-        response = bb_user_client.get_all_exchanges()
+        client = get_user_client(request.user)
+        response = client.get_all_exchanges()
         return Response(response.json())
