@@ -30,7 +30,7 @@ class ChartWrapper extends Component {
               </div>
               <div className="col-sm-4">
                 <ChartStat
-                  number={this.props.chart.value}
+                  number={this.props.chart.market_value}
                   description="Market Value"
                 />
               </div>

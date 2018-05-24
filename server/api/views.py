@@ -14,21 +14,15 @@ from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
 from api.serializers import PasswordSerializer, PersonalDetailSerializer
 from api.serializers import SettingsSerializer
 from api.tokens import account_activation_token
-from api.backtest import Portfolio as PortfolioInstance
+from api.backtest import Portfolio as PortfolioBacktest
 from api.auth import get_client_ip, get_user_agent
 from api.bitbutter import get_partner_client, get_user_client
 
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
-
     def has_permission(self, request, view):
-        if not request.user.is_authenticated():
-            if view.action == 'create':
-                return True
-            else:
-                return False
-        else:
-            return True
+        return True if request.user.is_authenticated() else \
+            True if view.action == 'create' else False
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -143,7 +137,8 @@ class PortfolioViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['GET'])
     def chart(self, request, pk=None):
-        portfolio = self.get_object()
+        client = get_user_client(request.user)
+        ledger = client.get_user_ledger().json()[::-1]
 
         # Determine length of backtest
         period = request.query_params.get('period')
@@ -151,10 +146,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         end = date.today()
         start = end - timedelta(days=days[period])
 
-        client = get_user_client(request.user)
-        response = client.get_user_ledger()
-        ledger = response.json()[::-1]
-        portfolio = PortfolioInstance(start=start)
+        portfolio = PortfolioBacktest(start=start)
         cost_basis = 0
         cost_basis_period = 0
         profit = 0
@@ -219,14 +211,14 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         portfolio.remove('USD', portfolio.assets['USD'], date.today())
         historic_value = portfolio.historic_value(start=start, end=end, freq='D')
         start_value = round(historic_value[0][1], 2)
-        current_value = round(historic_value[-1][1], 2)
-        past_period = round(current_value - start_value - cost_basis_period + profit_period, 2)
-        all_time_return = current_value - cost_basis + profit
+        market_value = round(historic_value[-1][1], 2)
+        past_period_return = round(market_value - start_value - cost_basis_period + profit_period, 2)
+        all_time_return = market_value - cost_basis + profit
 
         try:
-            past_period_pct = float(past_period) / float(start_value + cost_basis_period)
+            past_period_return_pct = float(past_period_return) / float(start_value + cost_basis_period)
         except ZeroDivisionError:
-            past_period_pct = 0
+            past_period_return_pct = 0
 
         try:
             all_time_return_pct = (float(all_time_return) / float(cost_basis))
@@ -240,9 +232,9 @@ class PortfolioViewSet(viewsets.ModelViewSet):
                     'data': historic_value
                 }
             ],
-            'value': current_value,
-            'past_period': past_period,
-            'past_period_pct': past_period_pct,
+            'market_value': market_value,
+            'past_period_return': past_period_return,
+            'past_period_return_pct': past_period_return_pct,
             'all_time_return': all_time_return,
             'all_time_return_pct': all_time_return_pct
         }
