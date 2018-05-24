@@ -17,7 +17,7 @@ from api.tokens import account_activation_token
 from api.backtest import backtest, Portfolio as PortfolioInstance
 from api.tasks import allocate_for_user
 from api.auth import get_client_ip, get_user_agent
-from api.bitbutter import get_bb_partner_client, get_bb_user_client
+from api.bitbutter import get_partner_client, get_user_client
 
 
 class IsCreationOrIsAuthenticated(permissions.BasePermission):
@@ -72,7 +72,7 @@ class UserViewSet(viewsets.ModelViewSet):
             ip_address.save()
 
             # Save Bitbutter user
-            response = get_bb_partner_client().create_user()
+            response = get_partner_client().create_user()
             bb_user = response.json()['user']
             user.bitbutter.uuid = bb_user['id']
             created_at = dateutil.parser.parse(bb_user['created_at'])
@@ -193,7 +193,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['GET'])
     def assets(self, request, pk=None):
-        bb_user_client = get_bb_user_client(request.user)
+        bb_user_client = get_user_client(request.user)
         response = bb_user_client.get_user_balance()
         balances = response.json()
 
@@ -224,7 +224,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         end = date.today()
         start = end - timedelta(days=days[period])
 
-        bb_user_client = get_bb_user_client(request.user)
+        bb_user_client = get_user_client(request.user)
         response = bb_user_client.get_user_ledger()
         ledger = response.json()[::-1]
         portfolio = PortfolioInstance(start=start)
@@ -344,7 +344,7 @@ class RetrieveAssets(APIView):
         """
         Return assets
         """
-        bb_user_client = get_bb_user_client(request.user)
+        bb_user_client = get_user_client(request.user)
         response = bb_user_client.get_all_assets()
         assets = response.json()
         return Response(assets)
@@ -361,7 +361,7 @@ class ListCreateDestroyConnectedAddresses(APIView):
         """
         Return authenticated user's connected addresses.
         """
-        bb_user_client = get_bb_user_client(request.user)
+        bb_user_client = get_user_client(request.user)
         response = bb_user_client.get_user_connected_addresses()
         return Response(response.json())
 
@@ -369,7 +369,7 @@ class ListCreateDestroyConnectedAddresses(APIView):
         """
         Connect an address
         """
-        bb_user_client = get_bb_user_client(request.user)
+        bb_user_client = get_user_client(request.user)
         payload = {
             'user_id': str(request.user.bitbutter.uuid),
             'address': request.data['address'],
@@ -382,7 +382,7 @@ class ListCreateDestroyConnectedAddresses(APIView):
         """
         Disconnect an exchange
         """
-        bb_user_client = get_bb_user_client(request.user)
+        bb_user_client = get_user_client(request.user)
         address_id = request.data['address_id']
         response = bb_user_client.disconnect_address(address_id)
         return Response(response.json())
@@ -418,7 +418,7 @@ class ListCreateDestroyConnectedExchanges(APIView):
         """
         Return authenticated user's connected exchanges.
         """
-        bb_user_client = get_bb_user_client(request.user)
+        bb_user_client = get_user_client(request.user)
         response = bb_user_client.get_user_connected_exchanges()
         return Response(response.json())
 
@@ -426,7 +426,7 @@ class ListCreateDestroyConnectedExchanges(APIView):
         """
         Connect an exchange
         """
-        bb_user_client = get_bb_user_client(request.user)
+        bb_user_client = get_user_client(request.user)
         payload = {
             'credentials': {
                 'api_key': request.data['api_key'],
@@ -441,7 +441,7 @@ class ListCreateDestroyConnectedExchanges(APIView):
         """
         Disconnect an exchange
         """
-        bb_user_client = get_bb_user_client(request.user)
+        bb_user_client = get_user_client(request.user)
         exchange_id = request.data['exchange_id']
         response = bb_user_client.disconnect_exchange(exchange_id)
         return Response(response.json())
@@ -458,6 +458,6 @@ class RetrieveExchanges(APIView):
         """
         Return connectable exchanges
         """
-        bb_user_client = get_bb_user_client(request.user)
+        bb_user_client = get_user_client(request.user)
         response = bb_user_client.get_all_exchanges()
         return Response(response.json())
