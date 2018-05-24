@@ -135,7 +135,7 @@ class Portfolio(object):
         df.reset_index(inplace=True)
         df = pd.pivot_table(
             data=df,
-            values='price',
+            values='close',
             index='date',
             columns='asset',
             aggfunc='first')
@@ -195,9 +195,9 @@ class Portfolio(object):
     @staticmethod
     def get_price(asset, date=date.today()):
         try:
-            price = Price.objects.get(date=date, asset=asset).price
+            price = Price.objects.get(date=date, asset=asset).close
         except ObjectDoesNotExist:
-            price = Price.objects.filter(asset=asset).earliest('date').price
+            price = Price.objects.filter(asset=asset).earliest('date').close
         return price
 
     @staticmethod

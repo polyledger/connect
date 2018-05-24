@@ -84,11 +84,13 @@ def fill_daily_historical_prices(assets=Asset.objects.all()):
 
         for price in prices:
             timestamp = int(price['time'])
-            price = price['close']
             instance, created = Price.objects.update_or_create(
                 date=date.fromtimestamp(timestamp),
                 asset=asset,
-                price=price)
+                open=price['open'],
+                high=price['high'],
+                low=price['low'],
+                close=price['close'])
             instance.save()
         print('Price update for {0} complete.'.format(asset.name))
 

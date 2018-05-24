@@ -106,8 +106,7 @@ def get_asset_data(balances):
         if float(position['asset']['size']) > 0:
             asset = position['asset']['symbol']
             try:
-                object = Price.objects.get(date=date.today(), asset=asset)
-                price = object.price
+                price = Price.objects.get(date=date.today(), asset=asset).close
             except Price.DoesNotExist:
                 price = 0
             quantity = float(position['asset']['size'])

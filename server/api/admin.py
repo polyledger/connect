@@ -133,7 +133,7 @@ class TransactionAdmin(admin.ModelAdmin):
 
 class PriceAdmin(admin.ModelAdmin):
     ordering = ('-date', 'asset',)
-    list_display = ('date', 'asset', 'price')
+    list_display = ('date', 'asset', 'open', 'high', 'low', 'close')
 
 
 class SettingsAdmin(admin.ModelAdmin):
