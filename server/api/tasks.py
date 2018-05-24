@@ -22,7 +22,7 @@ import pytz
 import time
 import requests
 from datetime import datetime, date
-from api.models import Price, Coin
+from api.models import Price, Asset
 
 
 @shared_task
@@ -53,7 +53,7 @@ def send_confirmation_email(pk, recipient, site_url):
 
 
 @shared_task
-def fill_daily_historical_prices(coins=Coin.objects.all()):
+def fill_daily_historical_prices(assets=Asset.objects.all()):
     """
     Fills the database with daily historical price data.
     """
@@ -66,13 +66,13 @@ def fill_daily_historical_prices(coins=Coin.objects.all()):
         microsecond=0,
         tzinfo=tzinfo)
 
-    def get_prices(coin, limit=None):
+    def get_prices(asset, limit=None):
         url = 'https://min-api.cryptocompare.com/data/histoday'
         toTs = time.mktime(today.timetuple())
         params = {
             'tsym': 'USD',
             'toTs': toTs,
-            'fsym': coin.symbol
+            'fsym': asset.symbol
         }
         if limit:
             params['limit'] = limit
@@ -87,30 +87,30 @@ def fill_daily_historical_prices(coins=Coin.objects.all()):
             price = price['close']
             instance, created = Price.objects.update_or_create(
                 date=date.fromtimestamp(timestamp),
-                coin=coin,
+                asset=asset,
                 price=price)
             instance.save()
-        print('Price update for {0} complete.'.format(coin.name))
+        print('Price update for {0} complete.'.format(asset.name))
 
-    for coin in coins:
-        print('Checking prices for {0}'.format(coin.name))
-        queryset = Price.objects.filter(coin=coin).order_by('-date')
+    for asset in assets:
+        print('Checking prices for {0}'.format(asset.name))
+        queryset = Price.objects.filter(asset=asset).order_by('-date')
 
         if not queryset:
-            print('Fetching prices for {0}...'.format(coin.name))
-            get_prices(coin)
+            print('Fetching prices for {0}...'.format(asset.name))
+            get_prices(asset)
         else:
             last_date_updated = queryset.first().date
 
             if today.date() > last_date_updated:
                 limit = (today.date() - last_date_updated).days
                 print('Fetching prices of {0} for past {1} day(s)'
-                      .format(coin.name, limit))
-                get_prices(coin, limit=limit)
+                      .format(asset.name, limit))
+                get_prices(asset, limit=limit)
 
 
 @shared_task
-def get_current_prices(coins=Coin.objects.all()):
+def get_current_prices(assets=Asset.objects.all()):
     """
     Gets the current price
     """
@@ -122,7 +122,7 @@ def get_current_prices(coins=Coin.objects.all()):
         tzinfo=pytz.UTC)
     url = 'https://min-api.cryptocompare.com/data/pricemulti'
     params = {
-        'fsyms': ','.join(coins.values_list('symbol', flat=True)),
+        'fsyms': ','.join(assets.values_list('symbol', flat=True)),
         'tsyms': 'USD',
         'allData': 'true'
     }
@@ -132,8 +132,8 @@ def get_current_prices(coins=Coin.objects.all()):
 
     for symbol in data:
         price = data[symbol]['USD']
-        coin = Coin.objects.get(symbol=symbol)
+        asset = Asset.objects.get(symbol=symbol)
         instance, created = Price.objects.update_or_create(
             date=today,
-            coin=coin,
+            asset=asset,
             price=price)

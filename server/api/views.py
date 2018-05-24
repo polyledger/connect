@@ -1,6 +1,5 @@
-import dateutil.parser
-from datetime import date, timedelta
-from api.models import User, Coin, Portfolio, Token, Settings, IPAddress, Price
+from api.portfolio import get_chart_data, get_asset_data
+from api.models import User, Asset, Portfolio, Token, Settings, IPAddress
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.utils.encoding import force_text
@@ -10,11 +9,10 @@ from rest_framework import permissions, authentication, viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
-from api.serializers import UserSerializer, CoinSerializer, PortfolioSerializer
+from api.serializers import UserSerializer, AssetSerializer, PortfolioSerializer
 from api.serializers import PasswordSerializer, PersonalDetailSerializer
 from api.serializers import SettingsSerializer
 from api.tokens import account_activation_token
-from api.backtest import Portfolio as PortfolioBacktest
 from api.auth import get_client_ip, get_user_agent
 from api.bitbutter import get_partner_client, get_user_client
 
@@ -64,9 +62,9 @@ class UserViewSet(viewsets.ModelViewSet):
             response = client.create_user()
             created_user = response.json()['user']
             credentials = created_user['credentials']
-            user.profile.bitbutter_user_id = created_user['id']
-            user.profile.bitbutter_api_key = credentials['api_key']
-            user.profile.bitbutter_secret = credentials['secret']
+            user.identity.bitbutter_user_id = created_user['id']
+            user.identity.bitbutter_api_key = credentials['api_key']
+            user.identity.bitbutter_secret = credentials['secret']
             user.save()
         redirect_url = settings.ACTIVATION_URL + '?token=' + str(auth_token.key)
         return HttpResponseRedirect(redirect_url)
@@ -115,143 +113,45 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         return self.request.user.portfolio
 
     @detail_route(methods=['GET'])
-    def positions(self, request, pk=None):
+    def assets(self, request, pk=None):
         client = get_user_client(request.user)
-        positions = client.get_user_balance().json()
-
-        response = []
-        for position in positions:
-            if float(position['asset']['size']) > 0:
-                coin = position['asset']['symbol']
-                try:
-                    object = Price.objects.get(date=date.today(), coin=coin)
-                    price = object.price
-                except Price.DoesNotExist:
-                    price = 0
-                quantity = float(position['asset']['size'])
-                market_value = price * quantity
-                position['asset']['price'] = price
-                position['asset']['market_value'] = market_value
-                response.append(position)
-        return Response(response)
+        response = client.get_user_balance()
+        balances = response.json()
+        assets = get_asset_data(balances)
+        return Response(assets)
 
     @detail_route(methods=['GET'])
     def chart(self, request, pk=None):
         client = get_user_client(request.user)
         ledger = client.get_user_ledger().json()[::-1]
-
-        # Determine length of backtest
         period = request.query_params.get('period')
-        days = {'7D': 7, '1M': 30, '3M': 90, '6M': 182, '1Y': 364}
-        end = date.today()
-        start = end - timedelta(days=days[period])
 
-        portfolio = PortfolioBacktest(start=start)
-        cost_basis = 0
-        cost_basis_period = 0
-        profit = 0
-        profit_period = 0
-        for entry in ledger:
-            transaction_type = entry['transaction_type']
-            time = dateutil.parser.parse(entry['time'])
-
-            if transaction_type == 'exchange_deposit':
-                asset = entry['size']['symbol']
-                amount = abs(float(entry['size']['size']))
-                portfolio.add(asset, amount, time)
-            elif transaction_type == 'exchange_withdrawal':
-                asset = entry['size']['symbol']
-                amount = abs(float(entry['size']['size']))
-                portfolio.remove(asset, amount, time)
-            elif transaction_type == 'buy':
-                amount = abs(float(entry['quote']['size']))
-                quote = entry['quote']['symbol']
-                if quote == 'USD':
-                    cost_basis += amount
-                    if time.date() > start:
-                        cost_basis_period += amount
-                else:
-                    portfolio.remove(quote, amount, time)
-                base = entry['base']['symbol']
-                amount = abs(float(entry['base']['size']))
-                portfolio.add(base, amount, time)
-            elif transaction_type == 'sell':
-                base = entry['base']['symbol']
-                amount = abs(float(entry['base']['size']))
-                portfolio.remove(base, amount, time)
-                quote = entry['quote']['symbol']
-                amount = abs(float(entry['quote']['size']))
-                if quote == 'USD':
-                    profit += amount
-                    if time.date() > start:
-                        profit_period += amount
-                portfolio.add(quote, amount, time)
-            elif transaction_type == 'address_withdrawal':
-                asset = entry['size']['symbol']
-                amount = abs(float(entry['size']['size']))
-                fee = float(entry['network_fee']['size'])
-                amount += fee
-                portfolio.remove(asset, amount, time)
-            elif transaction_type == 'address_deposit':
-                asset = entry['size']['symbol']
-                amount = abs(float(entry['size']['size']))
-                fee = float(entry['network_fee']['size'])
-                amount -= fee
-                portfolio.add(asset, amount, time)
-            elif transaction_type == 'internal_address_withdrawal':
-                asset = entry['size']['symbol']
-                amount = abs(float(entry['size']['size']))
-                portfolio.remove(asset, amount, time)
-            elif transaction_type == 'internal_address_deposit':
-                asset = entry['size']['symbol']
-                amount = abs(float(entry['size']['size']))
-                portfolio.add(asset, amount, time)
-
-        # Don't include USD in portfolio valuation
-        portfolio.remove('USD', portfolio.assets['USD'], date.today())
-        historic_value = portfolio.historic_value(start=start, end=end, freq='D')
-        start_value = round(historic_value[0][1], 2)
-        market_value = round(historic_value[-1][1], 2)
-        past_period_return = round(market_value - start_value - cost_basis_period + profit_period, 2)
-        all_time_return = market_value - cost_basis + profit
-
-        try:
-            past_period_return_pct = float(past_period_return) / float(start_value + cost_basis_period)
-        except ZeroDivisionError:
-            past_period_return_pct = 0
-
-        try:
-            all_time_return_pct = (float(all_time_return) / float(cost_basis))
-        except ZeroDivisionError:
-            all_time_return_pct = 0
+        chart = get_chart_data(ledger, period)
 
         content = {
-            'series': [
-                {
-                    'name': 'Portfolio',
-                    'data': historic_value
-                }
-            ],
-            'market_value': market_value,
-            'past_period_return': past_period_return,
-            'past_period_return_pct': past_period_return_pct,
-            'all_time_return': all_time_return,
-            'all_time_return_pct': all_time_return_pct
+            'series': chart['series'],
+            'market_value': chart['market_value'],
+            'past_period_return': chart['past_period_return'],
+            'past_period_return_pct': chart['past_period_return_pct'],
+            'all_time_return': chart['all_time_return'],
+            'all_time_return_pct': chart['all_time_return_pct']
         }
         return Response(content)
 
 
-class CoinViewSet(viewsets.ReadOnlyModelViewSet):
-    model = Coin
-    queryset = Coin.objects.all()
-    authentication_classes = (authentication.TokenAuthentication,)
-    serializer_class = CoinSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class RetrieveAssets(APIView):
+class AssetViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    View to retrieve supported assets.
+    Read-only viewset for assets.
+    """
+    model = Asset
+    queryset = Asset.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = AssetSerializer
+
+
+class ListAssets(APIView):
+    """
+    View to list supported assets.
     """
     permission_classes = (permissions.AllowAny,)
 
@@ -286,7 +186,7 @@ class ListCreateDestroyConnectedAddresses(APIView):
         """
         client = get_user_client(request.user)
         payload = {
-            'user_id': str(request.user.profile.bitbutter_user_id),
+            'user_id': str(request.user.identity.bitbutter_user_id),
             'address': request.data['address'],
             'asset_id': request.data['asset_id']
         }

@@ -14,7 +14,7 @@
     }
   },
   {
-    "model": "api.profile",
+    "model": "api.identity",
     "pk": 1,
     "fields": {
       "user": 1,
@@ -23,16 +23,23 @@
       "bitbutter_secret": "L4rR4DurrBvug9CbWJ75uqxjWUML6F8o3wgCtYauV73Sx6u8Qphi"
     }
   },
-  { "model": "api.coin", "pk": "BCH", "fields": { "name": "Bitcoin Cash" } },
-  { "model": "api.coin", "pk": "BTC", "fields": { "name": "Bitcoin" } },
-  { "model": "api.coin", "pk": "DASH", "fields": { "name": "Dash" } },
-  { "model": "api.coin", "pk": "EOS", "fields": { "name": "EOS" } },
-  { "model": "api.coin", "pk": "ETH", "fields": { "name": "Ethereum" } },
-  { "model": "api.coin", "pk": "LTC", "fields": { "name": "Litecoin" } },
-  { "model": "api.coin", "pk": "XMR", "fields": { "name": "Monero" } },
-  { "model": "api.coin", "pk": "NEO", "fields": { "name": "NEO" } },
-  { "model": "api.coin", "pk": "XLM", "fields": { "name": "Stellar" } },
-  { "model": "api.coin", "pk": "XRP", "fields": { "name": "Ripple" } },
+  {
+    "model": "api.profile",
+    "pk": 1,
+    "fields": {
+      "user": 1
+    }
+  },
+  { "model": "api.asset", "pk": "BCH", "fields": { "name": "Bitcoin Cash" } },
+  { "model": "api.asset", "pk": "BTC", "fields": { "name": "Bitcoin" } },
+  { "model": "api.asset", "pk": "DASH", "fields": { "name": "Dash" } },
+  { "model": "api.asset", "pk": "EOS", "fields": { "name": "EOS" } },
+  { "model": "api.asset", "pk": "ETH", "fields": { "name": "Ethereum" } },
+  { "model": "api.asset", "pk": "LTC", "fields": { "name": "Litecoin" } },
+  { "model": "api.asset", "pk": "XMR", "fields": { "name": "Monero" } },
+  { "model": "api.asset", "pk": "NEO", "fields": { "name": "NEO" } },
+  { "model": "api.asset", "pk": "XLM", "fields": { "name": "Stellar" } },
+  { "model": "api.asset", "pk": "XRP", "fields": { "name": "Ripple" } },
   {
     "model": "api.portfolio",
     "pk": 1,
@@ -42,7 +49,7 @@
     }
   },
   {
-    "model": "api.whitelistedemail",
+    "model": "api.betatester",
     "pk": "admin@polyledger.com",
     "fields": { "date": "2018-05-11" }
   },

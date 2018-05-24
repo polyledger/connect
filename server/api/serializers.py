@@ -1,38 +1,38 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
-from api.models import User, Portfolio, Coin, Position, Settings
-from api.models import WhitelistedEmail
+from api.models import User, Portfolio, Asset, Position, Settings
+from api.models import BetaTester
 from api.tasks import send_confirmation_email
 from rest_framework import serializers
 
 
-class CoinSerializer(serializers.ModelSerializer):
+class AssetSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Coin
+        model = Asset
         fields = ('symbol', 'name')
 
 
 class PositionSerializer(serializers.ModelSerializer):
-    coin = CoinSerializer()
+    asset = AssetSerializer()
 
     class Meta:
         model = Position
-        fields = ('id', 'coin', 'amount')
+        fields = ('id', 'asset', 'amount')
 
 
 class PortfolioSerializer(serializers.ModelSerializer):
     positions = PositionSerializer(many=True, read_only=True)
-    coins = serializers.PrimaryKeyRelatedField(
+    assets = serializers.PrimaryKeyRelatedField(
         many=True,
         read_only=False,
-        queryset=Coin.objects.all()
+        queryset=Asset.objects.all()
     )
 
     class Meta:
         model = Portfolio
-        fields = ('id', 'created', 'coins', 'positions')
+        fields = ('id', 'created', 'assets', 'positions')
         read_only_fields = ('id', 'created', 'positions',)
 
     def get_queryset(self):
@@ -58,8 +58,8 @@ class UserSerializer(serializers.ModelSerializer):
         email = validated_data.get('email')
 
         try:
-            WhitelistedEmail.objects.get(email=email)
-        except WhitelistedEmail.DoesNotExist:
+            BetaTester.objects.get(email=email)
+        except BetaTester.DoesNotExist:
             raise PermissionDenied
 
         password = validated_data.pop('password')

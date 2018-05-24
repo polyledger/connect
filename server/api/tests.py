@@ -28,14 +28,14 @@ from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from rest_framework.test import APIClient
-from api.models import Portfolio, Coin, Position, Token, WhitelistedEmail
+from api.models import Portfolio, Asset, Position, Token, BetaTester
 from api.tokens import account_activation_token
 
 
 class UserTestCase(TestCase):
 
     def test_signup(self):
-        WhitelistedEmail.objects.create(email='ari@polyledger.com')
+        BetaTester.objects.create(email='ari@polyledger.com')
         client = APIClient()
         data = {
             'email': 'ari@polyledger.com',
@@ -109,7 +109,7 @@ class UserTestCase(TestCase):
 class PortfolioTestCase(TestCase):
 
     def setUp(self):
-        Coin.objects.create(symbol='BTC', name='Bitcoin')
+        Asset.objects.create(symbol='BTC', name='Bitcoin')
         self.user = get_user_model().objects.create_user(
             first_name='Ari',
             last_name='Hall',
@@ -118,7 +118,7 @@ class PortfolioTestCase(TestCase):
         )
         Position.objects.create(
             portfolio=self.user.portfolio,
-            coin=Coin.objects.get(name='Bitcoin'),
+            asset=Asset.objects.get(name='Bitcoin'),
             amount=10
         )
         self.user.save()
