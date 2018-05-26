@@ -226,7 +226,7 @@ class Price(models.Model):
     """
     A table for the prices of all supported assets in USD.
     """
-    date = models.DateField(auto_now_add=False, db_index=True)
+    date = models.DateTimeField(auto_now_add=False, db_index=True)
     asset = models.ForeignKey(to='Asset', related_name='prices')
     open = models.FloatField(default=0.0)
     high = models.FloatField(default=0.0)

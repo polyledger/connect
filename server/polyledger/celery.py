@@ -30,4 +30,4 @@ app.autodiscover_tasks()
 @receiver(post_migrate)
 def on_start(sender, **kwargs):
     if sender.name == 'api':
-        app.send_task('api.tasks.fill_daily_historical_prices')
+        app.send_task('api.tasks.fill_historical_prices')
