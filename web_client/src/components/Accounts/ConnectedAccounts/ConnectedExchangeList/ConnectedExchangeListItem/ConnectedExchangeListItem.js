@@ -15,7 +15,7 @@ class ConnectedExchangeListItem extends Component {
           <div className="col-xs-4 col-md-6">
             <small className="text-muted">{this.props.syncedAt}</small>
           </div>
-          <div className="col-xs-6 col-md-4 mt-2">
+          <div className="col-xs-6 col-md-4">
             <button
               className="btn btn-primary btn-outline-secondary pull-right"
               onClick={event => this.onClick(event)}
