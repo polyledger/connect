@@ -1,16 +1,16 @@
 """
-Run this file with `python manage.py test api.tests`
-To run a single test:
-
-```
-$ python manage.py test api.tests.AllocationTestCase.test_no_error
-```
-
-To execute the command in a Docker container:
+To run the tests in a Docker container:
 
 ```
 $ container_id=$(docker-compose ps -q server)
 $ docker exec -it $container_id python manage.py test api.tests
+```
+
+To run a single test:
+
+```
+$ docker exec -it $container_id python manage.py test \
+    api.tests.test_users.UserTestCase.test_signup
 ```
 
 Testing in Django:
@@ -28,7 +28,7 @@ from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from rest_framework.test import APIClient
-from api.models import Portfolio, Asset, Position, Token, BetaTester
+from api.models import Token, BetaTester
 from api.tokens import account_activation_token
 
 
@@ -104,25 +104,3 @@ class UserTestCase(TestCase):
         url = '/api/users/{0}/set_personal_details/'.format(user.pk)
         response = client.put(url, data, format='json')
         assert response.status_code is 204
-
-
-class PortfolioTestCase(TestCase):
-
-    def setUp(self):
-        Asset.objects.create(symbol='BTC', name='Bitcoin')
-        self.user = get_user_model().objects.create_user(
-            first_name='Ari',
-            last_name='Hall',
-            email='ari@polyledger.com',
-            password='top_secret'
-        )
-        Position.objects.create(
-            portfolio=self.user.portfolio,
-            asset=Asset.objects.get(name='Bitcoin'),
-            amount=10
-        )
-        self.user.save()
-
-    def test_fetch_portfolio(self):
-        portfolio = self.user.portfolio
-        assert isinstance(portfolio, Portfolio) is True
