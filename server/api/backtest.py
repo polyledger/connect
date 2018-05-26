@@ -121,23 +121,23 @@ class Portfolio(object):
         assets = self.assets.copy()
         del assets['USD']
 
-        coins = [coin for coin in assets]
+        assets = [asset for asset in assets]
 
-        if len(coins) == 0:
+        if len(assets) == 0:
             range = map(lambda x: x.timestamp(), pd.date_range(start=start, end=end, freq=freq))
             for x in range:
                 values.append([x, 0])
             return values
-        queryset = self.get_prices(coins, start, end)
+        queryset = self.get_prices(assets, start, end)
         df = pd.DataFrame(data=list(queryset.values()))
         df.set_index('date', inplace=True)
-        df.rename(columns={'coin_id': 'coin'}, inplace=True)
+        df.rename(columns={'asset_id': 'asset'}, inplace=True)
         df.reset_index(inplace=True)
         df = pd.pivot_table(
             data=df,
-            values='price',
+            values='close',
             index='date',
-            columns='coin',
+            columns='asset',
             aggfunc='first')
         df.fillna(value=0, inplace=True)
 
@@ -146,7 +146,7 @@ class Portfolio(object):
             date = datetime.fromtimestamp(x).date()
             assets = self.get_assets(date=date)
             del assets['USD']
-            amounts = [assets[coin] for coin in sorted(assets) if coin in df.columns]
+            amounts = [assets[asset] for asset in sorted(assets) if asset in df.columns]
             y = row.dot(amounts)
             values.append([x * 1000, round(y, 2)])
 
@@ -186,23 +186,23 @@ class Portfolio(object):
         """
 
         if buy == 'USD':
-            price = 1/self.get_price(coin=sell, date=date)
+            price = 1/self.get_price(asset=sell, date=date)
         else:
-            price = self.get_price(coin=buy, date=date)
+            price = self.get_price(asset=buy, date=date)
         self.remove(sell, amount, date)
         self.add(buy, amount * 1/price, date)
 
     @staticmethod
-    def get_price(coin, date=date.today()):
+    def get_price(asset, date=date.today()):
         try:
-            price = Price.objects.get(date=date, coin=coin).price
+            price = Price.objects.get(date=date, asset=asset).close
         except ObjectDoesNotExist:
-            price = Price.objects.filter(coin=coin).earliest('date').price
+            price = Price.objects.filter(asset=asset).earliest('date').close
         return price
 
     @staticmethod
-    def get_prices(coins, start, end=date.today()):
-        return Price.objects.filter(coin__in=coins, date__range=(start, end))
+    def get_prices(assets, start, end=date.today()):
+        return Price.objects.filter(asset__in=assets, date__range=(start, end))
 
 
 def backtest(allocations, investment, start, end, freq):

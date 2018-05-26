@@ -1,9 +1,10 @@
 """
 The `fill_daily_historical_prices` task can be run manually inside the Django
-shell:
+shell with Docker:
 
 ```
-(venv) $ python manage.py shell
+❯ container_id=$(docker-compose ps -q server)
+❯ docker exec -it $container_id python manage.py shell
 >>> from api.tasks import fill_daily_historical_prices
 >>> fill_daily_historical_prices()
 ```
@@ -19,61 +20,33 @@ from django.utils.encoding import force_bytes
 from api.tokens import account_activation_token
 
 import pytz
-import time
-import requests
-import numpy as np
-import pandas as pd
-from datetime import datetime, date
-from api.models import Price, Position, Coin, Distribution
-from api.allocator import CVaR
-
-
-@shared_task(bind=True)
-def allocate_for_user(self, pk, symbols, risk_score):
-    """
-    Rebalances portfolio allocations.
-    """
-    user = get_user_model().objects.get(pk=pk)
-    start = date(year=2017, month=1, day=1)
-    allocator = CVaR(symbols=symbols, start=start)
-    allocations = allocator.allocate()
-    allocation = allocations.loc[risk_score-1]
-
-    user.portfolio.positions.all().delete()
-
-    for symbol in symbols:
-        position = Position(
-            coin=Coin.objects.get(symbol=symbol),
-            amount=allocation[symbol],
-            portfolio=user.portfolio
-        )
-        position.save()
-        user.portfolio.positions.add(position)
-
-    user.save()
+from datetime import datetime
+from api.models import Price, Asset
+from api.library import cryptocompare
 
 
 @shared_task
 def send_confirmation_email(pk, recipient, site_url):
+    """
+    Sends an account activation email
+    """
     user = get_user_model().objects.get(pk=pk)
-    email_context = {
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = account_activation_token.make_token(user)
+    context = {
         'user': user,
-        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': account_activation_token.make_token(user),
+        'uid': uid,
+        'token': token,
         'site_url': site_url
     }
-    text_content = render_to_string(
-        'account_activation_email.txt', email_context
-    )
-    html_content = render_to_string(
-        'account_activation_email.html', email_context
-    )
-    mail_subject = 'Activate your Polyledger account'
+    text_content = render_to_string('account_activation_email.txt', context)
+    html_content = render_to_string('account_activation_email.html', context)
+    subject = 'Activate your Polyledger account'
     sender = 'Ari at Polyledger <ari@polyledger.com>'
     email = EmailMultiAlternatives(
-        mail_subject,
-        text_content,
-        sender,
+        subject=subject,
+        body=text_content,
+        from_email=sender,
         to=[recipient]
     )
     email.attach_alternative(html_content, "text/html")
@@ -81,134 +54,55 @@ def send_confirmation_email(pk, recipient, site_url):
 
 
 @shared_task
-def fit_distributions(coins=Coin.objects.all()):
+def fill_historical_prices(assets=Asset.objects.all()):
     """
-    Fits distributions to coin returns and stores the result.
+    Fills the database with historical price data
     """
-    start = date(year=2017, month=1, day=1)
-    symbols = [coin.symbol for coin in coins]
-    allocator = CVaR(symbols=symbols, start=start)
-    prices = allocator.retrieve_data()
-
-    # Replace NAs with zeros
-    prices.replace(0, np.nan, inplace=True)
-    prices = prices.reset_index(drop=True)
-
-    # Order rows ascending by time (oldest first, newest last)
-    # prices.sort_values(['time'], ascending=True, inplace=True)
-
-    # Truncate dataframe to prices on or after 2016-01-01
-    # prices = prices[prices['time'] >= '2016-01-01']
-    # prices = prices.reset_index(drop=True)
-
-    # Create a dataframe of daily returns
-    objs = [prices[symbols].apply(lambda x: x / x.shift(1) - 1)]
-    daily_returns = pd.concat(objs=objs, axis=1)
-    daily_returns = daily_returns.reset_index(drop=True)
-
-    tzinfo = pytz.UTC
-    today = datetime.utcnow().replace(
-        hour=0,
-        minute=0,
-        second=0,
-        microsecond=0,
-        tzinfo=tzinfo)
-
-    for symbol in symbols:
-        returns = daily_returns[symbol]
-        distribution = allocator.fit_distribution(returns=returns)
-        name = distribution[0].name
-        params = str(list(distribution[1])).strip('[]')
-        coin = Coin.objects.get(symbol=symbol)
-        distribution = Distribution.objects.get(coin=coin)
-        distribution.date = today
-        distribution.name = name
-        distribution.params = params
-        distribution.save()
-
-
-@shared_task
-def fill_daily_historical_prices(coins=Coin.objects.all()):
-    """
-    Fills the database with daily historical price data.
-    """
-
-    tzinfo = pytz.UTC
-    today = datetime.utcnow().replace(
-        hour=0,
-        minute=0,
-        second=0,
-        microsecond=0,
-        tzinfo=tzinfo)
-
-    def get_prices(coin, limit=None):
-        url = 'https://min-api.cryptocompare.com/data/histoday'
-        toTs = time.mktime(today.timetuple())
-        params = {
-            'tsym': 'USD',
-            'toTs': toTs,
-            'fsym': coin.symbol
-        }
-        if limit:
-            params['limit'] = limit
-        else:
-            params['allData'] = True
-        response = requests.get(url, params=params)
-        prices = response.json()['Data']
-        del prices[0]
-
+    def save_prices(prices, asset):
         for price in prices:
-            timestamp = int(price['time'])
-            price = price['close']
-            instance, created = Price.objects.update_or_create(
-                date=date.fromtimestamp(timestamp),
-                coin=coin,
-                price=price)
-            instance.save()
-        print('Price update for {0} complete.'.format(coin.name))
+            date = datetime.fromtimestamp(price['time'])
+            date = date.replace(tzinfo=pytz.UTC)
+            params = {
+                'asset': asset,
+                'open': price['open'],
+                'high': price['high'],
+                'low': price['low'],
+                'close': price['close'],
+                'date': date
+            }
+            price, created = Price.objects.update_or_create(**params)
+            price.save()
 
-    for coin in coins:
-        print('Checking prices for {0}'.format(coin.name))
-        queryset = Price.objects.filter(coin=coin).order_by('-date')
+    current_time = datetime.utcnow().replace(tzinfo=pytz.UTC)
 
-        if not queryset:
-            print('Fetching prices for {0}...'.format(coin.name))
-            get_prices(coin)
+    for asset in assets:
+        queryset = Price.objects.filter(asset=asset).order_by('-date')
+
+        if queryset.exists():
+            # Check if price data needs to be fetched
+            last_updated = queryset.first().date
+            if current_time.date() > last_updated.date():
+                limit = (current_time - last_updated).days
+                prices = cryptocompare.get_historical_prices_day(asset, limit)
+                save_prices(prices, asset)
         else:
-            last_date_updated = queryset.first().date
-
-            if today.date() > last_date_updated:
-                limit = (today.date() - last_date_updated).days
-                print('Fetching prices of {0} for past {1} day(s)'
-                      .format(coin.name, limit))
-                get_prices(coin, limit=limit)
+            # Get every day price data up to a year ago
+            prices = cryptocompare.get_historical_prices_day(asset)
+            save_prices(prices, asset)
 
 
 @shared_task
-def get_current_prices(coins=Coin.objects.all()):
+def get_current_prices(assets=Asset.objects.all()):
     """
-    Gets the current price
+    Gets the current prices
     """
-    today = datetime.utcnow().replace(
-        hour=0,
-        minute=0,
-        second=0,
-        microsecond=0,
-        tzinfo=pytz.UTC)
-    url = 'https://min-api.cryptocompare.com/data/pricemulti'
-    params = {
-        'fsyms': ','.join(coins.values_list('symbol', flat=True)),
-        'tsyms': 'USD',
-        'allData': 'true'
-    }
+    assets = assets.values_list('symbol', flat=True)
+    prices = cryptocompare.get_multiple_prices(assets)
+    date = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0,
+                                     tzinfo=pytz.UTC)
 
-    response = requests.get(url, params=params)
-    data = response.json()
-
-    for symbol in data:
-        price = data[symbol]['USD']
-        coin = Coin.objects.get(symbol=symbol)
-        instance, created = Price.objects.update_or_create(
-            date=today,
-            coin=coin,
-            price=price)
+    for symbol in prices:
+        close = prices[symbol]['USD']
+        asset = Asset.objects.get(symbol=symbol)
+        price, created = Price.objects.update_or_create(date=date, asset=asset,
+                                                        close=close)

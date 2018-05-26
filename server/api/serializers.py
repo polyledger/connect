@@ -1,52 +1,43 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
-from api.models import User, Portfolio, Coin, Position, Settings
-from api.models import WhitelistedEmail
+from api.models import User, Portfolio, Asset, Position, Settings
+from api.models import BetaTester
 from api.tasks import send_confirmation_email
 from rest_framework import serializers
 
 
-class CoinSerializer(serializers.ModelSerializer):
+class AssetSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Coin
+        model = Asset
         fields = ('symbol', 'name')
 
 
 class PositionSerializer(serializers.ModelSerializer):
-    coin = CoinSerializer()
+    asset = AssetSerializer()
 
     class Meta:
         model = Position
-        fields = ('id', 'coin', 'amount')
+        fields = ('id', 'asset', 'amount')
 
 
 class PortfolioSerializer(serializers.ModelSerializer):
     positions = PositionSerializer(many=True, read_only=True)
-    coins = serializers.PrimaryKeyRelatedField(
+    assets = serializers.PrimaryKeyRelatedField(
         many=True,
         read_only=False,
-        queryset=Coin.objects.all()
+        queryset=Asset.objects.all()
     )
 
     class Meta:
         model = Portfolio
-        fields = ('id', 'created', 'title', 'risk_score', 'usd', 'coins',
-                  'positions')
+        fields = ('id', 'created', 'assets', 'positions')
         read_only_fields = ('id', 'created', 'positions',)
 
     def get_queryset(self):
         user = self.request.user
         return Portfolio.objects.filter(user=user)
-
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.usd = validated_data.get('usd', instance.usd)
-        instance.risk_score = validated_data.get(
-            'risk_score', instance.risk_score)
-        instance.save()
-        return instance
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -54,8 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'first_name', 'last_name', 'password',
-                  'portfolio')
+        fields = ('id', 'email', 'first_name', 'last_name', 'password', 'portfolio')
         extra_kwargs = {
             'id': {'read_only': True},
             'password': {'write_only': True}
@@ -68,8 +58,8 @@ class UserSerializer(serializers.ModelSerializer):
         email = validated_data.get('email')
 
         try:
-            WhitelistedEmail.objects.get(email=email)
-        except WhitelistedEmail.DoesNotExist:
+            BetaTester.objects.get(email=email)
+        except BetaTester.DoesNotExist:
             raise PermissionDenied
 
         password = validated_data.pop('password')
@@ -105,8 +95,7 @@ class SettingsSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Settings
-        fields = ('id', 'local_currency', 'time_zone', 'email_notification',
-                  'two_factor_enabled')
+        fields = ('id', 'local_currency', 'time_zone', 'email_notification', 'two_factor_enabled')
         extra_kwargs = {
             'id': {'read_only': True}
         }

@@ -20,7 +20,7 @@ class ConnectedAddressListItem extends Component {
             />
           </div>
           <div className="col-xs-6 col-md-6">{this.props.address}</div>
-          <div className="col-xs-4 col-md-4 mt-2">
+          <div className="col-xs-4 col-md-4">
             <button
               className="btn btn-outline-secondary float-right"
               onClick={event => this.onClick(event)}

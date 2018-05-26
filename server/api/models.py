@@ -4,11 +4,15 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
 from django.db import models
 from django.dispatch import receiver
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import RegexValidator
 from rest_framework.authtoken.models import Token
 
 
 class UserManager(BaseUserManager):
+    """
+    See https://docs.djangoproject.com/en/2.0/ref/contrib/auth/#manager-methods
+    """
+
     def create_user(self, email, first_name, last_name, password=None):
         """
         Creates and saves a User with the given email, first name, last name,
@@ -44,6 +48,10 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    """
+    See https://docs.djangoproject.com/en/2.0/topics/auth/customizing
+    """
+
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
@@ -90,66 +98,15 @@ class User(AbstractBaseUser):
 
 
 class Profile(models.Model):
+    """
+    Profile information about a user
+    """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    legal_name = models.CharField(max_length=255)
-    # TODO: Add demographic information about user, such as age, income, etc.
 
 
-@receiver(models.signals.post_save, sender=User)
-def create_user_profile(sender, instance=None, created=False, **kwargs):
+class Asset(models.Model):
     """
-    Create a profile for new users
-    """
-    if created:
-        Profile.objects.create(user=instance)
-        Settings.objects.create(user=instance)
-
-
-@receiver(models.signals.post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
-
-
-@receiver(models.signals.post_save, sender=User)
-def create_user_portfolio(sender, instance=None, created=False, **kwargs):
-    """
-    Create a profile for new users
-    """
-    if created:
-        Portfolio.objects.create(user=instance)
-
-
-@receiver(models.signals.post_save, sender=User)
-def save_user_portfolio(sender, instance, **kwargs):
-    instance.portfolio.save()
-
-
-@receiver(models.signals.post_save, sender=User)
-def create_user_bitbutter(sender, instance=None, created=False, **kwargs):
-    """
-    Create object containing Bitbutter integration credentials
-    """
-    if created:
-        Bitbutter.objects.create(user=instance)
-
-
-@receiver(models.signals.post_save, sender=User)
-def save_user_bitbutter(sender, instance, **kwargs):
-    instance.bitbutter.save()
-
-
-@receiver(models.signals.post_save, sender=User)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    """
-    Create an authentication token for new users
-    """
-    if created:
-        Token.objects.create(user=instance)
-
-
-class Coin(models.Model):
-    """
-    All coins supported on Polyledger.
+    All assets supported on Polyledger
     """
     symbol = models.CharField(primary_key=True, max_length=5)
     name = models.CharField(max_length=50)
@@ -157,7 +114,7 @@ class Coin(models.Model):
         to='Portfolio',
         blank=True,
         through='Position',
-        related_name='coins')
+        related_name='assets')
 
     def __str__(self):
         return self.name
@@ -165,16 +122,10 @@ class Coin(models.Model):
 
 class Portfolio(models.Model):
     """
-    A user's portfolio containing coins.
+    A user's portfolio containing positions
     """
     created = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(default='My Portfolio', max_length=100)
-    risk_score = models.IntegerField(
-        blank=True,
-        null=True,
-        validators=[MinValueValidator(1), MaxValueValidator(5)])
     user = models.OneToOneField('User', on_delete=models.CASCADE)
-    usd = models.FloatField(default=0)
 
     def __str__(self):
         return '{0}\'s portfolio'.format(self.user)
@@ -182,9 +133,9 @@ class Portfolio(models.Model):
 
 class Position(models.Model):
     """
-    A position of a coin in a portfolio.
+    A position in a portfolio
     """
-    coin = models.ForeignKey('Coin')
+    asset = models.ForeignKey('Asset')
     portfolio = models.ForeignKey(
         to='Portfolio',
         related_name='positions',
@@ -192,86 +143,62 @@ class Position(models.Model):
     amount = models.FloatField(default=0.0)
 
 
-class Deposit(models.Model):
+class Identity(models.Model):
     """
-    A deposit of crypto from Coinbase to Polyledger
+    A user's identity (credentials proving their identity)
     """
-    STATUS_CHOICES = (
-        ('created', 'Created'),
-        ('completed', 'Completed'),
-        ('canceled', 'Canceled'),
-    )
+    user = models.OneToOneField('User', on_delete=models.CASCADE)
+    bitbutter_user_id = models.UUIDField(editable=True, null=True)
+    bitbutter_api_key = models.CharField(max_length=255, null=True)
+    bitbutter_secret = models.CharField(max_length=255, null=True)
 
-    status = models.CharField(choices=STATUS_CHOICES, max_length=255)
-    coinbase_user_id = models.CharField(
-        null=False,
-        blank=False,
-        max_length=255)
-    coinbase_account_id = models.CharField(
-        null=False,
-        blank=False,
-        max_length=255)
-    transaction = models.OneToOneField(
-        to='Transaction',
-        on_delete=models.CASCADE)
-    amount = models.FloatField(default=0.0)
-    coin = models.CharField(max_length=255)
+    class Meta:
+        verbose_name_plural = 'Identities'
 
 
-class Withdrawal(models.Model):
+class ConnectedExchange(models.Model):
     """
-    A withdrawal of crypto from Polyledger to Coinbase
+    A user's connected exchange (via Bitbutter)
     """
-    STATUS_CHOICES = (
-        ('created', 'Created'),
-        ('completed', 'Completed'),
-        ('canceled', 'Canceled'),
-    )
+    name = models.CharField(max_length=255)
+    label = models.CharField(max_length=255)
 
-    status = models.CharField(choices=STATUS_CHOICES, max_length=255)
-    coinbase_user_id = models.CharField(
-        null=False,
-        blank=False,
-        max_length=255)
-    coinbase_account_id = models.CharField(
-        null=False,
-        blank=False,
-        max_length=255)
-    transaction = models.OneToOneField(
-        to='Transaction',
-        on_delete=models.CASCADE)
-    amount = models.FloatField(default=0.0)
-    coin = models.CharField(max_length=255)
+
+class ConnectedAddress(models.Model):
+    """
+    A user's connected address (via Bitbutter)
+    """
+    address = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    symbol = models.CharField(max_length=5)
+    label = models.CharField(max_length=255)
 
 
 class Transaction(models.Model):
     """
-    A crypto-crypto transaction in the user's portfolio
+    A transaction in the user's portfolio
     """
     CATEGORY_CHOICES = (
         ('buy', 'Buy'),
         ('sell', 'Sell'),
-        ('deposit', 'Deposit'),
-        ('withdrawal', 'Withdrawal'),
+        ('exchange_deposit', 'Exchange Deposit'),
+        ('exchange_withdrawal', 'Exchange Withdrawal'),
+        ('address_withdrawal', 'Address Withdrawal'),
+        ('address_deposit', 'Address Deposit'),
+        ('internal_address_withdrawal', 'Internal Address Withdrawal'),
+        ('internal_address_deposit', 'Internal Address Deposit'),
     )
 
-    STATUS_CHOICES = (
-        ('pending', 'Pending'),
-        ('completed', 'Completed'),
-        ('failed', 'Failed'),
-        ('expired', 'Expired'),
-        ('canceled', 'Canceled'),
-    )
-
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=False)
     portfolio = models.ForeignKey(
         to='Portfolio',
         on_delete=models.CASCADE,
         related_name='transactions')
     category = models.CharField(choices=CATEGORY_CHOICES, max_length=255)
-    status = models.CharField(choices=STATUS_CHOICES, max_length=255)
-    amount = models.FloatField(default=0.0)
-    coin = models.CharField(max_length=255)
+    base = models.CharField(max_length=5, validators=[RegexValidator('[A-Z]+')])
+    quote = models.CharField(max_length=5, validators=[RegexValidator('[A-Z]+')])
+    base_size = models.FloatField(default=0.0)
+    quote_size = models.FloatField(default=0.0)
 
 
 class IPAddress(models.Model):
@@ -279,8 +206,7 @@ class IPAddress(models.Model):
     A table linking users to their known IP addresses
     """
     ip = models.GenericIPAddressField(db_index=True)
-    user = models.ForeignKey(to='User', related_name='ip_addresses',
-                             on_delete=models.CASCADE)
+    user = models.ForeignKey(to='User', related_name='ip_addresses', on_delete=models.CASCADE)
     last_login = models.DateTimeField(auto_now=True)
     user_agent = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
@@ -296,31 +222,24 @@ class IPAddress(models.Model):
         unique_together = (('ip', 'user', 'user_agent'),)
 
 
-class Distribution(models.Model):
-    """
-    A distribution for each coin
-    """
-    date = models.DateTimeField(auto_now_add=False)
-    coin = models.OneToOneField(to='Coin', on_delete=models.CASCADE)
-    name = models.CharField(null=True, blank=True, max_length=255)
-    params = models.CharField(null=True, blank=True, max_length=255)
-
-
 class Price(models.Model):
     """
-    A table for the prices of all supported coins in USD.
+    A table for the prices of all supported assets in USD.
     """
-    date = models.DateField(auto_now_add=False, db_index=True)
-    coin = models.ForeignKey(to='Coin', related_name='prices')
-    price = models.FloatField(default=0.0)
+    date = models.DateTimeField(auto_now_add=False, db_index=True)
+    asset = models.ForeignKey(to='Asset', related_name='prices')
+    open = models.FloatField(default=0.0)
+    high = models.FloatField(default=0.0)
+    low = models.FloatField(default=0.0)
+    close = models.FloatField(default=0.0)
 
     class Meta:
-        unique_together = (('date', 'coin'),)
+        unique_together = (('date', 'asset'),)
 
 
-class WhitelistedEmail(models.Model):
+class BetaTester(models.Model):
     """
-    Whitelisted emails for user signup
+    Beta testers (for a service, feature, etc.)
     """
     date = models.DateField(auto_now_add=True)
     email = models.EmailField(
@@ -331,20 +250,8 @@ class WhitelistedEmail(models.Model):
         blank=False,
         max_length=254)
 
-
-class Bitbutter(models.Model):
-    """
-    Bitbutter integration user credentials
-    """
-    user = models.OneToOneField(to='User', related_name='bitbutter',
-                                on_delete=models.CASCADE)
-    uuid = models.UUIDField(editable=False, null=True)
-    api_key = models.CharField(max_length=255, null=True)
-    secret = models.CharField(max_length=255, null=True)
-    created_at = models.DateTimeField(null=True)
-
     class Meta:
-        verbose_name_plural = 'bitbutter'
+        verbose_name = 'Beta Tester'
 
 
 class Settings(models.Model):
@@ -369,13 +276,68 @@ class Settings(models.Model):
     )
 
     user = models.ForeignKey(to='User', related_name='settings')
-    local_currency = models.CharField(choices=LOCAL_CURRENCY_CHOICES,
-                                      max_length=255, default='usd')
-    time_zone = models.CharField(choices=TIME_ZONE_CHOICES, max_length=255,
-                                 default='pst')
-    email_notification = models.CharField(choices=EMAIL_NOTIFICATION_CHOICES,
-                                          max_length=255, default='weekly')
+    local_currency = models.CharField(choices=LOCAL_CURRENCY_CHOICES, max_length=255, default='usd')
+    time_zone = models.CharField(choices=TIME_ZONE_CHOICES, max_length=255, default='pst')
+    email_notification = models.CharField(choices=EMAIL_NOTIFICATION_CHOICES, max_length=255, default='weekly')
     two_factor_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "settings"
+
+
+"""
+MODEL SIGNALS
+https://docs.djangoproject.com/en/2.0/topics/signals/
+"""
+
+
+@receiver(models.signals.post_save, sender=User)
+def create_user_profile(sender, instance=None, created=False, **kwargs):
+    """
+    Create a profile for new users on signup
+    """
+    if created:
+        Profile.objects.create(user=instance)
+        Settings.objects.create(user=instance)
+
+
+@receiver(models.signals.post_save, sender=User)
+def create_user_portfolio(sender, instance=None, created=False, **kwargs):
+    """
+    Create a portfolio for new users on signup
+    """
+    if created:
+        Portfolio.objects.create(user=instance)
+
+
+@receiver(models.signals.post_save, sender=User)
+def create_user_identity(sender, instance=None, created=False, **kwargs):
+    """
+    Create an identity for new users on signup
+    """
+    if created:
+        Identity.objects.create(user=instance)
+
+
+@receiver(models.signals.post_save, sender=User)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    """
+    Create an authentication token for new users on signup
+    """
+    if created:
+        Token.objects.create(user=instance)
+
+
+@receiver(models.signals.post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+
+
+@receiver(models.signals.post_save, sender=User)
+def save_user_portfolio(sender, instance, **kwargs):
+    instance.portfolio.save()
+
+
+@receiver(models.signals.post_save, sender=User)
+def save_user_identity(sender, instance, **kwargs):
+    instance.identity.save()

@@ -7,9 +7,8 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from api.models import User, Profile, Portfolio, Coin, Position, Price
-from api.models import Distribution, IPAddress, Transaction, Settings
-from api.models import Bitbutter, WhitelistedEmail
+from api.models import User, Profile, Portfolio, Asset, Position, Price
+from api.models import IPAddress, Transaction, Settings, BetaTester, Identity
 
 
 class UserCreationForm(forms.ModelForm):
@@ -105,26 +104,26 @@ class PositionInline(admin.TabularInline):
 
 
 class PortfolioAdmin(admin.ModelAdmin):
-    list_display = ('user', 'title', 'risk_score', 'usd')
+    list_display = ('user',)
     inlines = [PositionInline]
 
 
-class CoinAdmin(admin.ModelAdmin):
+class AssetAdmin(admin.ModelAdmin):
     ordering = ('symbol',)
     list_display = ('symbol', 'name')
 
 
+class IdentityAdmin(admin.ModelAdmin):
+    list_display = ('user', 'bitbutter_user_id', 'bitbutter_api_key',
+                    'bitbutter_secret',)
+
+
 class PositionAdmin(admin.ModelAdmin):
-    list_display = ('coin', 'amount', 'portfolio')
+    list_display = ('asset', 'amount', 'portfolio')
 
 
 class IPAddressAdmin(admin.ModelAdmin):
     list_display = ('ip', 'user', 'last_login', 'user_agent')
-
-
-class DistributionAdmin(admin.ModelAdmin):
-    ordering = ('-date', 'coin',)
-    list_display = ('date', 'coin', 'name', 'params')
 
 
 class TransactionAdmin(admin.ModelAdmin):
@@ -133,8 +132,8 @@ class TransactionAdmin(admin.ModelAdmin):
 
 
 class PriceAdmin(admin.ModelAdmin):
-    ordering = ('-date', 'coin',)
-    list_display = ('date', 'coin', 'price')
+    ordering = ('-date', 'asset',)
+    list_display = ('date', 'asset', 'open', 'high', 'low', 'close')
 
 
 class SettingsAdmin(admin.ModelAdmin):
@@ -142,20 +141,7 @@ class SettingsAdmin(admin.ModelAdmin):
                     'time_zone', 'local_currency')
 
 
-class BitbutterChangeForm(forms.ModelForm):
-    """A form for updating Bitbutter credneitals."""
-
-    class Meta:
-        model = Bitbutter
-        fields = ('uuid', 'created_at', 'api_key', 'secret')
-
-
-class BitbutterAdmin(admin.ModelAdmin):
-    form = BitbutterChangeForm
-    list_display = ('user', 'uuid', 'created_at', 'api_key', 'secret')
-
-
-class WhitelistedEmailAdmin(admin.ModelAdmin):
+class BetaTesterAdmin(admin.ModelAdmin):
     list_display = ('date', 'email')
 
 
@@ -164,11 +150,10 @@ admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Portfolio, PortfolioAdmin)
 admin.site.register(Position, PositionAdmin)
 admin.site.register(IPAddress, IPAddressAdmin)
-admin.site.register(Distribution, DistributionAdmin)
 admin.site.register(Transaction, TransactionAdmin)
-admin.site.register(Coin, CoinAdmin)
+admin.site.register(Asset, AssetAdmin)
+admin.site.register(Identity, IdentityAdmin)
 admin.site.register(Price, PriceAdmin)
 admin.site.register(Settings, SettingsAdmin)
-admin.site.register(Bitbutter, BitbutterAdmin)
-admin.site.register(WhitelistedEmail, WhitelistedEmailAdmin)
+admin.site.register(BetaTester, BetaTesterAdmin)
 admin.site.unregister(Group)
