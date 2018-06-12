@@ -10,13 +10,19 @@
 
 ## Prerequisites
 
-You must have [Docker](https://www.docker.com/community-edition) installed on your system. Then clone this repository:
+- [Docker](https://www.docker.com/community-edition) installed on your system.
+- An account on [npmjs.org](https://www.npmjs.com/). Ask to be added to the Polyledger organization so you can generate an NPM token.
+- A GitHub account with read/write access to this repository in the Polyledger organization.
+
+## Quick Start
+
+Clone this repository:
 
 ```
 ❯ git clone https://github.com/polyledger/polyledger.git
 ```
 
-You must also install web dependencies before running the application in Docker. To install the private packages, you have to export `NPM_TOKEN` as an environment variable. Export it in your shell. Now install on the dependencies locally:
+You must also install web dependencies before running the application in Docker. To install the private packages, you have to export `NPM_TOKEN` as an environment variable (see [Docker and private packages](https://docs.npmjs.com/private-modules/docker-and-private-modules)). Export it in your shell. Now install on the dependencies locally:
 
 ```
 ❯ cd ./polyledger/web_client && npm install
@@ -67,8 +73,8 @@ If you pre-populate the database, 10 coins will also be created. To fetch prices
 This will launch an interactive Python shell. You can call the task to fetch prices:
 
 ```python
->>> from api.tasks import fill_daily_historical_prices
->>> fill_daily_historical_prices()
+>>> from api.tasks import fill_historical_prices
+>>> fill_historical_prices()
 ```
 
 ---
