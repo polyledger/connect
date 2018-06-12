@@ -38,14 +38,7 @@
     "validator": "^9.4.1"
   },
   "proxy": "http://server:8000",
-  "lint-staged": {
-    "src/**/*.{js,jsx,json,css}": [
-      "prettier --write",
-      "git add"
-    ]
-  },
   "scripts": {
-    "precommit": "lint-staged",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
