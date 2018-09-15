@@ -1,18 +1,14 @@
-<p align="center">
-  <img src="/web_client/src/assets/logo.png?raw=true" height="100">
-</p>
+# Connect
 
 ![Screenshot](/polyledger.png?raw=true)
 
-> Cryptoasset portfolio management platform
+> Cryptoasset portfolio management app
 
 ---
 
 ## Prerequisites
 
 - [Docker](https://www.docker.com/community-edition) installed on your system.
-- An account on [npmjs.org](https://www.npmjs.com/). Ask to be added to the Polyledger organization so you can generate an NPM token.
-- A GitHub account with read/write access to this repository in the Polyledger organization.
 
 ## Quick Start
 
@@ -22,31 +18,25 @@ Clone this repository:
 ❯ git clone https://github.com/polyledger/polyledger.git
 ```
 
-You must also install web dependencies before running the application in Docker. To install the private packages, you have to export `NPM_TOKEN` as an environment variable (see [Docker and private packages](https://docs.npmjs.com/private-modules/docker-and-private-modules)). Export it in your shell. Now install on the dependencies locally:
+You must install the web client's dependencies before running the application in Docker:
 
 ```
-❯ cd ./polyledger/web_client && npm install
+❯ cd polyledger/web_client && npm install
 ```
 
 You will need a file containing your environment variables (either `.env.development` or `.env.production`) at the project root. The contents should contain these variables:
 
 ```
-NPM_TOKEN=<npm_token>
 SECRET_KEY=<secret_key>
 PYTHON_ENV=<development|production>
 EMAIL_HOST_PASSWORD=<email_host_password>
 DJANGO_SETTINGS_MODULE=polyledger.settings.<local|production>
-BITBUTTER_API_KEY=<bitbutter_api_key>
-BITBUTTER_API_SECRET=<bitbutter_api_secret>
-BITBUTTER_BASE_URI=<bitbutter_base_uri>
-BITBUTTER_PARTNERSHIP_ID=<bitbutter_partnership_id>
-BITBUTTER_PARTNER_ID=<bitbutter_partner_id>
 ```
 
 Now you can build the Docker containers:
 
 ```
-❯ cd .. && docker-compose build --build-arg NPM_TOKEN=${NPM_TOKEN}
+❯ cd .. && docker-compose build
 ```
 
 ## Development
