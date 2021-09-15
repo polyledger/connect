@@ -4,6 +4,8 @@
 
 > Cryptoasset portfolio management app
 
+Note: This repository is no longer active.
+
 ---
 
 ## Prerequisites
